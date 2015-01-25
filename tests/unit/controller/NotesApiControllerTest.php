@@ -19,7 +19,7 @@ use \OCA\Notes\Service\NoteDoesNotExistException;
 use \OCA\Notes\Utility\ControllerTestUtility;
 use \OCA\Notes\Db\Note;
 
-class NotesApiControllerTest extends \OCA\Notes\Tests\Unit\NotesUnitTest {
+class NotesApiControllerTestCase extends \OCA\Notes\Tests\Unit\NotesUnitTestCase {
 
 
 	/**

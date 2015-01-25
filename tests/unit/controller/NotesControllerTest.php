@@ -18,7 +18,7 @@ use \OCP\AppFramework\Http;
 use \OCA\Notes\Service\NoteDoesNotExistException;
 use \OCA\Notes\Utility\ControllerTestUtility;
 
-class NotesControllerTest extends \OCA\Notes\Tests\Unit\NotesUnitTest {
+class NotesControllerTestCase extends \OCA\Notes\Tests\Unit\NotesUnitTestCase {
 
 
 	/**

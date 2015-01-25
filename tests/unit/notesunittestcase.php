@@ -14,7 +14,7 @@ namespace OCA\Notes\Tests\Unit;
 use \OCA\Notes\AppInfo\Application;
 
 
-class NotesUnitTest extends \PHPUnit_Framework_TestCase {
+class NotesUnitTestCase extends \PHPUnit_Framework_TestCase {
 
 	protected $container;
 	protected $user;

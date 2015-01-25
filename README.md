@@ -11,10 +11,10 @@ For further developer and user documentation please visit [the wiki](https://git
 This app is looking for a maintainer
 
 # Minimum PHP Version
-* PHP >= 5.3.6
+* PHP >= 5.4.0
 
 # Minimum ownCloud Version
-* >= 7.0.3
+* >= 8.0.0
 
 # Supported Webservers
 * Apache

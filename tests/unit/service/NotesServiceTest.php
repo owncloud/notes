@@ -14,7 +14,7 @@ namespace OCA\Notes\Service;
 use \OCA\Notes\Utility\ControllerTestUtility;
 use \OCA\Notes\Db\Note;
 
-class NotesServiceTest extends \OCA\Notes\Tests\Unit\NotesUnitTest {
+class NotesServiceTestCase extends \OCA\Notes\Tests\Unit\NotesUnitTestCase {
 
 
 	public function setUp(){
