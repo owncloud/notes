@@ -12,7 +12,7 @@
 namespace OCA\Notes\Utility;
 
 
-class FileSystemUtilityTest extends \OCA\Notes\Tests\Unit\NotesUnitTest {
+class FileSystemUtilityTestCase extends \OCA\Notes\Tests\Unit\NotesUnitTestCase {
 
 
 	public function testNoCollision() {

@@ -16,7 +16,7 @@ use \OCP\AppFramework\Http\TemplateResponse;
 
 use \OCA\Notes\Service\NoteDoesNotExistException;
 
-class PageControllerTest extends \OCA\Notes\Tests\Unit\NotesUnitTest {
+class PageControllerTestCase extends \OCA\Notes\Tests\Unit\NotesUnitTestCase {
 
 
 	/**
