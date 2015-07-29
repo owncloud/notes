@@ -4,34 +4,32 @@
  * later.
  * See the COPYING file.
  */
-
-// This is available by using ng-controller="NotesController" in your HTML
-app.controller('NotesController', function($routeParams, $scope, $location,
-                                           Restangular, NotesModel) {
+angular.module('Notes').controller('NotesController', function($routeParams,
+    $location, Restangular, NotesModel) {
     'use strict';
 
-    $scope.route = $routeParams;
-    $scope.notes = NotesModel.getAll();
+    this.route = $routeParams;
+    this.notes = NotesModel.getAll();
 
     var notesResource = Restangular.all('notes');
 
     // initial request for getting all notes
-    notesResource.getList().then(function (notes) {
+    notesResource.getList().then((notes) => {
         NotesModel.addAll(notes);
     });
 
-    $scope.create = function () {
-        notesResource.post().then(function (note) {
+    this.create = () => {
+        notesResource.post().then((note) => {
             NotesModel.add(note);
             $location.path('/notes/' + note.id);
         });
     };
 
-    $scope.delete = function (noteId) {
+    this.delete = (noteId) => {
         var note = NotesModel.get(noteId);
-        note.remove().then(function () {
+        note.remove().then(() => {
             NotesModel.remove(noteId);
-            $scope.$emit('$routeChangeError');
+            this.$emit('$routeChangeError');
         });
     };
 

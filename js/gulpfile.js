@@ -52,7 +52,7 @@ gulp.task('build', function () {
                 out: buildTarget
             }))
             .pipe(ngAnnotate())
-            .pipe(uglify())
+            //.pipe(uglify())
         .pipe(sourcemaps.write('.'))
         .pipe(gulp.dest(buildFolder));
 });

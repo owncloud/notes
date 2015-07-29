@@ -4,8 +4,7 @@
  * later.
  * See the COPYING file.
  */
-
-app.directive('notesAutofocus', function () {
+angular.module('Notes').directive('notesAutofocus', function () {
     'use strict';
     return {
         restrict: 'A',

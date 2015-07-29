@@ -27,22 +27,22 @@ style('notes', [
 
 ?>
 
-<div id="app" ng-app="Notes" ng-controller="AppController"
-    ng-init="init(<?php p($_['lastViewedNote']); ?>)" ng-cloak>
+<div id="app" ng-app="Notes" ng-controller="AppController as App"
+    ng-init="App.init(<?php p($_['lastViewedNote']); ?>)" ng-cloak>
 
     <script type="text/ng-template" id="note.html">
         <?php print_unescaped($this->inc('note')); ?>
     </script>
 
-    <div id="app-navigation" ng-controller="NotesController">
+    <div id="app-navigation" ng-controller="NotesController as Notes">
         <ul>
             <!-- new note button -->
-            <li id="note-add" ng-click="create()"
+            <li id="note-add" ng-click="Notes.create()"
                 oc-click-focus="{ selector: '#app-content textarea' }">
                 <a href='#'>+ <span><?php p($l->t('New note')); ?></span></a>
             </li>
             <!-- notes list -->
-            <li ng-repeat="note in notes|orderBy:'modified':'reverse'"
+            <li ng-repeat="note in Notes.notes|orderBy:'modified':'reverse'"
                 ng-class="{ active: note.id == route.noteId }">
                 <a href="#/notes/{{ note.id }}">
                     {{ note.title | noteTitle }}
@@ -52,14 +52,14 @@ style('notes', [
                         title="<?php p($l->t('Delete note')); ?>"
                         notes-tooltip
                         data-placement="bottom"
-                        ng-click="delete(note.id)"></button>
+                        ng-click="Notes.delete(note.id)"></button>
                 </span>
             </li>
 
         </ul>
     </div>
 
-    <div id="app-content" ng-class="{loading: is.loading}">
+    <div id="app-content" ng-class="{loading: App.is.loading}">
         <div id="app-content-container" ng-view></div>
     </div>
 </div>

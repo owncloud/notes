@@ -5,9 +5,18 @@
  * See the COPYING file.
  */
 
-/*jshint unused:false*/
-var app = angular.module('Notes', ['ngMock', 'restangular', 'ngRoute']).
+// type declarations of global functions used
+declare var angular: any;
+declare var oc_requesttoken: string;
+declare var mdEdit: any;
+
+'use strict';
+
+angular.module('Notes', ['ngMock', 'restangular', 'ngRoute']).
 config(['RestangularProvider', function (RestangularProvider) {
-    'use strict';
     RestangularProvider.setBaseUrl('/');
 }]);
+
+function t (app: string, text: string) : string  {
+    return text;
+};

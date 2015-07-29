@@ -4,13 +4,12 @@
  * later.
  * See the COPYING file.
  */
+'use strict';
 
-app.controller('AppController', function ($scope, $location, is) {
-    'use strict';
+angular.module('Notes').controller('AppController', function ($location, is) {
+    this.is = is;
 
-    $scope.is = is;
-
-    $scope.init = function (lastViewedNote) {
+    this.init = function (lastViewedNote) {
         if(lastViewedNote !== 0) {
             $location.path('/notes/' + lastViewedNote);
         }

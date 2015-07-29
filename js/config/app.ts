@@ -8,11 +8,11 @@
 // type declarations of global functions used
 declare var angular: any;
 declare var oc_requesttoken: string;
-declare var t: (app: string, translatable: string) => string;
 declare var mdEdit: any;
+declare function t(app: string, translatable: string) : string;
 
-var app = angular.module('Notes', ['restangular', 'ngRoute']).
-config(function($provide, $routeProvider, RestangularProvider, $httpProvider,
+angular.module('Notes', ['restangular', 'ngRoute'])
+.config(function($provide, $routeProvider, RestangularProvider, $httpProvider,
                 $windowProvider) {
     'use strict';
 
@@ -28,7 +28,7 @@ config(function($provide, $routeProvider, RestangularProvider, $httpProvider,
     // define your routes that that load templates into the ng-view
     $routeProvider.when('/notes/:noteId', {
         templateUrl: 'note.html',
-        controller: 'NoteController',
+        controller: 'NoteController as Note',
         resolve: {
             // $routeParams does not work inside resolve so use $route
             // note is the name of the argument that will be injected into the
@@ -61,10 +61,8 @@ config(function($provide, $routeProvider, RestangularProvider, $httpProvider,
     var url = $window.location.href;
     var baseUrl = url.split('index.php')[0] + 'index.php/apps/notes';
     RestangularProvider.setBaseUrl(baseUrl);
-
-
-
-}).run(function ($rootScope, $location, NotesModel) {
+})
+.run(function ($rootScope, $location, NotesModel) {
     'use strict';
     // handle route errors
     $rootScope.$on('$routeChangeError', function () {

@@ -4,7 +4,7 @@
  * later.
  * See the COPYING file.
  */
-app.directive('notesIsSaving', function ($window) {
+angular.module('Notes').directive('notesIsSaving', function ($window) {
     'use strict';
     return {
         restrict: 'A',

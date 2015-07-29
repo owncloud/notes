@@ -4,12 +4,7 @@
  * later.
  * See the COPYING file.
  */
-
-/**
- * Like ng-change only that it does not fire when you type faster than
- * 300 ms
- */
-app.directive('notesTimeoutChange', function ($timeout) {
+angular.module('Notes').directive('notesTimeoutChange', function ($timeout) {
     'use strict';
 
     return {

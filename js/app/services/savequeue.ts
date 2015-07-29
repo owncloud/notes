@@ -4,8 +4,7 @@
  * later.
  * See the COPYING file.
  */
-
-app.factory('SaveQueue', function($q) {
+angular.module('Notes').factory('SaveQueue', function($q) {
     'use strict';
 
     var SaveQueue = function () {

@@ -27,8 +27,20 @@ module.exports = function(config) {
     'use strict';
 
     config.set({
-        frameworks: ['jasmine'],
         basePath: '',
+        frameworks: ['jasmine'],
+        preprocessors: {
+            '**/*.ts': ['typescript']
+        },
+        typescriptPreprocessor: {
+            options: {
+                sourceMap: false,
+                target: 'ES5',
+                module: 'commonjs',
+                noResolve: true
+            },
+            typings: ['typings/app.d.ts']
+        },
         // list of files / patterns to load in the browser
         files: [
             'vendor/jquery/dist/jquery.js',
@@ -39,8 +51,8 @@ module.exports = function(config) {
             'vendor/angular-route/angular-route.js',
             'vendor/restangular/dist/restangular.js',
             'vendor/angular-mocks/angular-mocks.js',
-            'tests/stubs/**/*.js',
-            'app/**/*.js',
+            'tests/stubs/**/*.ts',
+            'app/**/*.ts',
             'tests/unit/**/*.js'
         ],
 

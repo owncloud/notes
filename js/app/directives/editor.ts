@@ -4,20 +4,24 @@
  * later.
  * See the COPYING file.
  */
-app.directive('editor', ['$timeout', function ($timeout) {
+angular.module('Notes').directive('editor', ['$timeout', function ($timeout) {
 	'use strict';
 	return {
 		restrict: 'A',
-		link: function(scope, element) {
-			var editor = mdEdit(element[0], {change: function(value) {
-				$timeout(function(){
-					scope.$apply(function() {
-						scope.note.content = value;
-						scope.updateTitle();
+		scope: {
+			editor: '=',
+			beforeSave: '&'
+		},
+		link: (scope, element) => {
+			var editor = mdEdit(element[0], {change: (value) => {
+				$timeout(() => {
+					scope.$apply(() => {
+						scope.editor.content = value;
+						scope.beforeSave();
 					});
 				});
 			}});
-			editor.setValue(scope.note.content);
+			editor.setValue(scope.editor.content);
 		}
 	};
 }]);

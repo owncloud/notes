@@ -4,8 +4,7 @@
  * later.
  * See the COPYING file.
  */
-
-app.directive('notesTooltip', function () {
+angular.module('Notes').directive('notesTooltip', function () {
     'use strict';
 
     return {

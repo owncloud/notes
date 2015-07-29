@@ -4,9 +4,9 @@
  * later.
  * See the COPYING file.
  */
+'use strict';
 
-app.factory('is', function () {
-    'use strict';
+angular.module('Notes').factory('is', function () {
 
     return {
         loading: false

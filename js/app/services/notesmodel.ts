@@ -4,9 +4,7 @@
  * later.
  * See the COPYING file.
  */
-
-// take care of fileconflicts by appending a number
-app.factory('NotesModel', function () {
+angular.module('Notes').factory('NotesModel', function () {
     'use strict';
 
     var NotesModel = function () {

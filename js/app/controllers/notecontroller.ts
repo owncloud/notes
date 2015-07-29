@@ -4,26 +4,25 @@
  * later.
  * See the COPYING file.
  */
-
-app.controller('NoteController', function($routeParams, $scope, NotesModel,
-                                          SaveQueue, note) {
+angular.module('Notes').controller('NoteController', function($routeParams,
+    NotesModel, SaveQueue, note) {
     'use strict';
 
     NotesModel.updateIfExists(note);
 
-    $scope.note = NotesModel.get($routeParams.noteId);
+    this.note = NotesModel.get($routeParams.noteId);
 
-    $scope.isSaving = function () {
+    this.isSaving = () => {
         return SaveQueue.isSaving();
     };
 
-    $scope.updateTitle = function () {
-        $scope.note.title = $scope.note.content.split('\n')[0] ||
+    this.updateTitle = () => {
+        this.note.title = this.note.content.split('\n')[0] ||
             t('notes', 'New note');
     };
 
-    $scope.save = function() {
-        var note = $scope.note;
+    this.save = () => {
+        var note = this.note;
         SaveQueue.add(note);
     };
 
