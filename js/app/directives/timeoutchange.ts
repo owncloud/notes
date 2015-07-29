@@ -18,7 +18,7 @@ app.directive('notesTimeoutChange', function ($timeout) {
             var interval = 300;  // 300 miliseconds timeout after typing
             var timeout;
 
-            $(element).bind('input propertychange', function () {
+            element.on('input propertychange', function () {
                 $timeout.cancel(timeout);
 
                 timeout = $timeout(function () {

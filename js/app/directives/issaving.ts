@@ -4,7 +4,6 @@
  * later.
  * See the COPYING file.
  */
-
 app.directive('notesIsSaving', function ($window) {
     'use strict';
     return {

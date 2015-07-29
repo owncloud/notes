@@ -13,46 +13,45 @@ var buildTarget = 'app.min.js';
 
 var sources = {
     css: ['../css/**/*.css'],
-    js: ['config/app.js', 'app/**/*.js'],
+    ts: ['config/app.ts', 'app/**/*.ts'],
     tests: ['tests/**/*.js'],
     php: ['../**/*.php'],
     config: ['karma.conf.js', 'gulpfile.js']
 };
 
-var wrappers = '(function(angular, $, requestToken, mdEdit, undefined){'+
-    '\'use strict\';<%= contents %>' +
-    '})(angular, jQuery, oc_requesttoken, mdEdit);';
-
-
 /**
  * Task definitions
  */
-gulp.task('default', ['lint', 'build']);
-
-gulp.task('lint', function () {
-    'use strict';
-    var jshint = require('gulp-jshint');
-
-    return gulp.src(sources.js
-            .concat(sources.tests)
-            .concat(sources.config))
-        .pipe(jshint(jsHintRc))
-        .pipe(jshint.reporter('jshint-stylish'));
-});
+gulp.task('default', ['build']);
 
 gulp.task('build', function () {
     'use strict';
-    var ngAnnotate = require('gulp-ng-annotate'),
-        wrap = require('gulp-wrap'),
-        uglify = require('gulp-uglify'),
+    var uglify = require('gulp-uglify'),
         sourcemaps = require('gulp-sourcemaps'),
-        concat = require('gulp-concat');
+        tslint = require('gulp-tslint'),
+        ngAnnotate = require('gulp-ng-annotate'),
+        tsc = require('gulp-typescript');
 
-    return gulp.src(sources.js)
+    return gulp.src(sources.ts)
+        .pipe(tslint({
+            configuration: {
+                rules: {
+                    semicolon: true,
+                    //requireReturnType: true,
+                    //requireParameterType: true
+                }
+            }
+        }))
+        .pipe(tslint.report('prose', {emitError: true}))
         .pipe(sourcemaps.init())
-            .pipe(concat(buildTarget))
+            .pipe(tsc({
+                //noImplicitAny: true,
+                typescript: require('typescript'),
+                target: 'ES5',
+                module: 'commonjs',
+                out: buildTarget
+            }))
             .pipe(ngAnnotate())
-            .pipe(wrap(wrappers))
             .pipe(uglify())
         .pipe(sourcemaps.write('.'))
         .pipe(gulp.dest(buildFolder));
@@ -97,7 +96,7 @@ gulp.task('test-php-integration', function () {
 // watch tasks
 gulp.task('watch', ['default'], function () {
     'use strict';
-    gulp.watch(sources.js
+    gulp.watch(sources.ts
         .concat(sources.tests)
         .concat(sources.css)
         .concat(sources.config), ['default']);

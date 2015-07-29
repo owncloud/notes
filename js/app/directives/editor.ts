@@ -1,4 +1,9 @@
-/*global mdEdit*/
+/**
+ * Copyright (c) 2015, Hendrik Leppelsack
+ * This file is licensed under the Affero General Public License version 3 or
+ * later.
+ * See the COPYING file.
+ */
 app.directive('editor', ['$timeout', function ($timeout) {
 	'use strict';
 	return {

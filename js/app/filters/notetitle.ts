@@ -1,4 +1,11 @@
 /**
+ * Copyright (c) 2015, Hendrik Leppelsack
+ * This file is licensed under the Affero General Public License version 3 or
+ * later.
+ * See the COPYING file.
+ */
+
+/**
  * removes whitespaces and leading #
  */
 app.filter('noteTitle', function () {

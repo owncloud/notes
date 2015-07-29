@@ -5,14 +5,19 @@
  * See the COPYING file.
  */
 
-/* jshint unused: false */
+// type declarations of global functions used
+declare var angular: any;
+declare var oc_requesttoken: string;
+declare var t: (app: string, translatable: string) => string;
+declare var mdEdit: any;
+
 var app = angular.module('Notes', ['restangular', 'ngRoute']).
 config(function($provide, $routeProvider, RestangularProvider, $httpProvider,
                 $windowProvider) {
     'use strict';
 
     // Always send the CSRF token by default
-    $httpProvider.defaults.headers.common.requesttoken = requestToken;
+    $httpProvider.defaults.headers.common.requesttoken = oc_requesttoken;
 
     // you have to use $provide inside the config method to provide a globally
     // shared and injectable object
