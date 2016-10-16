@@ -42,10 +42,7 @@
     display: none;
 }
 
-#app-navigation .active > .utils .icon-delete {
-    display: inline-block;
-    opacity: .3;
-}
+#app-navigation .active > .utils .icon-delete,
 #app-navigation .active > .utils .icon-star {
     display: inline-block;
     opacity: .3;

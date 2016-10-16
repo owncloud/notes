@@ -50,7 +50,7 @@ app.factory('NotesModel', function () {
                     break;
                 }
             }
-        },
+        }
     };
 
     return new NotesModel();
