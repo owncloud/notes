@@ -44,12 +44,23 @@ class NotesService {
     public function getAll ($userId){
         $folder = $this->getFolderForUser($userId);
         $files = $folder->getDirectoryListing();
-        $notes = [];
-
+        $filesById = [];
         foreach($files as $file) {
             if($this->isNote($file)) {
-                $notes[] = Note::fromFile($file);
+                $filesById[$file->getId()] = $file;
             }
+        }
+        $tagger = \OC::$server->getTagManager()->load('files');
+        $tags = $tagger->getTagsForObjects(array_keys($filesById));
+        if ($tags) {
+            foreach ($tags as $fileId => $fileTags) {
+                $filesById[$fileId]->getFileInfo()->offsetSet('tags', $fileTags);
+            }
+        }
+
+        $notes = [];
+        foreach($filesById as $file) {
+            $notes[] = Note::fromFile($file);
         }
 
         return $notes;
@@ -136,6 +147,30 @@ class NotesService {
 
 
     /**
+     * Set or unset a note as favorite.
+     * @param int $id the id of the note used to update
+     * @param boolean $favorite whether the note should be a favorite or not
+     * @throws NoteDoesNotExistException if note does not exist
+     * @return boolean the new favorite state of the note
+     */
+    public function favorite ($id, $favorite, $userId){
+        $folder = $this->getFolderForUser($userId);
+        $file = $this->getFileById($folder, $id);
+        if(!$this->isNote($file)) {
+            throw new NoteDoesNotExistException();
+        }
+        $tagger = \OC::$server->getTagManager()->load('files');
+        if($favorite)
+            $tagger->addToFavorites($id);
+        else
+            $tagger->removeFromFavorites($id);
+
+        $tags = $tagger->getTagsForObjects([$id]);
+        return in_array(\OC\Tags::TAG_FAVORITE, $tags[$id]);
+    }
+
+
+    /**
      * Deletes a note
      * @param int $id the id of the note which should be deleted
      * @param string $userId
@@ -161,7 +196,11 @@ class NotesService {
         if(count($file) <= 0 || !$this->isNote($file[0])) {
             throw new NoteDoesNotExistException();
         }
-
+        $tagger = \OC::$server->getTagManager()->load('files');
+        $tags = $tagger->getTagsForObjects([$id]);
+        if ($tags) {
+            $file[0]->getFileInfo()->offsetSet('tags', $tags[$id]);
+        }
         return $file[0];
     }
 

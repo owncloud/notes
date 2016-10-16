@@ -43,8 +43,16 @@
 }
 
 #app-navigation .active > .utils .icon-delete {
-    display: block;
+    display: inline-block;
     opacity: .3;
+}
+#app-navigation .active > .utils .icon-star {
+    display: inline-block;
+    opacity: .3;
+}
+#app-navigation .utils .icon-starred {
+    display: inline-block;
+    opacity: 1 !important;
 }
 
 .tooltip {
