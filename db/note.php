@@ -44,19 +44,15 @@ class Note extends Entity {
      * @param File $file
      * @return static
      */
-    public static function fromFile(File $file){
+    public static function fromFile(File $file, array $tags=[]){
         $note = new static();
         $note->setId($file->getId());
         $note->setContent($file->getContent());
         $note->setModified($file->getMTime());
         $note->setTitle(pathinfo($file->getName(),PATHINFO_FILENAME)); // remove extension
-        $fileInfo = $file->getFileInfo();
-        if($fileInfo->offsetExists('tags')) {
-            $tags = $fileInfo->offsetGet('tags');
-            if(in_array(\OC\Tags::TAG_FAVORITE, $tags)) {
-                $note->setFavorite(true);
-                //unset($tags[array_search(\OC\Tags::TAG_FAVORITE, $tags)]);
-            }
+        if(is_array($tags) && in_array(\OC\Tags::TAG_FAVORITE, $tags)) {
+            $note->setFavorite(true);
+            //unset($tags[array_search(\OC\Tags::TAG_FAVORITE, $tags)]);
         }
         $note->resetUpdatedFields();
         return $note;

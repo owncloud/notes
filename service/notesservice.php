@@ -52,15 +52,10 @@ class NotesService {
         }
         $tagger = \OC::$server->getTagManager()->load('files');
         $tags = $tagger->getTagsForObjects(array_keys($filesById));
-        if ($tags) {
-            foreach ($tags as $fileId => $fileTags) {
-                $filesById[$fileId]->getFileInfo()->offsetSet('tags', $fileTags);
-            }
-        }
 
         $notes = [];
-        foreach($filesById as $file) {
-            $notes[] = Note::fromFile($file);
+        foreach($filesById as $id=>$file) {
+            $notes[] = Note::fromFile($file, array_key_exists($id, $tags) ? $tags[$id] : []);
         }
 
         return $notes;
@@ -76,9 +71,14 @@ class NotesService {
      */
     public function get ($id, $userId) {
         $folder = $this->getFolderForUser($userId);
-        return Note::fromFile($this->getFileById($folder, $id));
+        return Note::fromFile($this->getFileById($folder, $id), $this->getTags($id));
     }
 
+    private function getTags ($id) {
+        $tagger = \OC::$server->getTagManager()->load('files');
+        $tags = $tagger->getTagsForObjects([$id]);
+        return $tags[$id];
+    }
 
     /**
      * Creates a note and returns the empty note
@@ -142,7 +142,7 @@ class NotesService {
 
         $file->putContent($content);
 
-        return Note::fromFile($file);
+        return Note::fromFile($file, $this->getTags($id));
     }
 
 
@@ -195,11 +195,6 @@ class NotesService {
 
         if(count($file) <= 0 || !$this->isNote($file[0])) {
             throw new NoteDoesNotExistException();
-        }
-        $tagger = \OC::$server->getTagManager()->load('files');
-        $tags = $tagger->getTagsForObjects([$id]);
-        if ($tags) {
-            $file[0]->getFileInfo()->offsetSet('tags', $tags[$id]);
         }
         return $file[0];
     }
