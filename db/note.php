@@ -44,7 +44,7 @@ class Note extends Entity {
      * @param File $file
      * @return static
      */
-    public static function fromFile(File $file, array $tags=[]){
+    public static function fromFile(File $file, $tags=[]){
         $note = new static();
         $note->setId($file->getId());
         $note->setContent($file->getContent());
