@@ -51,7 +51,11 @@ class NotesService {
             }
         }
         $tagger = \OC::$server->getTagManager()->load('files');
-        $tags = $tagger->getTagsForObjects(array_keys($filesById));
+        if($tagger==null) {
+            $tags = [];
+        } else {
+            $tags = $tagger->getTagsForObjects(array_keys($filesById));
+        }
 
         $notes = [];
         foreach($filesById as $id=>$file) {
@@ -76,8 +80,12 @@ class NotesService {
 
     private function getTags ($id) {
         $tagger = \OC::$server->getTagManager()->load('files');
-        $tags = $tagger->getTagsForObjects([$id]);
-        return $tags[$id];
+        if($tagger==null) {
+            $tags = [];
+        } else {
+            $tags = $tagger->getTagsForObjects([$id]);
+        }
+        return array_key_exists($id, $tags) ? $tags[$id] : [];
     }
 
     /**
