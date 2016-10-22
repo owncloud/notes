@@ -2,6 +2,7 @@
     "Notes" : "Catatan",
     "New note" : "Catatan baru",
     "_%n word_::_%n words_" : ["%n kata"],
-    "Delete note" : "Hapus catatan"
+    "Delete note" : "Hapus catatan",
+    "Favorite" : "Favorit"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

@@ -5,6 +5,7 @@ OC.L10N.register(
     "New note" : "Yeni not",
     "Note is currently saving. Leaving the page will delete all changes!" : "Not halen kaydediliyor. Sayfadan ayrılmanız tüm değişiklikleri silecektir!",
     "_%n word_::_%n words_" : ["%n kelime","%n kelime"],
-    "Delete note" : "Notu sil"
+    "Delete note" : "Notu sil",
+    "Favorite" : "Favorilere ekle"
 },
 "nplurals=2; plural=(n > 1);");

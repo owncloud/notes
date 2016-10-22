@@ -4,6 +4,7 @@ OC.L10N.register(
     "Notes" : "筆記",
     "New note" : "新筆記",
     "_%n word_::_%n words_" : ["%n 字"],
-    "Delete note" : "刪除筆記"
+    "Delete note" : "刪除筆記",
+    "Favorite" : "我的最愛"
 },
 "nplurals=1; plural=0;");

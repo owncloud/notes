@@ -4,6 +4,7 @@ OC.L10N.register(
     "Notes" : "Jegyzetek",
     "New note" : "Új jegyzet",
     "_%n word_::_%n words_" : ["%n szó","%n szó"],
-    "Delete note" : "Jegyzet törlése"
+    "Delete note" : "Jegyzet törlése",
+    "Favorite" : "Kedvenc"
 },
 "nplurals=2; plural=(n != 1);");
