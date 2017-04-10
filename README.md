@@ -1,8 +1,3 @@
-# We have moved!
-## This app is now maintained at: https://github.com/nextcloud/notes
-
--------------------------
-
 # Notes
 
 [![build state](https://travis-ci.org/owncloud/notes.png)](https://travis-ci.org/owncloud/notes)[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/owncloud/notes/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/owncloud/notes/?branch=master)
