@@ -3,6 +3,7 @@ OC.L10N.register(
     {
     "Notes" : "Pastabos",
     "New note" : "Nauja pastaba",
+    "Note is currently saving. Leaving the page will delete all changes!" : "Užrašas išsaugomas. Jei uždarysite šį puslapį, pakeitimai bus prarasti!",
     "_%n word_::_%n words_" : ["%n žodis","%n žodžių","%n žodžių"],
     "Delete note" : "Ištrinti pastabą",
     "Favorite" : "Mėgiamas"
