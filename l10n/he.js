@@ -4,8 +4,7 @@ OC.L10N.register(
     "Notes" : "הערות",
     "New note" : "הערה חדשה",
     "Note is currently saving. Leaving the page will delete all changes!" : "הערה נשמרת ברגע זה. יציאה מהדף תמחק את כל השינויים!",
-    "_%n word_::_%n words_" : ["%n מילה","%n מילים"],
     "Delete note" : "מחיקת הערה",
     "Favorite" : "מועדף"
 },
-"nplurals=2; plural=(n != 1);");
+"nplurals=4; plural=(n==1 ? 1: n == 2 ? 2 : (n % 10 == 0 and n > 10) ? 4);");
