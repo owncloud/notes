@@ -4,6 +4,7 @@ OC.L10N.register(
     "Notes" : "הערות",
     "New note" : "הערה חדשה",
     "Note is currently saving. Leaving the page will delete all changes!" : "הערה נשמרת ברגע זה. יציאה מהדף תמחק את כל השינויים!",
+    "_%n word_::_%n words_" : ["%n מילה","%n מילים","%n מילים","%n מילים"],
     "Delete note" : "מחיקת הערה",
     "Favorite" : "מועדף"
 },
