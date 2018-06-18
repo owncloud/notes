@@ -4,6 +4,7 @@ build/artifacts
 .rvm
 report
 clover.xml
+build
 
 # just sane ignores
 .*.sw[po]

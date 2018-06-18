@@ -1,7 +1,7 @@
 language: php
 php:
-  - 5.6
-  - 7.0
+  - 7.1
+  - 7.2
 
 env:
   global:
@@ -36,20 +36,14 @@ script:
   - php ocular.phar code-coverage:upload --format=php-clover clover.xml
 
   # execute js tests
-  - cd js
-  - npm install
-  - npm install -g gulp
-  - gulp test
-
-  # Create coverage report
-  - sh -c "if [ '$TRAVIS_PHP_VERSION' != 'hhvm' ]; then wget https://scrutinizer-ci.com/ocular.phar; fi"
-  - sh -c "if [ '$TRAVIS_PHP_VERSION' != 'hhvm' ]; then php ocular.phar code-coverage:upload --format=php-clover clover.xml; fi"
+  - make
+  - cd js && npm run test
 
 matrix:
   include:
-    - php: 7.0
+    - php: 7.1
       env: DB=sqlite
-    - php: 7.0
+    - php: 7.1
       env: DB=pgsql
     - php: 5.4
       env: "DB=mysql CORE_BRANCH=stable8.1"
@@ -57,6 +51,8 @@ matrix:
       env: "DB=mysql CORE_BRANCH=stable8.2"
     - php: 5.4
       env: "DB=mysql CORE_BRANCH=stable9"
-    - php: 5.4
+    - php: 5.6
       env: "DB=mysql CORE_BRANCH=stable9.1"
+    - php: 7.0
+      env: "DB=mysql CORE_BRANCH=stable10"
   fast_finish: true
