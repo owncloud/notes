@@ -8,25 +8,20 @@
  * @author Bernhard Posselt <dev@bernhard-posselt.com>
  * @copyright Bernhard Posselt 2012, 2014
  */
-
 namespace OCA\Notes\Service;
-
+use OCP\Files\FileInfo;
 use OCP\IL10N;
 use OCP\Files\IRootFolder;
 use OCP\Files\Folder;
-
 use OCA\Notes\Db\Note;
-
 /**
  * Class NotesService
  *
  * @package OCA\Notes\Service
  */
 class NotesService {
-
     private $l10n;
     private $root;
-
     /**
      * @param IRootFolder $root
      * @param IL10N $l10n
@@ -35,20 +30,15 @@ class NotesService {
         $this->root = $root;
         $this->l10n = $l10n;
     }
-
-
     /**
      * @param string $userId
      * @return array with all notes in the current directory
      */
     public function getAll ($userId){
-        $folder = $this->getFolderForUser($userId);
-        $files = $folder->getDirectoryListing();
+        $notes = $this->gatherNoteFiles($this->getFolderForUser($userId));
         $filesById = [];
-        foreach($files as $file) {
-            if($this->isNote($file)) {
-                $filesById[$file->getId()] = $file;
-            }
+        foreach($notes as $note) {
+            $filesById[$note->getId()] = $note;
         }
         $tagger = \OC::$server->getTagManager()->load('files');
         if($tagger==null) {
@@ -56,16 +46,12 @@ class NotesService {
         } else {
             $tags = $tagger->getTagsForObjects(array_keys($filesById));
         }
-
         $notes = [];
         foreach($filesById as $id=>$file) {
             $notes[] = Note::fromFile($file, array_key_exists($id, $tags) ? $tags[$id] : []);
         }
-
         return $notes;
     }
-
-
     /**
      * Used to get a single note by id
      * @param int $id the id of the note to get
@@ -77,7 +63,6 @@ class NotesService {
         $folder = $this->getFolderForUser($userId);
         return Note::fromFile($this->getFileById($folder, $id), $this->getTags($id));
     }
-
     private function getTags ($id) {
         $tagger = \OC::$server->getTagManager()->load('files');
         if($tagger==null) {
@@ -87,7 +72,6 @@ class NotesService {
         }
         return array_key_exists($id, $tags) ? $tags[$id] : [];
     }
-
     /**
      * Creates a note and returns the empty note
      * @param string $userId
@@ -97,17 +81,13 @@ class NotesService {
     public function create ($userId) {
         $title = $this->l10n->t('New note');
         $folder = $this->getFolderForUser($userId);
-
         // check new note exists already and we need to number it
         // pass -1 because no file has id -1 and that will ensure
         // to only return filenames that dont yet exist
         $path = $this->generateFileName($folder, $title, "txt", -1);
         $file = $folder->newFile($path);
-
         return Note::fromFile($file);
     }
-
-
     /**
      * Updates a note. Be sure to check the returned note since the title is
      * dynamically generated and filename conflicts are resolved
@@ -118,17 +98,15 @@ class NotesService {
      * @return \OCA\Notes\Db\Note the updated note
      */
     public function update ($id, $content, $userId){
-        $folder = $this->getFolderForUser($userId);
-        $file = $this->getFileById($folder, $id);
-
+        $notesFolder = $this->getFolderForUser($userId);
+        $file = $this->getFileById($notesFolder, $id);
+        $folder = $file->getParent();
         // generate content from the first line of the title
         $splitContent = explode("\n", $content);
         $title = $splitContent[0];
-
         if(!$title) {
             $title = $this->l10n->t('New note');
         }
-
         // prevent directory traversal
         $title = str_replace(array('/', '\\'), '',  $title);
         // remove hash and space characters from the beginning of the filename
@@ -136,24 +114,19 @@ class NotesService {
         $title = ltrim($title, ' #');
         // using a maximum of 100 chars should be enough
         $title = mb_substr($title, 0, 100, "UTF-8");
-
         // generate filename if there were collisions
         $currentFilePath = $file->getPath();
-        $basePath = '/' . $userId . '/files/Notes/';
+        $basePath = pathinfo($file->getPath(), PATHINFO_DIRNAME);
+        \OCP\Util::writeLog('notes', $basePath, \OCP\Util::ERROR);
         $fileExtension = pathinfo($file->getName(), PATHINFO_EXTENSION);
-        $newFilePath = $basePath . $this->generateFileName($folder, $title, $fileExtension, $id);
-
+        $newFilePath = $basePath . '/' . $this->generateFileName($folder, $title, $fileExtension, $id);
         // if the current path is not the new path, the file has to be renamed
         if($currentFilePath !== $newFilePath) {
             $file->move($newFilePath);
         }
-
         $file->putContent($content);
-
         return Note::fromFile($file, $this->getTags($id));
     }
-
-
     /**
      * Set or unset a note as favorite.
      * @param int $id the id of the note used to update
@@ -172,12 +145,9 @@ class NotesService {
             $tagger->addToFavorites($id);
         else
             $tagger->removeFromFavorites($id);
-
         $tags = $tagger->getTagsForObjects([$id]);
         return in_array(\OC\Tags::TAG_FAVORITE, $tags[$id]);
     }
-
-
     /**
      * Deletes a note
      * @param int $id the id of the note which should be deleted
@@ -190,8 +160,6 @@ class NotesService {
         $file = $this->getFileById($folder, $id);
         $file->delete();
     }
-
-
     /**
      * @param Folder $folder
      * @param int $id
@@ -200,14 +168,11 @@ class NotesService {
      */
     private function getFileById ($folder, $id) {
         $file = $folder->getById($id);
-
         if(count($file) <= 0 || !$this->isNote($file[0])) {
             throw new NoteDoesNotExistException();
         }
         return $file[0];
     }
-
-
     /**
      * @param string $userId the user id
      * @return Folder
@@ -221,8 +186,6 @@ class NotesService {
         }
         return $folder;
     }
-
-
     /**
      * get path of file and the title.txt and check if they are the same
      * file. If not the title needs to be renamed
@@ -238,7 +201,6 @@ class NotesService {
      */
     private function generateFileName (Folder $folder, $title, $extension, $id) {
         $path = $title . '.' . $extension;
-
         // if file does not exist, that name has not been taken. Similar we don't
         // need to handle file collisions if it is the filename did not change
         if (!$folder->nodeExists($path) || $folder->get($path)->getId() === $id) {
@@ -256,7 +218,26 @@ class NotesService {
             return $this->generateFileName($folder, $newTitle, $extension, $id);
         }
     }
-
+	/**
+	 * gather note files in given directory and all subdirectories
+	 * @param Folder $folder
+	 * @return array
+	 */
+	private function gatherNoteFiles ($folder) {
+		$notes = [];
+		$nodes = $folder->getDirectoryListing();
+		foreach($nodes as $node) {
+			\OCP\Util::writeLog('notes', $node->getType(), \OCP\Util::ERROR);
+			if($node->getType() === FileInfo::TYPE_FOLDER) {
+				$notes = array_merge($notes, $this->gatherNoteFiles($node));
+				continue;
+			}
+			if($this->isNote($node)) {
+				$notes[] = $node;
+			}
+		}
+		return $notes;
+	}
     /**
      * test if file is a note
      *
@@ -265,14 +246,11 @@ class NotesService {
      */
     private function isNote($file) {
         $allowedExtensions = ['txt', 'org', 'markdown', 'md', 'note'];
-
         if($file->getType() !== 'file') return false;
         if(!in_array(
             pathinfo($file->getName(), PATHINFO_EXTENSION),
             $allowedExtensions
         )) return false;
-
         return true;
     }
-
 }
