@@ -17,6 +17,7 @@ use OCP\IRequest;
 
 use OCA\Notes\Service\NotesService;
 use OCA\Notes\Db\Note;
+use OCP\IUserSession;
 
 /**
  * Class NotesApiController
@@ -29,20 +30,21 @@ class NotesApiController extends ApiController {
 
     /** @var NotesService */
     private $service;
-    /** @var string */
-    private $userId;
+    /** @var IUserSession */
+    private $userSession;
 
     /**
      * @param string $AppName
      * @param IRequest $request
      * @param NotesService $service
-     * @param string $UserId
+     * @param IUserSession $userSession
      */
     public function __construct($AppName, IRequest $request,
-                                NotesService $service, $UserId){
+                                NotesService $service,
+								IUserSession $userSession){
         parent::__construct($AppName, $request);
         $this->service = $service;
-        $this->userId = $UserId;
+        $this->userSession = $userSession;
     }
 
 
@@ -74,7 +76,7 @@ class NotesApiController extends ApiController {
      */
     public function index($exclude='') {
         $exclude = explode(',', $exclude);
-        $notes = $this->service->getAll($this->userId);
+        $notes = $this->service->getAll($this->userSession->getUser()->getUID());
         foreach ($notes as $note) {
             $note = $this->excludeFields($note, $exclude);
         }
@@ -95,7 +97,7 @@ class NotesApiController extends ApiController {
         $exclude = explode(',', $exclude);
 
         return $this->respond(function () use ($id, $exclude) {
-            $note = $this->service->get($id, $this->userId);
+            $note = $this->service->get($id, $this->userSession->getUser()->getUID());
             $note = $this->excludeFields($note, $exclude);
             return $note;
         });
@@ -112,8 +114,8 @@ class NotesApiController extends ApiController {
      */
     public function create($content) {
         return $this->respond(function () use ($content) {
-            $note = $this->service->create($this->userId);
-            return $this->service->update($note->getId(), $content, $this->userId);
+            $note = $this->service->create($this->userSession->getUser()->getUID());
+            return $this->service->update($note->getId(), $content, $this->userSession->getUser()->getUID());
         });
     }
 
@@ -130,13 +132,13 @@ class NotesApiController extends ApiController {
      */
     public function update($id, $content=null, $favorite=null) {
         if($favorite!==null) {
-            $this->service->favorite($id, $favorite, $this->userId);
+            $this->service->favorite($id, $favorite, $this->userSession->getUser()->getUID());
         }
         return $this->respond(function () use ($id, $content) {
             if($content===null) {
-                return $this->service->get($id, $this->userId);
+                return $this->service->get($id, $this->userSession->getUser()->getUID());
             } else {
-                return $this->service->update($id, $content, $this->userId);
+                return $this->service->update($id, $content, $this->userSession->getUser()->getUID());
             }
         });
     }
@@ -152,7 +154,7 @@ class NotesApiController extends ApiController {
      */
     public function destroy($id) {
         return $this->respond(function () use ($id) {
-            $this->service->delete($id, $this->userId);
+            $this->service->delete($id, $this->userSession->getUser()->getUID());
             return [];
         });
     }
