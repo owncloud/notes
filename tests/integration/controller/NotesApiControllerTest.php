@@ -11,6 +11,7 @@
 
 namespace OCA\Notes\Controller;
 
+use OCP\IUserSession;
 use PHPUnit_Framework_TestCase;
 
 use OCP\AppFramework\Http\DataResponse;
@@ -32,6 +33,15 @@ class NotesApiControllerTest extends PHPUnit_Framework_TestCase {
         $container->registerService('UserId', function($c) {
             return $this->userId;
         });
+        $user = $this->getMockBuilder('OCP\IUser')
+			->disableOriginalConstructor()
+			->getMock();
+        $user->method('getUID')
+			->willReturn($this->userId);
+
+		/** @var IUserSession $userSession */
+        $userSession = $container->query('OCP\IUserSession');
+		$userSession->setUser($user);
         $this->controller = $container->query(
             'OCA\Notes\Controller\NotesApiController'
         );
