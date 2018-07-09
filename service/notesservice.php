@@ -148,7 +148,7 @@ class NotesService {
             $file->move($newFilePath);
         }
 
-        $file->putContent($content);
+        $file->putContent($content === null ? '' : $content);
 
         return Note::fromFile($file, $this->getTags($id));
     }
