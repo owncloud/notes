@@ -18,4 +18,5 @@ use Exception;
  *
  * @package OCA\Notes\Service
  */
-class NoteDoesNotExistException extends Exception {}
+class NoteDoesNotExistException extends Exception {
+}

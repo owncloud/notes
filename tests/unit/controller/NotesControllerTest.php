@@ -20,200 +20,187 @@ use OCP\AppFramework\Http;
 use OCA\Notes\Service\NoteDoesNotExistException;
 use OCA\Notes\Db\Note;
 
-
 class NotesControllerTest extends PHPUnit_Framework_TestCase {
+	private $request;
+	private $service;
+	private $userId;
+	private $appName;
+	private $controller;
+	private $config;
 
+	public function setUp() {
+		$this->request = $this->getMockBuilder('OCP\IRequest')
+			->disableOriginalConstructor()
+			->getMock();
+		$this->config = $this->getMockBuilder('OCP\IConfig')
+			->disableOriginalConstructor()
+			->getMock();
+		$this->service = $this->getMockBuilder('OCA\Notes\Service\NotesService')
+			->disableOriginalConstructor()
+			->getMock();
+		$this->userId = 'john';
+		$this->appName = 'notes';
+		$this->controller = new NotesController(
+			$this->appName, $this->request, $this->service, $this->config,
+			$this->userId
+		);
+	}
 
-    private $request;
-    private $service;
-    private $userId;
-    private $appName;
-    private $controller;
-    private $config;
+	/**
+	 * GET /notes/
+	 */
+	public function testGetAll() {
+		$expected = ['hi'];
 
-    public function setUp (){
-        $this->request = $this->getMockBuilder('OCP\IRequest')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->config = $this->getMockBuilder('OCP\IConfig')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->service = $this->getMockBuilder('OCA\Notes\Service\NotesService')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->userId = 'john';
-        $this->appName = 'notes';
-        $this->controller = new NotesController(
-            $this->appName, $this->request, $this->service, $this->config,
-            $this->userId
-        );
-    }
+		$this->service->expects($this->once())
+			->method('getAll')
+			->will($this->returnValue($expected));
 
+		$response = $this->controller->index();
 
-    /**
-     * GET /notes/
-     */
-    public function testGetAll(){
-        $expected = ['hi'];
+		$this->assertEquals($expected, $response->getData());
+		$this->assertTrue($response instanceof DataResponse);
+	}
 
-        $this->service->expects($this->once())
-            ->method('getAll')
-            ->will($this->returnValue($expected));
+	/**
+	 * GET /notes/1
+	 */
+	public function testGet() {
+		$id = 1;
+		$expected = ['hi'];
 
-        $response = $this->controller->index();
+		$this->config->expects($this->once())
+			->method('setUserValue')
+			->with($this->equalTo($this->userId),
+				$this->equalTo($this->appName),
+				$this->equalTo('notesLastViewedNote'),
+				$this->equalTo($id));
 
-        $this->assertEquals($expected, $response->getData());
-        $this->assertTrue($response instanceof DataResponse);
-    }
+		$this->service->expects($this->once())
+			->method('get')
+			->with($this->equalTo($id),
+				   $this->equalTo($this->userId))
+			->will($this->returnValue($expected));
 
+		$response = $this->controller->get($id);
 
-    /**
-     * GET /notes/1
-     */
-    public function testGet(){
-        $id = 1;
-        $expected = ['hi'];
+		$this->assertEquals($expected, $response->getData());
+		$this->assertTrue($response instanceof DataResponse);
+	}
 
-        $this->config->expects($this->once())
-            ->method('setUserValue')
-            ->with($this->equalTo($this->userId),
-                $this->equalTo($this->appName),
-                $this->equalTo('notesLastViewedNote'),
-                $this->equalTo($id));
+	public function testGetDoesNotExist() {
+		$id = 1;
+		$expected = ['hi'];
 
-        $this->service->expects($this->once())
-            ->method('get')
-            ->with($this->equalTo($id),
-                   $this->equalTo($this->userId))
-            ->will($this->returnValue($expected));
+		$this->config->expects($this->once())
+			->method('setUserValue')
+			->with($this->equalTo($this->userId),
+				$this->equalTo($this->appName),
+				$this->equalTo('notesLastViewedNote'),
+				$this->equalTo($id));
 
-        $response = $this->controller->get($id);
+		$this->service->expects($this->once())
+			->method('get')
+			->with($this->equalTo($id),
+				   $this->equalTo($this->userId))
+			->will($this->throwException(new NoteDoesNotExistException()));
 
-        $this->assertEquals($expected, $response->getData());
-        $this->assertTrue($response instanceof DataResponse);
-    }
+		$response = $this->controller->get($id);
 
+		$this->assertEquals(Http::STATUS_NOT_FOUND, $response->getStatus());
+		$this->assertTrue($response instanceof DataResponse);
+	}
 
-    public function testGetDoesNotExist(){
-        $id = 1;
-        $expected = ['hi'];
+	/**
+	 * POST /notes
+	 */
+	public function testCreate() {
+		$created = new Note();
+		$created->setId(3);
 
-        $this->config->expects($this->once())
-            ->method('setUserValue')
-            ->with($this->equalTo($this->userId),
-                $this->equalTo($this->appName),
-                $this->equalTo('notesLastViewedNote'),
-                $this->equalTo($id));
+		$expected = new Note();
 
-        $this->service->expects($this->once())
-            ->method('get')
-            ->with($this->equalTo($id),
-                   $this->equalTo($this->userId))
-            ->will($this->throwException(new NoteDoesNotExistException()));
+		$this->service->expects($this->once())
+			->method('create')
+			->with($this->equalTo($this->userId))
+			->will($this->returnValue($created));
+		$this->service->expects($this->once())
+			->method('update')
+			->with(3, 'hi', $this->userId)
+			->will($this->returnValue($expected));
 
-        $response = $this->controller->get($id);
+		$response = $this->controller->create('hi');
 
-        $this->assertEquals(Http::STATUS_NOT_FOUND, $response->getStatus());
-        $this->assertTrue($response instanceof DataResponse);
-    }
+		$this->assertEquals($expected, $response->getData());
+		$this->assertTrue($response instanceof DataResponse);
+	}
 
+	/**
+	 * PUT /notes/
+	 */
+	public function testUpdate() {
+		$id = 1;
+		$content = 'yo';
+		$expected = ['hi'];
 
-    /**
-     * POST /notes
-     */
-    public function testCreate(){
-        $created = new Note();
-        $created->setId(3);
+		$this->service->expects($this->once())
+			->method('update')
+			->with($this->equalTo($id),
+				   $this->equalTo($content),
+				   $this->equalTo($this->userId))
+			->will($this->returnValue($expected));
 
-        $expected = new Note();
+		$response = $this->controller->update($id, $content);
 
-        $this->service->expects($this->once())
-            ->method('create')
-            ->with($this->equalTo($this->userId))
-            ->will($this->returnValue($created));
-        $this->service->expects($this->once())
-            ->method('update')
-            ->with(3, 'hi', $this->userId)
-            ->will($this->returnValue($expected));
+		$this->assertEquals($expected, $response->getData());
+		$this->assertTrue($response instanceof DataResponse);
+	}
 
-        $response = $this->controller->create('hi');
+	public function testUpdateDoesNotExist() {
+		$id = 1;
+		$content = 'yo';
 
-        $this->assertEquals($expected, $response->getData());
-        $this->assertTrue($response instanceof DataResponse);
-    }
+		$this->service->expects($this->once())
+			->method('update')
+			->with($this->equalTo($id),
+				   $this->equalTo($content),
+				   $this->equalTo($this->userId))
+			->will($this->throwException(new NoteDoesNotExistException()));
 
+		$response = $this->controller->update($id, $content);
 
-    /**
-     * PUT /notes/
-     */
-    public function testUpdate(){
-        $id = 1;
-        $content = 'yo';
-        $expected = ['hi'];
+		$this->assertEquals(Http::STATUS_NOT_FOUND, $response->getStatus());
+		$this->assertTrue($response instanceof DataResponse);
+	}
 
-        $this->service->expects($this->once())
-            ->method('update')
-            ->with($this->equalTo($id),
-                   $this->equalTo($content),
-                   $this->equalTo($this->userId))
-            ->will($this->returnValue($expected));
+	/**
+	 * DELETE /notes/
+	 */
+	public function testDelete() {
+		$id = 1;
 
-        $response = $this->controller->update($id, $content);
+		$this->service->expects($this->once())
+			->method('delete')
+			->with($this->equalTo($id),
+				   $this->equalTo($this->userId));
 
-        $this->assertEquals($expected, $response->getData());
-        $this->assertTrue($response instanceof DataResponse);
-    }
+		$response = $this->controller->destroy($id);
 
+		$this->assertTrue($response instanceof DataResponse);
+	}
 
-    public function testUpdateDoesNotExist(){
-        $id = 1;
-        $content = 'yo';
+	public function testDeleteDoesNotExist() {
+		$id = 1;
 
-        $this->service->expects($this->once())
-            ->method('update')
-            ->with($this->equalTo($id),
-                   $this->equalTo($content),
-                   $this->equalTo($this->userId))
-            ->will($this->throwException(new NoteDoesNotExistException()));
+		$this->service->expects($this->once())
+			->method('delete')
+			->with($this->equalTo($id),
+				   $this->equalTo($this->userId))
+			->will($this->throwException(new NoteDoesNotExistException()));
 
-        $response = $this->controller->update($id, $content);
+		$response = $this->controller->destroy($id);
 
-        $this->assertEquals(Http::STATUS_NOT_FOUND, $response->getStatus());
-        $this->assertTrue($response instanceof DataResponse);
-    }
-
-
-    /**
-     * DELETE /notes/
-     */
-    public function testDelete(){
-        $id = 1;
-
-        $this->service->expects($this->once())
-            ->method('delete')
-            ->with($this->equalTo($id),
-                   $this->equalTo($this->userId));
-
-        $response = $this->controller->destroy($id);
-
-        $this->assertTrue($response instanceof DataResponse);
-    }
-
-
-    public function testDeleteDoesNotExist(){
-        $id = 1;
-
-        $this->service->expects($this->once())
-            ->method('delete')
-            ->with($this->equalTo($id),
-                   $this->equalTo($this->userId))
-            ->will($this->throwException(new NoteDoesNotExistException()));
-
-        $response = $this->controller->destroy($id);
-
-        $this->assertEquals(Http::STATUS_NOT_FOUND, $response->getStatus());
-        $this->assertTrue($response instanceof DataResponse);
-    }
-
-
+		$this->assertEquals(Http::STATUS_NOT_FOUND, $response->getStatus());
+		$this->assertTrue($response instanceof DataResponse);
+	}
 }

@@ -29,33 +29,31 @@ use OCP\AppFramework\Db\Entity;
  * @package OCA\Notes\Db
  */
 class Note extends Entity {
+	public $modified;
+	public $title;
+	public $content;
+	public $favorite = false;
 
-    public $modified;
-    public $title;
-    public $content;
-    public $favorite = false;
+	public function __construct() {
+		$this->addType('modified', 'integer');
+		$this->addType('favorite', 'boolean');
+	}
 
-    public function __construct() {
-        $this->addType('modified', 'integer');
-        $this->addType('favorite', 'boolean');
-    }
-
-    /**
-     * @param File $file
-     * @return static
-     */
-    public static function fromFile(File $file, $tags=[]){
-        $note = new static();
-        $note->setId($file->getId());
-        $note->setContent($file->getContent());
-        $note->setModified($file->getMTime());
-        $note->setTitle(pathinfo($file->getName(),PATHINFO_FILENAME)); // remove extension
-        if(is_array($tags) && in_array(\OC\Tags::TAG_FAVORITE, $tags)) {
-            $note->setFavorite(true);
-            //unset($tags[array_search(\OC\Tags::TAG_FAVORITE, $tags)]);
-        }
-        $note->resetUpdatedFields();
-        return $note;
-    }
-
+	/**
+	 * @param File $file
+	 * @return static
+	 */
+	public static function fromFile(File $file, $tags=[]) {
+		$note = new static();
+		$note->setId($file->getId());
+		$note->setContent($file->getContent());
+		$note->setModified($file->getMTime());
+		$note->setTitle(\pathinfo($file->getName(), PATHINFO_FILENAME)); // remove extension
+		if (\is_array($tags) && \in_array(\OC\Tags::TAG_FAVORITE, $tags)) {
+			$note->setFavorite(true);
+			//unset($tags[array_search(\OC\Tags::TAG_FAVORITE, $tags)]);
+		}
+		$note->resetUpdatedFields();
+		return $note;
+	}
 }

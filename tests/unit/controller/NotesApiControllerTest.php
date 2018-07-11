@@ -21,16 +21,14 @@ use OCP\AppFramework\Http;
 use OCA\Notes\Service\NoteDoesNotExistException;
 use OCA\Notes\Db\Note;
 
-
 class NotesApiControllerTest extends PHPUnit_Framework_TestCase {
-
 	private $request;
 	private $service;
 	private $userId;
 	private $appName;
 	private $controller;
 
-	public function setUp (){
+	public function setUp() {
 		$this->request = $this->getMockBuilder('OCP\IRequest')
 			->disableOriginalConstructor()
 			->getMock();
@@ -52,11 +50,10 @@ class NotesApiControllerTest extends PHPUnit_Framework_TestCase {
 		);
 	}
 
-
 	/**
 	 * GET /notes/
 	 */
-	public function testGetAll(){
+	public function testGetAll() {
 		$expected = [new Note, new Note];
 
 		$this->service->expects($this->once())
@@ -70,8 +67,7 @@ class NotesApiControllerTest extends PHPUnit_Framework_TestCase {
 		$this->assertTrue($response instanceof DataResponse);
 	}
 
-
-	public function testGetAllHide(){
+	public function testGetAllHide() {
 		$note1 = Note::fromRow([
 			'id' => 3,
 			'modified' => 123,
@@ -95,7 +91,7 @@ class NotesApiControllerTest extends PHPUnit_Framework_TestCase {
 
 		$response = $this->controller->index('title,content');
 
-		$this->assertEquals(json_encode([
+		$this->assertEquals(\json_encode([
 			[
 				'modified' => 123,
 				'favorite' => false,
@@ -106,15 +102,14 @@ class NotesApiControllerTest extends PHPUnit_Framework_TestCase {
 				'favorite' => false,
 				'id' => 4,
 			]
-		]), json_encode($response->getData()));
+		]), \json_encode($response->getData()));
 		$this->assertTrue($response instanceof DataResponse);
 	}
-
 
 	/**
 	 * GET /notes/1
 	 */
-	public function testGet(){
+	public function testGet() {
 		$id = 1;
 		$expected = new Note;
 
@@ -130,7 +125,7 @@ class NotesApiControllerTest extends PHPUnit_Framework_TestCase {
 		$this->assertTrue($response instanceof DataResponse);
 	}
 
-	public function testGetHide(){
+	public function testGetHide() {
 		$note = Note::fromRow([
 			'id' => 3,
 			'modified' => 123,
@@ -146,16 +141,15 @@ class NotesApiControllerTest extends PHPUnit_Framework_TestCase {
 
 		$response = $this->controller->get(3, 'title,content');
 
-		$this->assertEquals(json_encode([
+		$this->assertEquals(\json_encode([
 			'modified' => 123,
 			'favorite' => false,
 			'id' => 3,
-		]), json_encode($response->getData()));
+		]), \json_encode($response->getData()));
 		$this->assertTrue($response instanceof DataResponse);
 	}
 
-
-	public function testGetDoesNotExist(){
+	public function testGetDoesNotExist() {
 		$id = 1;
 		$expected = ['hi'];
 
@@ -171,11 +165,10 @@ class NotesApiControllerTest extends PHPUnit_Framework_TestCase {
 		$this->assertTrue($response instanceof DataResponse);
 	}
 
-
 	/**
 	 * POST /notes
 	 */
-	public function testCreate(){
+	public function testCreate() {
 		$content = 'yii';
 		$note = new Note();
 		$note->setId(4);
@@ -198,11 +191,10 @@ class NotesApiControllerTest extends PHPUnit_Framework_TestCase {
 		$this->assertTrue($response instanceof DataResponse);
 	}
 
-
 	/**
 	 * PUT /notes/
 	 */
-	public function testUpdate(){
+	public function testUpdate() {
 		$id = 1;
 		$content = 'yo';
 		$expected = ['hi'];
@@ -220,8 +212,7 @@ class NotesApiControllerTest extends PHPUnit_Framework_TestCase {
 		$this->assertTrue($response instanceof DataResponse);
 	}
 
-
-	public function testUpdateDoesNotExist(){
+	public function testUpdateDoesNotExist() {
 		$id = 1;
 		$content = 'yo';
 
@@ -238,11 +229,10 @@ class NotesApiControllerTest extends PHPUnit_Framework_TestCase {
 		$this->assertTrue($response instanceof DataResponse);
 	}
 
-
 	/**
 	 * DELETE /notes/
 	 */
-	public function testDelete(){
+	public function testDelete() {
 		$id = 1;
 
 		$this->service->expects($this->once())
@@ -255,8 +245,7 @@ class NotesApiControllerTest extends PHPUnit_Framework_TestCase {
 		$this->assertTrue($response instanceof DataResponse);
 	}
 
-
-	public function testDeleteDoesNotExist(){
+	public function testDeleteDoesNotExist() {
 		$id = 1;
 
 		$this->service->expects($this->once())
@@ -270,6 +259,4 @@ class NotesApiControllerTest extends PHPUnit_Framework_TestCase {
 		$this->assertEquals(Http::STATUS_NOT_FOUND, $response->getStatus());
 		$this->assertTrue($response instanceof DataResponse);
 	}
-
-
 }
