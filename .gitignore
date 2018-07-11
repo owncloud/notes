@@ -5,6 +5,8 @@ build/artifacts
 report
 clover.xml
 build
+vendor
+.php_cs.cache
 
 # just sane ignores
 .*.sw[po]

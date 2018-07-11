@@ -29,7 +29,9 @@ before_install:
 script:
   # Test lint
   - cd apps/$APP_NAME
-  - find . -name \*.php -exec php -l "{}" \;
+  - ../../build/composer.phar install
+  - vendor/bin/parallel-lint  --exclude vendor .
+  - vendor/bin/php-cs-fixer fix --allow-risky yes --dry-run -v --diff --diff-format udiff
   - phpunit --coverage-clover clover.xml -c phpunit.xml
   - phpunit -c phpunit.integration.xml
   - wget https://scrutinizer-ci.com/ocular.phar
