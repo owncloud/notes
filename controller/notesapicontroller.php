@@ -110,12 +110,13 @@ class NotesApiController extends ApiController {
      * @NoCSRFRequired
      *
      * @param string $content
+     * @param boolean $favorite
      * @return DataResponse
      */
-    public function create($content) {
-        return $this->respond(function () use ($content) {
+    public function create($content, $favorite=null) {
+        return $this->respond(function () use ($content, $favorite) {
             $note = $this->service->create($this->userSession->getUser()->getUID());
-            return $this->service->update($note->getId(), $content, $this->userSession->getUser()->getUID());
+            return $this->updateData($note->getId(), $content, $favorite);
         });
     }
 
@@ -131,16 +132,27 @@ class NotesApiController extends ApiController {
      * @return DataResponse
      */
     public function update($id, $content=null, $favorite=null) {
+        return $this->respond(function () use ($id, $content, $favorite) {
+            return $this->updateData($id, $content, $favorite);
+        });
+    }
+
+    /**
+     * Updates a note, used by create and update
+     * @param int $id
+     * @param string $content
+     * @param boolean $favorite
+     * @return Note
+     */
+    private function updateData($id, $content, $favorite) {
         if($favorite!==null) {
             $this->service->favorite($id, $favorite, $this->userSession->getUser()->getUID());
         }
-        return $this->respond(function () use ($id, $content) {
-            if($content===null) {
-                return $this->service->get($id, $this->userSession->getUser()->getUID());
-            } else {
-                return $this->service->update($id, $content, $this->userSession->getUser()->getUID());
-            }
-        });
+        if($content===null) {
+            return $this->service->get($id, $this->userSession->getUser()->getUID());
+        } else {
+            return $this->service->update($id, $content, $this->userSession->getUser()->getUID());
+        }
     }
 
 
