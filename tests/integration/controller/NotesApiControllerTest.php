@@ -18,63 +18,57 @@ use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\App;
 use OCP\Files\File;
 
-
 class NotesApiControllerTest extends PHPUnit_Framework_TestCase {
+	private $controller;
+	private $mapper;
+	private $userId = 'test';
+	private $notesFolder = '/test/files/Notes';
+	private $fs;
 
-    private $controller;
-    private $mapper;
-    private $userId = 'test';
-    private $notesFolder = '/test/files/Notes';
-    private $fs;
-
-    public function setUp() {
-        $app = new App('notes');
-        $container = $app->getContainer();
-        $container->registerService('UserId', function($c) {
-            return $this->userId;
-        });
-        $user = $this->getMockBuilder('OCP\IUser')
+	public function setUp() {
+		$app = new App('notes');
+		$container = $app->getContainer();
+		$container->registerService('UserId', function ($c) {
+			return $this->userId;
+		});
+		$user = $this->getMockBuilder('OCP\IUser')
 			->disableOriginalConstructor()
 			->getMock();
-        $user->method('getUID')
+		$user->method('getUID')
 			->willReturn($this->userId);
 
 		/** @var IUserSession $userSession */
-        $userSession = $container->query('OCP\IUserSession');
+		$userSession = $container->query('OCP\IUserSession');
 		$userSession->setUser($user);
-        $this->controller = $container->query(
-            'OCA\Notes\Controller\NotesApiController'
-        );
+		$this->controller = $container->query(
+			'OCA\Notes\Controller\NotesApiController'
+		);
 
-        $this->fs = $container->query(
-            'OCP\Files\IRootFolder'
-        );
-        $this->fs->newFolder($this->notesFolder);
-    }
+		$this->fs = $container->query(
+			'OCP\Files\IRootFolder'
+		);
+		$this->fs->newFolder($this->notesFolder);
+	}
 
+	public function testUpdate() {
+		$note = $this->controller->create('test')->getData();
+		$this->assertEquals('test', $note->getContent());
 
-    public function testUpdate() {
-        $note = $this->controller->create('test')->getData();
-        $this->assertEquals('test', $note->getContent());
+		$note2 = $this->controller->update($note->getId(), 'test2')->getData();
+		$this->assertEquals('test2', $note2->getContent());
+		$this->assertEquals($note->getId(), $note2->getId());
 
-        $note2 = $this->controller->update($note->getId(), 'test2')->getData();
-        $this->assertEquals('test2', $note2->getContent());
-        $this->assertEquals($note->getId(), $note2->getId());
+		$notes = $this->controller->index()->getData();
 
-        $notes = $this->controller->index()->getData();
+		$this->assertCount(1, $notes);
+		$this->assertEquals('test2', $notes[0]->getContent());
 
-        $this->assertCount(1, $notes);
-        $this->assertEquals('test2', $notes[0]->getContent());
+		$file = $this->fs->get($this->notesFolder . '/test2.txt');
 
-        $file = $this->fs->get($this->notesFolder . '/test2.txt');
+		$this->assertTrue($file instanceof File);
+	}
 
-        $this->assertTrue($file instanceof File);
-    }
-
-
-    public function tearDown() {
-         $this->fs->get($this->notesFolder)->delete();
-    }
-
-
+	public function tearDown() {
+		$this->fs->get($this->notesFolder)->delete();
+	}
 }

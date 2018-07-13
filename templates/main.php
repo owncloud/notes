@@ -6,23 +6,22 @@
  * See the COPYING file.
  */
 
-
 script('notes', [
-    'vendor/bootstrap/tooltip',
-    'vendor/angular/angular',
-    'vendor/angular-route/angular-route',
-    'vendor/restangular/dist/restangular',
-    'vendor/underscore/underscore',
-    'vendor/prism/prism',
-    'vendor/mdEdit/mdedit.min',
-    'public/app.min'
+	'vendor/bootstrap/tooltip',
+	'vendor/angular/angular',
+	'vendor/angular-route/angular-route',
+	'vendor/restangular/dist/restangular',
+	'vendor/underscore/underscore',
+	'vendor/prism/prism',
+	'vendor/mdEdit/mdedit.min',
+	'public/app.min'
 ]);
 
 style('notes', [
-    '../js/vendor/mdEdit/mdedit',
-    '../js/vendor/mdEdit/prism',
-    'vendor/bootstrap/tooltip',
-    'notes'
+	'../js/vendor/mdEdit/mdedit',
+	'../js/vendor/mdEdit/prism',
+	'vendor/bootstrap/tooltip',
+	'notes'
 ]);
 
 ?>
