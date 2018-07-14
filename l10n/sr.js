@@ -1,7 +1,6 @@
 OC.L10N.register(
     "notes",
     {
-    "Notes" : "Белешке",
     "New note" : "Нова белешка",
     "_%n word_::_%n words_" : ["%n реч","%n речи","%n речи"],
     "Delete note" : "Обриши белешку",

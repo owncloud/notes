@@ -1,7 +1,6 @@
 OC.L10N.register(
     "notes",
     {
-    "Notes" : "Notas",
     "New note" : "Nuwe nota",
     "Note is currently saving. Leaving the page will delete all changes!" : "Nota word tans bewaar. Deur die blad te verlaat word alle veranderinge ontdaan!",
     "_%n word_::_%n words_" : ["%n woord","%n woorde"],

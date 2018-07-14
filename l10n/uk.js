@@ -1,7 +1,6 @@
 OC.L10N.register(
     "notes",
     {
-    "Notes" : "Нотатки",
     "New note" : "Нова нотатка",
     "Note is currently saving. Leaving the page will delete all changes!" : "Нотатка зараз зберігається. Покидання сторінки видалить всі зміни!",
     "_%n word_::_%n words_" : ["%n слово","%n слів","%n слів","%n слів"],
