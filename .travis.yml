@@ -34,10 +34,9 @@ script:
   - vendor/bin/php-cs-fixer fix --allow-risky yes --dry-run -v --diff --diff-format udiff
   - phpunit --coverage-clover clover.xml -c phpunit.xml
   - phpunit -c phpunit.integration.xml
-  - wget https://scrutinizer-ci.com/ocular.phar
-  - php ocular.phar code-coverage:upload --format=php-clover clover.xml
+  - bash <(curl -s https://codecov.io/bash)
 
-  # execute js tests
+# execute js tests
   - make
   - cd js && npm run test
 
