@@ -12,7 +12,7 @@
     <bugs>https://github.com/owncloud/notes/issues</bugs>
     <repository type="git">https://github.com/owncloud/notes.git</repository>
     <dependencies>
-        <owncloud min-version="10.0" max-version="10.1" />
+        <owncloud min-version="10" max-version="10" />
     </dependencies>
     <screenshot>https://cloud.githubusercontent.com/assets/4741199/17731273/e557b5fe-646c-11e6-9975-d6b242454482.png</screenshot>
     <navigation role="admin">
