@@ -26,6 +26,7 @@ For further developer and user documentation please visit [the wiki](https://git
 * latest 3 versions of Chrome, Firefox and Edge 
 * we *do not* officially support Internet Explorer and Safari (Patches accepted though)
 
+Trigger CI
 
 ## Bugs
 Before reporting bugs:
