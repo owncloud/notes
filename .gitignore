@@ -3,10 +3,18 @@ node_modules/
 build/artifacts
 .rvm
 report
-clover.xml
 build
-vendor
+/l10n/.transifexrc
 .php_cs.cache
+
+# Composer
+vendor/
+vendor-bin/**/vendor
+vendor-bin/**/composer.lock
+
+# Tests - auto-generated files
+/tests/acceptance/output*
+/tests/output
 
 # just sane ignores
 .*.sw[po]
