@@ -1,6 +1,6 @@
 # Notes
 
-[![build state](https://travis-ci.org/owncloud/notes.png)](https://travis-ci.org/owncloud/notes)[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/owncloud/notes/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/owncloud/notes/?branch=master)
+[![Build Status](https://drone.owncloud.com/api/badges/owncloud/notes/status.svg?branch=master)](https://drone.owncloud.com/owncloud/notes)
 
 The Notes app is a distraction free notes taking app. It offers a [RESTful API](https://github.com/owncloud/notes/wiki/API-0.2) for app developers. The source code is [available on GitHub](https://github.com/owncloud/notes)
 
