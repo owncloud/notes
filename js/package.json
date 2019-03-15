@@ -21,7 +21,7 @@
     "gulp-phpunit": "^0.8.1",
     "gulp-sourcemaps": "^1.5.2",
     "gulp-uglify": "^1.2.0",
-    "gulp-wrap": "^0.11.0",
+    "gulp-wrap": "^0.14.0",
     "jshint-stylish": "^2.0.1",
     "jasmine-core": "^3.1.0",
     "karma": "^0.13.3",
