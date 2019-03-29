@@ -165,6 +165,7 @@ matrix:
       DB_NAME: owncloud
       NEED_CORE: true
       NEED_INSTALL_APP: true
+      COVERAGE: true
 
     - PHP_VERSION: 7.1
       OC_VERSION: daily-master-qa
@@ -254,6 +255,7 @@ matrix:
       DB_NAME: owncloud
       NEED_CORE: true
       NEED_INSTALL_APP: true
+      COVERAGE: true
 
     - PHP_VERSION: 7.1
       OC_VERSION: daily-master-qa

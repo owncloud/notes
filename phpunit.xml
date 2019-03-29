@@ -4,9 +4,21 @@
     timeoutForMediumTests="900"
     timeoutForLargeTests="900"
     colors="true">
-<testsuites>
     <testsuite name="unit">
         <directory>./tests/unit</directory>
     </testsuite>
-</testsuites>
+    <!-- filters for code coverage -->
+    <filter>
+        <whitelist>
+            <directory suffix=".php">.</directory>
+            <exclude>
+                <directory suffix=".php">./l10n</directory>
+                <directory suffix=".php">./tests</directory>
+            </exclude>
+        </whitelist>
+    </filter>
+    <logging>
+        <!-- and this is where your report will be written -->
+        <log type="coverage-clover" target="./tests/output/clover.xml"/>
+    </logging>
 </phpunit>
