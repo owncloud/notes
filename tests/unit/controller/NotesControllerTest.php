@@ -11,16 +11,15 @@
 
 namespace OCA\Notes\Controller;
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
-use OCP\IRequest;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Http;
 
 use OCA\Notes\Service\NoteDoesNotExistException;
 use OCA\Notes\Db\Note;
 
-class NotesControllerTest extends PHPUnit_Framework_TestCase {
+class NotesControllerTest extends TestCase {
 	private $request;
 	private $service;
 	private $userId;

@@ -11,9 +11,9 @@
 
 namespace OCA\Notes\Db;
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
-class NoteTest extends PHPUnit_Framework_TestCase {
+class NoteTest extends TestCase {
 	public function testFromFile() {
 		$file = $this->getMockBuilder('OCP\Files\File')->getMock();
 		$file->expects($this->any())

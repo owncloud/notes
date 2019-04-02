@@ -1,9 +1,12 @@
 <phpunit bootstrap="../../tests/bootstrap.php"
-    verbose="true"
-    timeoutForSmallTests="900"
-    timeoutForMediumTests="900"
-    timeoutForLargeTests="900"
-    colors="true">
+         verbose="true"
+         failOnRisky="true"
+         failOnWarning="true"
+         timeoutForSmallTests="900"
+         timeoutForMediumTests="900"
+         timeoutForLargeTests="900"
+         colors="true"
+>
     <testsuite name="unit">
         <directory>./tests/unit</directory>
     </testsuite>

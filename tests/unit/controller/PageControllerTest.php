@@ -11,14 +11,13 @@
 
 namespace OCA\Notes\Controller;
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
-use OCP\IRequest;
 use OCP\AppFramework\Http\TemplateResponse;
 
 use OCA\Notes\Service\NoteDoesNotExistException;
 
-class PageControllerTest extends PHPUnit_Framework_TestCase {
+class PageControllerTest extends TestCase {
 	private $request;
 	private $service;
 	private $userId;

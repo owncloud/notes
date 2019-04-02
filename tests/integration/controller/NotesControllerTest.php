@@ -11,13 +11,12 @@
 
 namespace OCA\Notes\Controller;
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
-use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\App;
 use OCP\Files\File;
 
-class NotesControllerTest extends PHPUnit_Framework_TestCase {
+class NotesControllerTest extends TestCase {
 	private $controller;
 	private $userId = 'test';
 	private $notesFolder = '/test/files/Notes';
