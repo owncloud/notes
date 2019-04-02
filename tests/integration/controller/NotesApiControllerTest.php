@@ -14,7 +14,6 @@ namespace OCA\Notes\Controller;
 use OCP\IUserSession;
 use PHPUnit\Framework\TestCase;
 
-use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\App;
 use OCP\Files\File;
 

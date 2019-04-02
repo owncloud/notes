@@ -13,7 +13,6 @@ namespace OCA\Notes\Controller;
 
 use PHPUnit\Framework\TestCase;
 
-use OCP\IRequest;
 use OCP\AppFramework\Http\TemplateResponse;
 
 use OCA\Notes\Service\NoteDoesNotExistException;

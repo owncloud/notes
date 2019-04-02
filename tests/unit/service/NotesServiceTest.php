@@ -13,8 +13,6 @@ namespace OCA\Notes\Service;
 
 use PHPUnit\Framework\TestCase;
 
-use OCA\Notes\Db\Note;
-
 class NotesServiceTest extends TestCase {
 	private $root;
 	private $service;

@@ -11,8 +11,6 @@
 
 namespace OCA\Notes\Controller;
 
-use OCP\IUser;
-use OCP\IUserSession;
 use PHPUnit\Framework\TestCase;
 
 use OCP\AppFramework\Http\DataResponse;
