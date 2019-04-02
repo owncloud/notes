@@ -12,13 +12,13 @@
 namespace OCA\Notes\Controller;
 
 use OCP\IUserSession;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\App;
 use OCP\Files\File;
 
-class NotesApiControllerTest extends PHPUnit_Framework_TestCase {
+class NotesApiControllerTest extends TestCase {
 	private $controller;
 	private $mapper;
 	private $userId = 'test';
