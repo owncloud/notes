@@ -1,3 +1,6 @@
+owncloud-notes (2.0.5)
+* Ready for ownCloud 10.2+
+
 owncloud-notes (2.0.4)
 * Fix api calls with basic auth
 
