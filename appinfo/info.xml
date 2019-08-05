@@ -15,7 +15,7 @@
         <owncloud min-version="10.2" max-version="10" />
     </dependencies>
     <screenshot>https://cloud.githubusercontent.com/assets/4741199/17731273/e557b5fe-646c-11e6-9975-d6b242454482.png</screenshot>
-    <navigation role="admin">
+    <navigation>
         <route>notes.page.index</route>
         <order>10</order>
     </navigation>
