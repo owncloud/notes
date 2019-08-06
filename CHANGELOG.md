@@ -1,3 +1,6 @@
+owncloud-notes (2.0.6)
+* Fixing [App only visible for admins](https://github.com/owncloud/notes/issues/314)
+
 owncloud-notes (2.0.5)
 * Ready for ownCloud 10.2+
 
