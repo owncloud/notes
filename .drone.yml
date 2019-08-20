@@ -191,6 +191,14 @@ matrix:
       NEED_CORE: true
       NEED_INSTALL_APP: true
 
+    - PHP_VERSION: 7.3
+      OC_VERSION: daily-master-qa
+      TEST_SUITE: phpunit
+      DB_TYPE: mysql
+      DB_NAME: owncloud
+      NEED_CORE: true
+      NEED_INSTALL_APP: true
+
     - PHP_VERSION: 7.0
       OC_VERSION: daily-master-qa
       TEST_SUITE: phpunit
