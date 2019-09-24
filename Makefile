@@ -205,6 +205,11 @@ test-php-style-fix: ## Run php-cs-fixer and fix code style issues
 test-php-style-fix: vendor-bin/owncloud-codestyle/vendor
 	$(PHP_CS_FIXER) fix -v --diff --diff-format udiff --allow-risky yes
 
+.PHONY: test-js
+test-js: ## Test js files
+test-js: npm
+	cd js && npm run test
+
 #
 # Dependency management
 #--------------------------------------
