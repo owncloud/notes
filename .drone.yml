@@ -1,258 +1,1501 @@
+---
+kind: pipeline
+type: docker
+name: coding-standard-php7.0
+
+platform:
+  os: linux
+  arch: amd64
+
 workspace:
   base: /var/www/owncloud
-  path: apps/notes
+  path: server/apps/notes
 
-branches: [master, release*, release/*]
+steps:
+- name: coding-standard
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - make test-php-style
 
-pipeline:
-  install-core:
-    image: owncloudci/core
-    version: ${OC_VERSION}
-    pull: true
-    db_type: ${DB_TYPE}
-    db_name: ${DB_NAME}
-    db_host: ${DB_TYPE}
-    db_username: autotest
+trigger:
+  ref:
+  - refs/pull/**
+  - refs/tags/**
+  - refs/heads/master
+
+---
+kind: pipeline
+type: docker
+name: coding-standard-php7.1
+
+platform:
+  os: linux
+  arch: amd64
+
+workspace:
+  base: /var/www/owncloud
+  path: server/apps/notes
+
+steps:
+- name: coding-standard
+  pull: always
+  image: owncloudci/php:7.1
+  commands:
+  - make test-php-style
+
+trigger:
+  ref:
+  - refs/pull/**
+  - refs/tags/**
+  - refs/heads/master
+
+---
+kind: pipeline
+type: docker
+name: coding-standard-php7.2
+
+platform:
+  os: linux
+  arch: amd64
+
+workspace:
+  base: /var/www/owncloud
+  path: server/apps/notes
+
+steps:
+- name: coding-standard
+  pull: always
+  image: owncloudci/php:7.2
+  commands:
+  - make test-php-style
+
+trigger:
+  ref:
+  - refs/pull/**
+  - refs/tags/**
+  - refs/heads/master
+
+---
+kind: pipeline
+type: docker
+name: coding-standard-php7.3
+
+platform:
+  os: linux
+  arch: amd64
+
+workspace:
+  base: /var/www/owncloud
+  path: server/apps/notes
+
+steps:
+- name: coding-standard
+  pull: always
+  image: owncloudci/php:7.3
+  commands:
+  - make test-php-style
+
+trigger:
+  ref:
+  - refs/pull/**
+  - refs/tags/**
+  - refs/heads/master
+
+---
+kind: pipeline
+type: docker
+name: javascript-tests
+
+platform:
+  os: linux
+  arch: amd64
+
+workspace:
+  base: /var/www/owncloud
+  path: server/apps/notes
+
+steps:
+- name: install-core
+  pull: always
+  image: owncloudci/core
+  settings:
+    core_path: /var/www/owncloud/server
+    db_host: sqlite
+    db_name: owncloud
     db_password: owncloud
-    when:
-      matrix:
-        NEED_CORE: true
+    db_type: sqlite
+    db_username: owncloud
+    exclude: apps/notes
+    version: daily-master-qa
 
-  install-app:
-    image: owncloudci/php:${PHP_VERSION}
-    pull: true
-    commands:
-      - cd /var/www/owncloud/
-      - php occ a:l
-      - php occ a:e notes
-      - php occ a:e testing
-      - php occ a:l
-      - php occ config:system:set trusted_domains 1 --value=owncloud
-      - php occ log:manage --level 0
-    when:
-      matrix:
-        NEED_INSTALL_APP: true
+- name: setup-server-notes
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - cd /var/www/owncloud/server
+  - php occ a:l
+  - php occ a:e notes
+  - php occ a:e testing
+  - php occ a:l
+  - php occ config:system:set trusted_domains 1 --value=server
+  - php occ log:manage --level 2
 
-  owncloud-coding-standard:
-    image: owncloudci/php:${PHP_VERSION}
-    pull: true
-    commands:
-      - make test-php-style
-    when:
-      matrix:
-        TEST_SUITE: owncloud-coding-standard
+- name: js-tests
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - make test-js
 
-  test-javascript:
-    image: owncloudci/php:${PHP_VERSION}
-    pull: true
-    commands:
-      - make
-      - cd js
-      - npm run test
-    when:
-      matrix:
-        TEST_SUITE: javascript
+trigger:
+  ref:
+  - refs/pull/**
+  - refs/tags/**
+  - refs/heads/master
 
-  phpunit-tests:
-    image: owncloudci/php:${PHP_VERSION}
-    pull: true
-    environment:
-      - COVERAGE=${COVERAGE}
-    commands:
-      - if [ -z "${COVERAGE}" ]; then make test-php-unit; fi
-      - if [ "${COVERAGE}" = "true" ]; then make test-php-unit-dbg; fi
-    when:
-      matrix:
-        TEST_SUITE: phpunit
+depends_on:
+- coding-standard-php7.0
+- coding-standard-php7.1
+- coding-standard-php7.2
+- coding-standard-php7.3
 
-  phpintegration-tests:
-    image: owncloudci/php:${PHP_VERSION}
-    pull: true
-    environment:
-      - COVERAGE=${COVERAGE}
-    commands:
-      - if [ -z "${COVERAGE}" ]; then make test-php-integration; fi
-      - if [ "${COVERAGE}" = "true" ]; then make test-php-integration-dbg; fi
-    when:
-      matrix:
-        TEST_SUITE: phpintegration
+---
+kind: pipeline
+type: docker
+name: phpunit-php7.0-sqlite
 
-  codecov:
-    image: plugins/codecov:2
-    secrets: [codecov_token]
-    pull: true
+platform:
+  os: linux
+  arch: amd64
+
+workspace:
+  base: /var/www/owncloud
+  path: server/apps/notes
+
+steps:
+- name: install-core
+  pull: always
+  image: owncloudci/core
+  settings:
+    core_path: /var/www/owncloud/server
+    db_host: sqlite
+    db_name: owncloud
+    db_password: owncloud
+    db_type: sqlite
+    db_username: owncloud
+    exclude: apps/notes
+    version: daily-master-qa
+
+- name: setup-server-notes
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - cd /var/www/owncloud/server
+  - php occ a:l
+  - php occ a:e notes
+  - php occ a:e testing
+  - php occ a:l
+  - php occ config:system:set trusted_domains 1 --value=server
+  - php occ log:manage --level 2
+
+- name: phpunit-tests
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - make test-php-unit-dbg
+
+- name: codecov-upload
+  pull: always
+  image: plugins/codecov:2
+  settings:
     paths:
-      - tests/output/*.xml
-    when:
-      matrix:
-        COVERAGE: true
+    - tests/output/clover.xml
+    token:
+      from_secret: codecov_token
 
-  notify:
-    image: plugins/slack:1
-    pull: true
-    secrets: [slack_webhook]
-    channel: builds
-    when:
-      status: [failure, changed]
-      event: [push, tag]
+trigger:
+  ref:
+  - refs/pull/**
+  - refs/tags/**
+  - refs/heads/master
+
+depends_on:
+- coding-standard-php7.0
+- coding-standard-php7.1
+- coding-standard-php7.2
+- coding-standard-php7.3
+
+---
+kind: pipeline
+type: docker
+name: phpunit-php7.0-mariadb10.2
+
+platform:
+  os: linux
+  arch: amd64
+
+workspace:
+  base: /var/www/owncloud
+  path: server/apps/notes
+
+steps:
+- name: install-core
+  pull: always
+  image: owncloudci/core
+  settings:
+    core_path: /var/www/owncloud/server
+    db_host: mariadb
+    db_name: owncloud
+    db_password: owncloud
+    db_type: mysql
+    db_username: owncloud
+    exclude: apps/notes
+    version: daily-master-qa
+
+- name: setup-server-notes
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - cd /var/www/owncloud/server
+  - php occ a:l
+  - php occ a:e notes
+  - php occ a:e testing
+  - php occ a:l
+  - php occ config:system:set trusted_domains 1 --value=server
+  - php occ log:manage --level 2
+
+- name: phpunit-tests
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - make test-php-unit-dbg
+
+- name: codecov-upload
+  pull: always
+  image: plugins/codecov:2
+  settings:
+    paths:
+    - tests/output/clover.xml
+    token:
+      from_secret: codecov_token
 
 services:
-  mysql:
-    image: mysql:5.5
-    environment:
-      - MYSQL_USER=autotest
-      - MYSQL_PASSWORD=owncloud
-      - MYSQL_DATABASE=${DB_NAME}
-      - MYSQL_ROOT_PASSWORD=owncloud
-    when:
-      matrix:
-        DB_TYPE: mysql
+- name: mariadb
+  pull: always
+  image: mariadb:10.2
+  environment:
+    MYSQL_DATABASE: owncloud
+    MYSQL_PASSWORD: owncloud
+    MYSQL_ROOT_PASSWORD: owncloud
+    MYSQL_USER: owncloud
 
-  pgsql:
-    image: postgres:9.4
-    environment:
-      - POSTGRES_USER=autotest
-      - POSTGRES_PASSWORD=owncloud
-      - POSTGRES_DB=${DB_NAME}
-    when:
-      matrix:
-        DB_TYPE: pgsql
+trigger:
+  ref:
+  - refs/pull/**
+  - refs/tags/**
+  - refs/heads/master
 
-  oci:
-    image: deepdiver/docker-oracle-xe-11g
-    environment:
-      - ORACLE_USER=system
-      - ORACLE_PASSWORD=oracle
-      - ORACLE_DB=${DB_NAME}
-    when:
-      matrix:
-        DB_TYPE: oci
+depends_on:
+- coding-standard-php7.0
+- coding-standard-php7.1
+- coding-standard-php7.2
+- coding-standard-php7.3
 
-matrix:
-  include:
-    # owncloud-coding-standard
-    - PHP_VERSION: 7.0
-      TEST_SUITE: owncloud-coding-standard
+---
+kind: pipeline
+type: docker
+name: phpunit-php7.0-mysql5.5
 
-    - PHP_VERSION: 7.1
-      TEST_SUITE: owncloud-coding-standard
+platform:
+  os: linux
+  arch: amd64
 
-    - PHP_VERSION: 7.2
-      TEST_SUITE: owncloud-coding-standard
+workspace:
+  base: /var/www/owncloud
+  path: server/apps/notes
 
-    # Javascript Tests
-    - PHP_VERSION: 7.1
-      OC_VERSION: daily-master-qa
-      TEST_SUITE: javascript
-      DB_TYPE: sqlite
-      DB_NAME: owncloud
-      NEED_CORE: true
-      NEED_INSTALL_APP: true
+steps:
+- name: install-core
+  pull: always
+  image: owncloudci/core
+  settings:
+    core_path: /var/www/owncloud/server
+    db_host: mysql
+    db_name: owncloud
+    db_password: owncloud
+    db_type: mysql
+    db_username: owncloud
+    exclude: apps/notes
+    version: daily-master-qa
 
-    # Unit Tests
-    - PHP_VERSION: 7.1
-      OC_VERSION: daily-master-qa
-      TEST_SUITE: phpunit
-      DB_TYPE: sqlite
-      DB_NAME: owncloud
-      NEED_CORE: true
-      NEED_INSTALL_APP: true
+- name: setup-server-notes
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - cd /var/www/owncloud/server
+  - php occ a:l
+  - php occ a:e notes
+  - php occ a:e testing
+  - php occ a:l
+  - php occ config:system:set trusted_domains 1 --value=server
+  - php occ log:manage --level 2
 
-    - PHP_VERSION: 7.1
-      OC_VERSION: daily-master-qa
-      TEST_SUITE: phpunit
-      DB_TYPE: mysql
-      DB_NAME: owncloud
-      NEED_CORE: true
-      NEED_INSTALL_APP: true
-      COVERAGE: true
+- name: phpunit-tests
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - make test-php-unit-dbg
 
-    - PHP_VERSION: 7.1
-      OC_VERSION: daily-master-qa
-      TEST_SUITE: phpunit
-      DB_TYPE: pgsql
-      DB_NAME: owncloud
-      NEED_CORE: true
-      NEED_INSTALL_APP: true
+- name: codecov-upload
+  pull: always
+  image: plugins/codecov:2
+  settings:
+    paths:
+    - tests/output/clover.xml
+    token:
+      from_secret: codecov_token
 
-    - PHP_VERSION: 7.1
-      OC_VERSION: daily-master-qa
-      TEST_SUITE: phpunit
-      DB_TYPE: oci
-      DB_NAME: XE
-      NEED_CORE: true
-      NEED_INSTALL_APP: true
+services:
+- name: mysql
+  pull: always
+  image: mysql:5.5
+  environment:
+    MYSQL_DATABASE: owncloud
+    MYSQL_PASSWORD: owncloud
+    MYSQL_ROOT_PASSWORD: owncloud
+    MYSQL_USER: owncloud
 
-    - PHP_VERSION: 7.2
-      OC_VERSION: daily-master-qa
-      TEST_SUITE: phpunit
-      DB_TYPE: mysql
-      DB_NAME: owncloud
-      NEED_CORE: true
-      NEED_INSTALL_APP: true
+trigger:
+  ref:
+  - refs/pull/**
+  - refs/tags/**
+  - refs/heads/master
 
-    - PHP_VERSION: 7.3
-      OC_VERSION: daily-master-qa
-      TEST_SUITE: phpunit
-      DB_TYPE: mysql
-      DB_NAME: owncloud
-      NEED_CORE: true
-      NEED_INSTALL_APP: true
+depends_on:
+- coding-standard-php7.0
+- coding-standard-php7.1
+- coding-standard-php7.2
+- coding-standard-php7.3
 
-    - PHP_VERSION: 7.0
-      OC_VERSION: daily-master-qa
-      TEST_SUITE: phpunit
-      DB_TYPE: mysql
-      DB_NAME: owncloud
-      NEED_CORE: true
-      NEED_INSTALL_APP: true
+---
+kind: pipeline
+type: docker
+name: phpunit-php7.0-mysql5.7
 
-    # Integration Tests
-    - PHP_VERSION: 7.1
-      OC_VERSION: daily-master-qa
-      TEST_SUITE: phpintegration
-      DB_TYPE: sqlite
-      DB_NAME: owncloud
-      NEED_CORE: true
-      NEED_INSTALL_APP: true
+platform:
+  os: linux
+  arch: amd64
 
-    - PHP_VERSION: 7.1
-      OC_VERSION: daily-master-qa
-      TEST_SUITE: phpintegration
-      DB_TYPE: mysql
-      DB_NAME: owncloud
-      NEED_CORE: true
-      NEED_INSTALL_APP: true
-      COVERAGE: true
+workspace:
+  base: /var/www/owncloud
+  path: server/apps/notes
 
-    - PHP_VERSION: 7.1
-      OC_VERSION: daily-master-qa
-      TEST_SUITE: phpintegration
-      DB_TYPE: pgsql
-      DB_NAME: owncloud
-      NEED_CORE: true
-      NEED_INSTALL_APP: true
+steps:
+- name: install-core
+  pull: always
+  image: owncloudci/core
+  settings:
+    core_path: /var/www/owncloud/server
+    db_host: mysql
+    db_name: owncloud
+    db_password: owncloud
+    db_type: mysql
+    db_username: owncloud
+    exclude: apps/notes
+    version: daily-master-qa
 
-    - PHP_VERSION: 7.1
-      OC_VERSION: daily-master-qa
-      TEST_SUITE: phpintegration
-      DB_TYPE: oci
-      DB_NAME: XE
-      NEED_CORE: true
-      NEED_INSTALL_APP: true
+- name: setup-server-notes
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - cd /var/www/owncloud/server
+  - php occ a:l
+  - php occ a:e notes
+  - php occ a:e testing
+  - php occ a:l
+  - php occ config:system:set trusted_domains 1 --value=server
+  - php occ log:manage --level 2
 
-    - PHP_VERSION: 7.2
-      OC_VERSION: daily-master-qa
-      TEST_SUITE: phpintegration
-      DB_TYPE: mysql
-      DB_NAME: owncloud
-      NEED_CORE: true
-      NEED_INSTALL_APP: true
+- name: phpunit-tests
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - make test-php-unit-dbg
 
-    - PHP_VERSION: 7.0
-      OC_VERSION: daily-master-qa
-      TEST_SUITE: phpintegration
-      DB_TYPE: mysql
-      DB_NAME: owncloud
-      NEED_CORE: true
-      NEED_INSTALL_APP: true
+- name: codecov-upload
+  pull: always
+  image: plugins/codecov:2
+  settings:
+    paths:
+    - tests/output/clover.xml
+    token:
+      from_secret: codecov_token
+
+services:
+- name: mysql
+  pull: always
+  image: mysql:5.7
+  environment:
+    MYSQL_DATABASE: owncloud
+    MYSQL_PASSWORD: owncloud
+    MYSQL_ROOT_PASSWORD: owncloud
+    MYSQL_USER: owncloud
+
+trigger:
+  ref:
+  - refs/pull/**
+  - refs/tags/**
+  - refs/heads/master
+
+depends_on:
+- coding-standard-php7.0
+- coding-standard-php7.1
+- coding-standard-php7.2
+- coding-standard-php7.3
+
+---
+kind: pipeline
+type: docker
+name: phpunit-php7.0-postgres9.4
+
+platform:
+  os: linux
+  arch: amd64
+
+workspace:
+  base: /var/www/owncloud
+  path: server/apps/notes
+
+steps:
+- name: install-core
+  pull: always
+  image: owncloudci/core
+  settings:
+    core_path: /var/www/owncloud/server
+    db_host: postgres
+    db_name: owncloud
+    db_password: owncloud
+    db_type: pgsql
+    db_username: owncloud
+    exclude: apps/notes
+    version: daily-master-qa
+
+- name: setup-server-notes
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - cd /var/www/owncloud/server
+  - php occ a:l
+  - php occ a:e notes
+  - php occ a:e testing
+  - php occ a:l
+  - php occ config:system:set trusted_domains 1 --value=server
+  - php occ log:manage --level 2
+
+- name: phpunit-tests
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - make test-php-unit-dbg
+
+- name: codecov-upload
+  pull: always
+  image: plugins/codecov:2
+  settings:
+    paths:
+    - tests/output/clover.xml
+    token:
+      from_secret: codecov_token
+
+services:
+- name: postgres
+  pull: always
+  image: postgres:9.4
+  environment:
+    POSTGRES_DB: owncloud
+    POSTGRES_PASSWORD: owncloud
+    POSTGRES_USER: owncloud
+
+trigger:
+  ref:
+  - refs/pull/**
+  - refs/tags/**
+  - refs/heads/master
+
+depends_on:
+- coding-standard-php7.0
+- coding-standard-php7.1
+- coding-standard-php7.2
+- coding-standard-php7.3
+
+---
+kind: pipeline
+type: docker
+name: phpunit-php7.0-oracle
+
+platform:
+  os: linux
+  arch: amd64
+
+workspace:
+  base: /var/www/owncloud
+  path: server/apps/notes
+
+steps:
+- name: install-core
+  pull: always
+  image: owncloudci/core
+  settings:
+    core_path: /var/www/owncloud/server
+    db_host: oracle
+    db_name: XE
+    db_password: oracle
+    db_type: oci
+    db_username: system
+    exclude: apps/notes
+    version: daily-master-qa
+
+- name: setup-server-notes
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - cd /var/www/owncloud/server
+  - php occ a:l
+  - php occ a:e notes
+  - php occ a:e testing
+  - php occ a:l
+  - php occ config:system:set trusted_domains 1 --value=server
+  - php occ log:manage --level 2
+
+- name: phpunit-tests
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - make test-php-unit-dbg
+
+- name: codecov-upload
+  pull: always
+  image: plugins/codecov:2
+  settings:
+    paths:
+    - tests/output/clover.xml
+    token:
+      from_secret: codecov_token
+
+services:
+- name: oracle
+  pull: always
+  image: deepdiver/docker-oracle-xe-11g:latest
+  environment:
+    ORACLE_DB: XE
+    ORACLE_DISABLE_ASYNCH_IO: true
+    ORACLE_PASSWORD: oracle
+    ORACLE_USER: system
+
+trigger:
+  ref:
+  - refs/pull/**
+  - refs/tags/**
+  - refs/heads/master
+
+depends_on:
+- coding-standard-php7.0
+- coding-standard-php7.1
+- coding-standard-php7.2
+- coding-standard-php7.3
+
+---
+kind: pipeline
+type: docker
+name: phpunit-php7.1-mysql5.5
+
+platform:
+  os: linux
+  arch: amd64
+
+workspace:
+  base: /var/www/owncloud
+  path: server/apps/notes
+
+steps:
+- name: install-core
+  pull: always
+  image: owncloudci/core
+  settings:
+    core_path: /var/www/owncloud/server
+    db_host: mysql
+    db_name: owncloud
+    db_password: owncloud
+    db_type: mysql
+    db_username: owncloud
+    exclude: apps/notes
+    version: daily-master-qa
+
+- name: setup-server-notes
+  pull: always
+  image: owncloudci/php:7.1
+  commands:
+  - cd /var/www/owncloud/server
+  - php occ a:l
+  - php occ a:e notes
+  - php occ a:e testing
+  - php occ a:l
+  - php occ config:system:set trusted_domains 1 --value=server
+  - php occ log:manage --level 2
+
+- name: phpunit-tests
+  pull: always
+  image: owncloudci/php:7.1
+  commands:
+  - make test-php-unit
+
+services:
+- name: mysql
+  pull: always
+  image: mysql:5.5
+  environment:
+    MYSQL_DATABASE: owncloud
+    MYSQL_PASSWORD: owncloud
+    MYSQL_ROOT_PASSWORD: owncloud
+    MYSQL_USER: owncloud
+
+trigger:
+  ref:
+  - refs/pull/**
+  - refs/tags/**
+  - refs/heads/master
+
+depends_on:
+- coding-standard-php7.0
+- coding-standard-php7.1
+- coding-standard-php7.2
+- coding-standard-php7.3
+
+---
+kind: pipeline
+type: docker
+name: phpunit-php7.2-mysql5.5
+
+platform:
+  os: linux
+  arch: amd64
+
+workspace:
+  base: /var/www/owncloud
+  path: server/apps/notes
+
+steps:
+- name: install-core
+  pull: always
+  image: owncloudci/core
+  settings:
+    core_path: /var/www/owncloud/server
+    db_host: mysql
+    db_name: owncloud
+    db_password: owncloud
+    db_type: mysql
+    db_username: owncloud
+    exclude: apps/notes
+    version: daily-master-qa
+
+- name: setup-server-notes
+  pull: always
+  image: owncloudci/php:7.2
+  commands:
+  - cd /var/www/owncloud/server
+  - php occ a:l
+  - php occ a:e notes
+  - php occ a:e testing
+  - php occ a:l
+  - php occ config:system:set trusted_domains 1 --value=server
+  - php occ log:manage --level 2
+
+- name: phpunit-tests
+  pull: always
+  image: owncloudci/php:7.2
+  commands:
+  - make test-php-unit
+
+services:
+- name: mysql
+  pull: always
+  image: mysql:5.5
+  environment:
+    MYSQL_DATABASE: owncloud
+    MYSQL_PASSWORD: owncloud
+    MYSQL_ROOT_PASSWORD: owncloud
+    MYSQL_USER: owncloud
+
+trigger:
+  ref:
+  - refs/pull/**
+  - refs/tags/**
+  - refs/heads/master
+
+depends_on:
+- coding-standard-php7.0
+- coding-standard-php7.1
+- coding-standard-php7.2
+- coding-standard-php7.3
+
+---
+kind: pipeline
+type: docker
+name: phpunit-php7.3-mysql5.5
+
+platform:
+  os: linux
+  arch: amd64
+
+workspace:
+  base: /var/www/owncloud
+  path: server/apps/notes
+
+steps:
+- name: install-core
+  pull: always
+  image: owncloudci/core
+  settings:
+    core_path: /var/www/owncloud/server
+    db_host: mysql
+    db_name: owncloud
+    db_password: owncloud
+    db_type: mysql
+    db_username: owncloud
+    exclude: apps/notes
+    version: daily-master-qa
+
+- name: setup-server-notes
+  pull: always
+  image: owncloudci/php:7.3
+  commands:
+  - cd /var/www/owncloud/server
+  - php occ a:l
+  - php occ a:e notes
+  - php occ a:e testing
+  - php occ a:l
+  - php occ config:system:set trusted_domains 1 --value=server
+  - php occ log:manage --level 2
+
+- name: phpunit-tests
+  pull: always
+  image: owncloudci/php:7.3
+  commands:
+  - make test-php-unit
+
+services:
+- name: mysql
+  pull: always
+  image: mysql:5.5
+  environment:
+    MYSQL_DATABASE: owncloud
+    MYSQL_PASSWORD: owncloud
+    MYSQL_ROOT_PASSWORD: owncloud
+    MYSQL_USER: owncloud
+
+trigger:
+  ref:
+  - refs/pull/**
+  - refs/tags/**
+  - refs/heads/master
+
+depends_on:
+- coding-standard-php7.0
+- coding-standard-php7.1
+- coding-standard-php7.2
+- coding-standard-php7.3
+
+---
+kind: pipeline
+type: docker
+name: phpintegration-php7.0-sqlite
+
+platform:
+  os: linux
+  arch: amd64
+
+workspace:
+  base: /var/www/owncloud
+  path: server/apps/notes
+
+steps:
+- name: install-core
+  pull: always
+  image: owncloudci/core
+  settings:
+    core_path: /var/www/owncloud/server
+    db_host: sqlite
+    db_name: owncloud
+    db_password: owncloud
+    db_type: sqlite
+    db_username: owncloud
+    exclude: apps/notes
+    version: daily-master-qa
+
+- name: setup-server-notes
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - cd /var/www/owncloud/server
+  - php occ a:l
+  - php occ a:e notes
+  - php occ a:e testing
+  - php occ a:l
+  - php occ config:system:set trusted_domains 1 --value=server
+  - php occ log:manage --level 2
+
+- name: phpintegration-tests
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - make test-php-integration-dbg
+
+- name: codecov-upload
+  pull: always
+  image: plugins/codecov:2
+  settings:
+    paths:
+    - tests/output/clover.xml
+    token:
+      from_secret: codecov_token
+
+trigger:
+  ref:
+  - refs/pull/**
+  - refs/tags/**
+  - refs/heads/master
+
+depends_on:
+- coding-standard-php7.0
+- coding-standard-php7.1
+- coding-standard-php7.2
+- coding-standard-php7.3
+
+---
+kind: pipeline
+type: docker
+name: phpintegration-php7.0-mariadb10.2
+
+platform:
+  os: linux
+  arch: amd64
+
+workspace:
+  base: /var/www/owncloud
+  path: server/apps/notes
+
+steps:
+- name: install-core
+  pull: always
+  image: owncloudci/core
+  settings:
+    core_path: /var/www/owncloud/server
+    db_host: mariadb
+    db_name: owncloud
+    db_password: owncloud
+    db_type: mysql
+    db_username: owncloud
+    exclude: apps/notes
+    version: daily-master-qa
+
+- name: setup-server-notes
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - cd /var/www/owncloud/server
+  - php occ a:l
+  - php occ a:e notes
+  - php occ a:e testing
+  - php occ a:l
+  - php occ config:system:set trusted_domains 1 --value=server
+  - php occ log:manage --level 2
+
+- name: phpintegration-tests
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - make test-php-integration-dbg
+
+- name: codecov-upload
+  pull: always
+  image: plugins/codecov:2
+  settings:
+    paths:
+    - tests/output/clover.xml
+    token:
+      from_secret: codecov_token
+
+services:
+- name: mariadb
+  pull: always
+  image: mariadb:10.2
+  environment:
+    MYSQL_DATABASE: owncloud
+    MYSQL_PASSWORD: owncloud
+    MYSQL_ROOT_PASSWORD: owncloud
+    MYSQL_USER: owncloud
+
+trigger:
+  ref:
+  - refs/pull/**
+  - refs/tags/**
+  - refs/heads/master
+
+depends_on:
+- coding-standard-php7.0
+- coding-standard-php7.1
+- coding-standard-php7.2
+- coding-standard-php7.3
+
+---
+kind: pipeline
+type: docker
+name: phpintegration-php7.0-mysql5.5
+
+platform:
+  os: linux
+  arch: amd64
+
+workspace:
+  base: /var/www/owncloud
+  path: server/apps/notes
+
+steps:
+- name: install-core
+  pull: always
+  image: owncloudci/core
+  settings:
+    core_path: /var/www/owncloud/server
+    db_host: mysql
+    db_name: owncloud
+    db_password: owncloud
+    db_type: mysql
+    db_username: owncloud
+    exclude: apps/notes
+    version: daily-master-qa
+
+- name: setup-server-notes
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - cd /var/www/owncloud/server
+  - php occ a:l
+  - php occ a:e notes
+  - php occ a:e testing
+  - php occ a:l
+  - php occ config:system:set trusted_domains 1 --value=server
+  - php occ log:manage --level 2
+
+- name: phpintegration-tests
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - make test-php-integration-dbg
+
+- name: codecov-upload
+  pull: always
+  image: plugins/codecov:2
+  settings:
+    paths:
+    - tests/output/clover.xml
+    token:
+      from_secret: codecov_token
+
+services:
+- name: mysql
+  pull: always
+  image: mysql:5.5
+  environment:
+    MYSQL_DATABASE: owncloud
+    MYSQL_PASSWORD: owncloud
+    MYSQL_ROOT_PASSWORD: owncloud
+    MYSQL_USER: owncloud
+
+trigger:
+  ref:
+  - refs/pull/**
+  - refs/tags/**
+  - refs/heads/master
+
+depends_on:
+- coding-standard-php7.0
+- coding-standard-php7.1
+- coding-standard-php7.2
+- coding-standard-php7.3
+
+---
+kind: pipeline
+type: docker
+name: phpintegration-php7.0-mysql5.7
+
+platform:
+  os: linux
+  arch: amd64
+
+workspace:
+  base: /var/www/owncloud
+  path: server/apps/notes
+
+steps:
+- name: install-core
+  pull: always
+  image: owncloudci/core
+  settings:
+    core_path: /var/www/owncloud/server
+    db_host: mysql
+    db_name: owncloud
+    db_password: owncloud
+    db_type: mysql
+    db_username: owncloud
+    exclude: apps/notes
+    version: daily-master-qa
+
+- name: setup-server-notes
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - cd /var/www/owncloud/server
+  - php occ a:l
+  - php occ a:e notes
+  - php occ a:e testing
+  - php occ a:l
+  - php occ config:system:set trusted_domains 1 --value=server
+  - php occ log:manage --level 2
+
+- name: phpintegration-tests
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - make test-php-integration-dbg
+
+- name: codecov-upload
+  pull: always
+  image: plugins/codecov:2
+  settings:
+    paths:
+    - tests/output/clover.xml
+    token:
+      from_secret: codecov_token
+
+services:
+- name: mysql
+  pull: always
+  image: mysql:5.7
+  environment:
+    MYSQL_DATABASE: owncloud
+    MYSQL_PASSWORD: owncloud
+    MYSQL_ROOT_PASSWORD: owncloud
+    MYSQL_USER: owncloud
+
+trigger:
+  ref:
+  - refs/pull/**
+  - refs/tags/**
+  - refs/heads/master
+
+depends_on:
+- coding-standard-php7.0
+- coding-standard-php7.1
+- coding-standard-php7.2
+- coding-standard-php7.3
+
+---
+kind: pipeline
+type: docker
+name: phpintegration-php7.0-postgres9.4
+
+platform:
+  os: linux
+  arch: amd64
+
+workspace:
+  base: /var/www/owncloud
+  path: server/apps/notes
+
+steps:
+- name: install-core
+  pull: always
+  image: owncloudci/core
+  settings:
+    core_path: /var/www/owncloud/server
+    db_host: postgres
+    db_name: owncloud
+    db_password: owncloud
+    db_type: pgsql
+    db_username: owncloud
+    exclude: apps/notes
+    version: daily-master-qa
+
+- name: setup-server-notes
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - cd /var/www/owncloud/server
+  - php occ a:l
+  - php occ a:e notes
+  - php occ a:e testing
+  - php occ a:l
+  - php occ config:system:set trusted_domains 1 --value=server
+  - php occ log:manage --level 2
+
+- name: phpintegration-tests
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - make test-php-integration-dbg
+
+- name: codecov-upload
+  pull: always
+  image: plugins/codecov:2
+  settings:
+    paths:
+    - tests/output/clover.xml
+    token:
+      from_secret: codecov_token
+
+services:
+- name: postgres
+  pull: always
+  image: postgres:9.4
+  environment:
+    POSTGRES_DB: owncloud
+    POSTGRES_PASSWORD: owncloud
+    POSTGRES_USER: owncloud
+
+trigger:
+  ref:
+  - refs/pull/**
+  - refs/tags/**
+  - refs/heads/master
+
+depends_on:
+- coding-standard-php7.0
+- coding-standard-php7.1
+- coding-standard-php7.2
+- coding-standard-php7.3
+
+---
+kind: pipeline
+type: docker
+name: phpintegration-php7.0-oracle
+
+platform:
+  os: linux
+  arch: amd64
+
+workspace:
+  base: /var/www/owncloud
+  path: server/apps/notes
+
+steps:
+- name: install-core
+  pull: always
+  image: owncloudci/core
+  settings:
+    core_path: /var/www/owncloud/server
+    db_host: oracle
+    db_name: XE
+    db_password: oracle
+    db_type: oci
+    db_username: system
+    exclude: apps/notes
+    version: daily-master-qa
+
+- name: setup-server-notes
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - cd /var/www/owncloud/server
+  - php occ a:l
+  - php occ a:e notes
+  - php occ a:e testing
+  - php occ a:l
+  - php occ config:system:set trusted_domains 1 --value=server
+  - php occ log:manage --level 2
+
+- name: phpintegration-tests
+  pull: always
+  image: owncloudci/php:7.0
+  commands:
+  - make test-php-integration-dbg
+
+- name: codecov-upload
+  pull: always
+  image: plugins/codecov:2
+  settings:
+    paths:
+    - tests/output/clover.xml
+    token:
+      from_secret: codecov_token
+
+services:
+- name: oracle
+  pull: always
+  image: deepdiver/docker-oracle-xe-11g:latest
+  environment:
+    ORACLE_DB: XE
+    ORACLE_DISABLE_ASYNCH_IO: true
+    ORACLE_PASSWORD: oracle
+    ORACLE_USER: system
+
+trigger:
+  ref:
+  - refs/pull/**
+  - refs/tags/**
+  - refs/heads/master
+
+depends_on:
+- coding-standard-php7.0
+- coding-standard-php7.1
+- coding-standard-php7.2
+- coding-standard-php7.3
+
+---
+kind: pipeline
+type: docker
+name: phpintegration-php7.1-mysql5.5
+
+platform:
+  os: linux
+  arch: amd64
+
+workspace:
+  base: /var/www/owncloud
+  path: server/apps/notes
+
+steps:
+- name: install-core
+  pull: always
+  image: owncloudci/core
+  settings:
+    core_path: /var/www/owncloud/server
+    db_host: mysql
+    db_name: owncloud
+    db_password: owncloud
+    db_type: mysql
+    db_username: owncloud
+    exclude: apps/notes
+    version: daily-master-qa
+
+- name: setup-server-notes
+  pull: always
+  image: owncloudci/php:7.1
+  commands:
+  - cd /var/www/owncloud/server
+  - php occ a:l
+  - php occ a:e notes
+  - php occ a:e testing
+  - php occ a:l
+  - php occ config:system:set trusted_domains 1 --value=server
+  - php occ log:manage --level 2
+
+- name: phpintegration-tests
+  pull: always
+  image: owncloudci/php:7.1
+  commands:
+  - make test-php-integration
+
+services:
+- name: mysql
+  pull: always
+  image: mysql:5.5
+  environment:
+    MYSQL_DATABASE: owncloud
+    MYSQL_PASSWORD: owncloud
+    MYSQL_ROOT_PASSWORD: owncloud
+    MYSQL_USER: owncloud
+
+trigger:
+  ref:
+  - refs/pull/**
+  - refs/tags/**
+  - refs/heads/master
+
+depends_on:
+- coding-standard-php7.0
+- coding-standard-php7.1
+- coding-standard-php7.2
+- coding-standard-php7.3
+
+---
+kind: pipeline
+type: docker
+name: phpintegration-php7.2-mysql5.5
+
+platform:
+  os: linux
+  arch: amd64
+
+workspace:
+  base: /var/www/owncloud
+  path: server/apps/notes
+
+steps:
+- name: install-core
+  pull: always
+  image: owncloudci/core
+  settings:
+    core_path: /var/www/owncloud/server
+    db_host: mysql
+    db_name: owncloud
+    db_password: owncloud
+    db_type: mysql
+    db_username: owncloud
+    exclude: apps/notes
+    version: daily-master-qa
+
+- name: setup-server-notes
+  pull: always
+  image: owncloudci/php:7.2
+  commands:
+  - cd /var/www/owncloud/server
+  - php occ a:l
+  - php occ a:e notes
+  - php occ a:e testing
+  - php occ a:l
+  - php occ config:system:set trusted_domains 1 --value=server
+  - php occ log:manage --level 2
+
+- name: phpintegration-tests
+  pull: always
+  image: owncloudci/php:7.2
+  commands:
+  - make test-php-integration
+
+services:
+- name: mysql
+  pull: always
+  image: mysql:5.5
+  environment:
+    MYSQL_DATABASE: owncloud
+    MYSQL_PASSWORD: owncloud
+    MYSQL_ROOT_PASSWORD: owncloud
+    MYSQL_USER: owncloud
+
+trigger:
+  ref:
+  - refs/pull/**
+  - refs/tags/**
+  - refs/heads/master
+
+depends_on:
+- coding-standard-php7.0
+- coding-standard-php7.1
+- coding-standard-php7.2
+- coding-standard-php7.3
+
+---
+kind: pipeline
+type: docker
+name: phpintegration-php7.3-mysql5.5
+
+platform:
+  os: linux
+  arch: amd64
+
+workspace:
+  base: /var/www/owncloud
+  path: server/apps/notes
+
+steps:
+- name: install-core
+  pull: always
+  image: owncloudci/core
+  settings:
+    core_path: /var/www/owncloud/server
+    db_host: mysql
+    db_name: owncloud
+    db_password: owncloud
+    db_type: mysql
+    db_username: owncloud
+    exclude: apps/notes
+    version: daily-master-qa
+
+- name: setup-server-notes
+  pull: always
+  image: owncloudci/php:7.3
+  commands:
+  - cd /var/www/owncloud/server
+  - php occ a:l
+  - php occ a:e notes
+  - php occ a:e testing
+  - php occ a:l
+  - php occ config:system:set trusted_domains 1 --value=server
+  - php occ log:manage --level 2
+
+- name: phpintegration-tests
+  pull: always
+  image: owncloudci/php:7.3
+  commands:
+  - make test-php-integration
+
+services:
+- name: mysql
+  pull: always
+  image: mysql:5.5
+  environment:
+    MYSQL_DATABASE: owncloud
+    MYSQL_PASSWORD: owncloud
+    MYSQL_ROOT_PASSWORD: owncloud
+    MYSQL_USER: owncloud
+
+trigger:
+  ref:
+  - refs/pull/**
+  - refs/tags/**
+  - refs/heads/master
+
+depends_on:
+- coding-standard-php7.0
+- coding-standard-php7.1
+- coding-standard-php7.2
+- coding-standard-php7.3
+
+---
+kind: pipeline
+type: docker
+name: chat-notifications
+
+platform:
+  os: linux
+  arch: amd64
+
+clone:
+  disable: true
+
+steps:
+- name: notify-rocketchat
+  pull: always
+  image: plugins/slack:1
+  settings:
+    channel: builds
+    webhook:
+      from_secret: private_rocketchat
+
+trigger:
+  ref:
+  - refs/tags/**
+  - refs/heads/master
+
+depends_on:
+- javascript-tests
+- phpunit-php7.0-sqlite
+- phpunit-php7.0-mariadb10.2
+- phpunit-php7.0-mysql5.5
+- phpunit-php7.0-mysql5.7
+- phpunit-php7.0-postgres9.4
+- phpunit-php7.0-oracle
+- phpunit-php7.1-mysql5.5
+- phpunit-php7.2-mysql5.5
+- phpunit-php7.3-mysql5.5
+- phpintegration-php7.0-sqlite
+- phpintegration-php7.0-mariadb10.2
+- phpintegration-php7.0-mysql5.5
+- phpintegration-php7.0-mysql5.7
+- phpintegration-php7.0-postgres9.4
+- phpintegration-php7.0-oracle
+- phpintegration-php7.1-mysql5.5
+- phpintegration-php7.2-mysql5.5
+- phpintegration-php7.3-mysql5.5
+
+...
