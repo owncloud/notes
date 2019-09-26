@@ -13,7 +13,7 @@ For further developer and user documentation please visit [the wiki](https://git
 - [Hendrik Leppelsack](https://github.com/Henni)
 - [Lukas Reschke](https://github.com/LukasReschke)
 
-##Requirements
+## Requirements
 ##### Minimum PHP Version
 * PHP >= 5.4
 
