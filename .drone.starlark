@@ -255,9 +255,11 @@ def phpstan():
 					'base': '/var/www/owncloud',
 					'path': 'server/apps/%s' % config['app']
 				},
-				'steps': [
-					installCore('daily-master-qa', 'sqlite', False),
-					setupServerAndApp(phpVersion, params['logLevel']),
+				'steps':
+					installCore('daily-master-qa', 'sqlite', False) +
+					installApp(phpVersion) +
+					setupServerAndApp(phpVersion, params['logLevel']) +
+				[
 					{
 						'name': 'phpstan',
 						'image': 'owncloudci/php:%s' % phpVersion,
@@ -327,8 +329,9 @@ def phan():
 					'base': '/var/www/owncloud',
 					'path': 'server/apps/%s' % config['app']
 				},
-				'steps': [
-					installCore('daily-master-qa', 'sqlite', False),
+				'steps':
+					installCore('daily-master-qa', 'sqlite', False) +
+				[
 					{
 						'name': 'phan',
 						'image': 'owncloudci/php:%s' % phpVersion,
@@ -395,9 +398,11 @@ def javascript():
 			'base': '/var/www/owncloud',
 			'path': 'server/apps/%s' % config['app']
 		},
-		'steps': [
-			installCore('daily-master-qa', 'sqlite', False),
-			setupServerAndApp('7.0', params['logLevel']),
+		'steps':
+			installCore('daily-master-qa', 'sqlite', False) +
+			installApp('7.0') +
+			setupServerAndApp('7.0', params['logLevel']) +
+		[
 			params['extraSetup'],
 			{
 				'name': 'js-tests',
@@ -515,10 +520,12 @@ def phptests(testType):
 						'base': '/var/www/owncloud',
 						'path': 'server/apps/%s' % config['app']
 					},
-					'steps': [
-						installCore('daily-master-qa', db, False),
-						installExtraApps(phpVersion, params['extraApps']),
-						setupServerAndApp(phpVersion, params['logLevel']),
+					'steps':
+						installCore('daily-master-qa', db, False) +
+						installApp(phpVersion) +
+						installExtraApps(phpVersion, params['extraApps']) +
+						setupServerAndApp(phpVersion, params['logLevel']) +
+					[
 						params['extraSetup'],
 						{
 							'name': '%s-tests' % testType,
@@ -668,10 +675,10 @@ def acceptance():
 									'base': '/var/www/owncloud',
 									'path': 'testrunner/apps/%s' % config['app']
 								},
-								'steps': [
-									installCore(server, db, params['useBundledApp']),
-									installTestrunner(phpVersion, params['useBundledApp'])
-								] + ([
+								'steps':
+									installCore(server, db, params['useBundledApp']) +
+									installTestrunner(phpVersion, params['useBundledApp']) +
+								([
 									{
 										'name': 'install-federation',
 										'image': 'owncloudci/core',
@@ -697,12 +704,16 @@ def acceptance():
 										]
 									},
 									owncloudLog('federated')
-								] if params['federatedServerNeeded'] else []) + [
-									installExtraApps(phpVersion, params['extraApps']),
-									setupServerAndApp(phpVersion, params['logLevel']),
+								] if params['federatedServerNeeded'] else []) +
+									installApp(phpVersion) +
+									installExtraApps(phpVersion, params['extraApps']) +
+									setupServerAndApp(phpVersion, params['logLevel']) +
+								[
 									owncloudLog('server'),
 									params['extraSetup'],
-									fixPermissions(phpVersion, params['federatedServerNeeded']),
+								] +
+									fixPermissions(phpVersion, params['federatedServerNeeded']) +
+								[
 									({
 										'name': 'acceptance-tests',
 										'image': 'owncloudci/php:%s' % phpVersion,
@@ -943,10 +954,10 @@ def installCore(version, db, useBundledApp):
 	if not useBundledApp:
 		stepDefinition['settings']['exclude'] = 'apps/%s' % config['app']
 
-	return stepDefinition
+	return [stepDefinition]
 
 def installTestrunner(phpVersion, useBundledApp):
-	return {
+	return [{
 		'name': 'install-testrunner',
 		'image': 'owncloudci/php:%s' % phpVersion,
 		'pull': 'always',
@@ -960,12 +971,12 @@ def installTestrunner(phpVersion, useBundledApp):
 			'cd /var/www/owncloud/testrunner',
 			'make install-composer-deps vendor-bin-deps'
 		]
-	}
+	}]
 
 def installExtraApps(phpVersion, extraApps):
 	if type(extraApps) == "list":
 		if extraApps == []:
-			return None
+			return []
 		apps = {}
 		for app in extraApps:
 			apps[app] = None
@@ -978,7 +989,7 @@ def installExtraApps(phpVersion, extraApps):
 	for app, command in apps.items():
 		commandArray.append('git clone https://github.com/owncloud/%s.git /var/www/owncloud/testrunner/apps/%s' % (app, app))
 		commandArray.append('cp -r /var/www/owncloud/testrunner/apps/%s /var/www/owncloud/server/apps/' % app)
-		if (command != None):
+		if ((command != None) and (command != '')):
 			commandArray.append('cd /var/www/owncloud/server/apps/%s' % app)
 			commandArray.append(command)
 		commandArray.append('cd /var/www/owncloud/server')
@@ -986,22 +997,33 @@ def installExtraApps(phpVersion, extraApps):
 		commandArray.append('php occ a:e %s' % app)
 		commandArray.append('php occ a:l')
 
-	return {
+	return [{
 		'name': 'install-extra-apps',
 		'image': 'owncloudci/php:%s' % phpVersion,
 		'pull': 'always',
 		'commands': commandArray
-	}
+	}]
+
+def installApp(phpVersion):
+	if 'appInstallCommand' not in config:
+		return []
+
+	return [{
+		'name': 'install-app-%s' % config['app'],
+		'image': 'owncloudci/php:%s' % phpVersion,
+		'pull': 'always',
+		'commands': [
+			'cd /var/www/owncloud/server/apps/%s' % config['app'],
+			config['appInstallCommand']
+		]
+	}]
 
 def setupServerAndApp(phpVersion, logLevel):
-	return {
+	return [{
 		'name': 'setup-server-%s' % config['app'],
 		'image': 'owncloudci/php:%s' % phpVersion,
 		'pull': 'always',
-		'commands': ([
-			'cd /var/www/owncloud/server/apps/%s' % config['app'],
-			config['appInstallCommand']
-		] if 'appInstallCommand' in config else []) + [
+		'commands': [
 			'cd /var/www/owncloud/server',
 			'php occ a:l',
 			'php occ a:e %s' % config['app'],
@@ -1010,10 +1032,10 @@ def setupServerAndApp(phpVersion, logLevel):
 			'php occ config:system:set trusted_domains 1 --value=server',
 			'php occ log:manage --level %s' % logLevel,
 		]
-	}
+	}]
 
 def fixPermissions(phpVersion, federatedServerNeeded):
-	return {
+	return [{
 		'name': 'fix-permissions',
 		'image': 'owncloudci/php:%s' % phpVersion,
 		'pull': 'always',
@@ -1022,7 +1044,7 @@ def fixPermissions(phpVersion, federatedServerNeeded):
 		] + ([
 			'chown -R www-data /var/www/owncloud/federated'
 		] if federatedServerNeeded else [])
-	}
+	}]
 
 def owncloudLog(server):
 	return {
