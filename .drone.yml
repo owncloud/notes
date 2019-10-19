@@ -1476,6 +1476,9 @@ trigger:
   ref:
   - refs/tags/**
   - refs/heads/master
+  status:
+  - success
+  - failure
 
 depends_on:
 - javascript-tests
