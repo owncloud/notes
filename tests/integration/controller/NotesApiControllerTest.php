@@ -24,7 +24,7 @@ class NotesApiControllerTest extends TestCase {
 	private $notesFolder = '/test/files/Notes';
 	private $fs;
 
-	public function setUp() {
+	public function setUp(): void {
 		$app = new App('notes');
 		$container = $app->getContainer();
 		$container->registerService('UserId', function ($c) {
@@ -67,7 +67,7 @@ class NotesApiControllerTest extends TestCase {
 		$this->assertTrue($file instanceof File);
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		$this->fs->get($this->notesFolder)->delete();
 	}
 }

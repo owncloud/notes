@@ -20,7 +20,7 @@ class NotesServiceTest extends TestCase {
 	private $l10n;
 	private $userFolder;
 
-	public function setUp() {
+	public function setUp(): void {
 		$this->root = $this->getMockBuilder('OCP\Files\IRootFolder')
 			->getMock();
 		$this->userFolder = $this->getMockBuilder('OCP\Files\Folder')

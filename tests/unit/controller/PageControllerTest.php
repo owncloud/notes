@@ -25,7 +25,7 @@ class PageControllerTest extends TestCase {
 	private $controller;
 	private $config;
 
-	public function setUp() {
+	public function setUp(): void {
 		$this->request = $this->getMockBuilder('OCP\IRequest')
 			->disableOriginalConstructor()
 			->getMock();
