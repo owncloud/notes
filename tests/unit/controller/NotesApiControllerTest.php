@@ -26,7 +26,7 @@ class NotesApiControllerTest extends TestCase {
 	private $appName;
 	private $controller;
 
-	public function setUp() {
+	public function setUp(): void {
 		$this->request = $this->getMockBuilder('OCP\IRequest')
 			->disableOriginalConstructor()
 			->getMock();

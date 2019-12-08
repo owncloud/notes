@@ -7,9 +7,11 @@
          timeoutForLargeTests="900"
          colors="true"
 >
-    <testsuite name="unit">
-        <directory>./tests/unit</directory>
-    </testsuite>
+    <testsuites>
+        <testsuite name='unit'>
+            <directory suffix='Test.php'>./tests/unit</directory>
+        </testsuite>
+    </testsuites>
     <!-- filters for code coverage -->
     <filter>
         <whitelist>
