@@ -109,9 +109,10 @@ class NotesServiceTest extends TestCase {
 	}
 
 	/**
-	 * @expectedException OCA\Notes\Service\NoteDoesNotExistException
 	 */
 	public function testGetDoesNotExist() {
+		$this->expectException(\OCA\Notes\Service\NoteDoesNotExistException::class);
+
 		$nodes = [];
 
 		$this->expectUserFolder();
@@ -123,9 +124,10 @@ class NotesServiceTest extends TestCase {
 	}
 
 	/**
-	 * @expectedException OCA\Notes\Service\NoteDoesNotExistException
 	 */
 	public function testGetDoesNotExistWrongExtension() {
+		$this->expectException(\OCA\Notes\Service\NoteDoesNotExistException::class);
+
 		$nodes = [];
 		$nodes[] = $this->createNode('file1.jpg', 'file', 'image/jpeg');
 
@@ -154,9 +156,10 @@ class NotesServiceTest extends TestCase {
 	}
 
 	/**
-	 * @expectedException OCA\Notes\Service\NoteDoesNotExistException
 	 */
 	public function testDeleteDoesNotExist() {
+		$this->expectException(\OCA\Notes\Service\NoteDoesNotExistException::class);
+
 		$nodes = [];
 
 		$this->expectUserFolder();
@@ -168,9 +171,10 @@ class NotesServiceTest extends TestCase {
 	}
 
 	/**
-	 * @expectedException OCA\Notes\Service\NoteDoesNotExistException
 	 */
 	public function testDeleteDoesNotExistWrongExtension() {
+		$this->expectException(\OCA\Notes\Service\NoteDoesNotExistException::class);
+
 		$nodes = [];
 		$nodes[] = $this->createNode('file1.jpg', 'file', 'image/jpeg');
 
