@@ -553,7 +553,7 @@ steps:
 services:
 - name: oracle
   pull: always
-  image: deepdiver/docker-oracle-xe-11g:latest
+  image: owncloudci/oracle-xe:latest
   environment:
     ORACLE_DB: XE
     ORACLE_DISABLE_ASYNCH_IO: true
@@ -1124,7 +1124,7 @@ steps:
 services:
 - name: oracle
   pull: always
-  image: deepdiver/docker-oracle-xe-11g:latest
+  image: owncloudci/oracle-xe:latest
   environment:
     ORACLE_DB: XE
     ORACLE_DISABLE_ASYNCH_IO: true
