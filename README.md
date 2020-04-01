@@ -1,5 +1,7 @@
 # Notes
 
+Trigger CI
+
 [![Build Status](https://drone.owncloud.com/api/badges/owncloud/notes/status.svg?branch=master)](https://drone.owncloud.com/owncloud/notes)
 [![codecov](https://codecov.io/gh/owncloud/notes/branch/master/graph/badge.svg)](https://codecov.io/gh/owncloud/notes) 
 
