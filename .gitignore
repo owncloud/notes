@@ -15,6 +15,7 @@ build
 # Tests - auto-generated files
 /tests/acceptance/output*
 /tests/output
+.phpunit.result.cache
 
 # just sane ignores
 .*.sw[po]
