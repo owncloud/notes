@@ -515,7 +515,7 @@ def javascript():
 	if params['coverage']:
 		result['steps'].append({
 			'name': 'codecov-js',
-			'image': 'plugins/codecov:2',
+			'image': 'plugins/codecov:latest',
 			'pull': 'always',
 			'settings': {
 				'paths': [
@@ -672,7 +672,7 @@ def phptests(testType):
 				if params['coverage']:
 					result['steps'].append({
 						'name': 'codecov-upload',
-						'image': 'plugins/codecov:2',
+						'image': 'plugins/codecov:latest',
 						'pull': 'always',
 						'settings': {
 							'paths': [
