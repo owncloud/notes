@@ -12,20 +12,19 @@
 namespace OCA\Notes\Controller;
 
 use OCP\IUserSession;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
-use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\App;
 use OCP\Files\File;
 
-class NotesApiControllerTest extends PHPUnit_Framework_TestCase {
+class NotesApiControllerTest extends TestCase {
 	private $controller;
 	private $mapper;
 	private $userId = 'test';
 	private $notesFolder = '/test/files/Notes';
 	private $fs;
 
-	public function setUp() {
+	public function setUp(): void {
 		$app = new App('notes');
 		$container = $app->getContainer();
 		$container->registerService('UserId', function ($c) {
@@ -68,7 +67,7 @@ class NotesApiControllerTest extends PHPUnit_Framework_TestCase {
 		$this->assertTrue($file instanceof File);
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		$this->fs->get($this->notesFolder)->delete();
 	}
 }

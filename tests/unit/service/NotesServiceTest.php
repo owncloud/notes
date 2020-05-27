@@ -11,18 +11,16 @@
 
 namespace OCA\Notes\Service;
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
-use OCA\Notes\Db\Note;
-
-class NotesServiceTest extends PHPUnit_Framework_TestCase {
+class NotesServiceTest extends TestCase {
 	private $root;
 	private $service;
 	private $userId;
 	private $l10n;
 	private $userFolder;
 
-	public function setUp() {
+	public function setUp(): void {
 		$this->root = $this->getMockBuilder('OCP\Files\IRootFolder')
 			->getMock();
 		$this->userFolder = $this->getMockBuilder('OCP\Files\Folder')
@@ -111,9 +109,10 @@ class NotesServiceTest extends PHPUnit_Framework_TestCase {
 	}
 
 	/**
-	 * @expectedException OCA\Notes\Service\NoteDoesNotExistException
 	 */
 	public function testGetDoesNotExist() {
+		$this->expectException(\OCA\Notes\Service\NoteDoesNotExistException::class);
+
 		$nodes = [];
 
 		$this->expectUserFolder();
@@ -125,9 +124,10 @@ class NotesServiceTest extends PHPUnit_Framework_TestCase {
 	}
 
 	/**
-	 * @expectedException OCA\Notes\Service\NoteDoesNotExistException
 	 */
 	public function testGetDoesNotExistWrongExtension() {
+		$this->expectException(\OCA\Notes\Service\NoteDoesNotExistException::class);
+
 		$nodes = [];
 		$nodes[] = $this->createNode('file1.jpg', 'file', 'image/jpeg');
 
@@ -156,9 +156,10 @@ class NotesServiceTest extends PHPUnit_Framework_TestCase {
 	}
 
 	/**
-	 * @expectedException OCA\Notes\Service\NoteDoesNotExistException
 	 */
 	public function testDeleteDoesNotExist() {
+		$this->expectException(\OCA\Notes\Service\NoteDoesNotExistException::class);
+
 		$nodes = [];
 
 		$this->expectUserFolder();
@@ -170,9 +171,10 @@ class NotesServiceTest extends PHPUnit_Framework_TestCase {
 	}
 
 	/**
-	 * @expectedException OCA\Notes\Service\NoteDoesNotExistException
 	 */
 	public function testDeleteDoesNotExistWrongExtension() {
+		$this->expectException(\OCA\Notes\Service\NoteDoesNotExistException::class);
+
 		$nodes = [];
 		$nodes[] = $this->createNode('file1.jpg', 'file', 'image/jpeg');
 

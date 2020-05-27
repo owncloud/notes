@@ -11,14 +11,13 @@
 
 namespace OCA\Notes\Controller;
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
-use OCP\IRequest;
 use OCP\AppFramework\Http\TemplateResponse;
 
 use OCA\Notes\Service\NoteDoesNotExistException;
 
-class PageControllerTest extends PHPUnit_Framework_TestCase {
+class PageControllerTest extends TestCase {
 	private $request;
 	private $service;
 	private $userId;
@@ -26,7 +25,7 @@ class PageControllerTest extends PHPUnit_Framework_TestCase {
 	private $controller;
 	private $config;
 
-	public function setUp() {
+	public function setUp(): void {
 		$this->request = $this->getMockBuilder('OCP\IRequest')
 			->disableOriginalConstructor()
 			->getMock();

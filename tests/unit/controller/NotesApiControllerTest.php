@@ -11,9 +11,7 @@
 
 namespace OCA\Notes\Controller;
 
-use OCP\IUser;
-use OCP\IUserSession;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Http;
@@ -21,14 +19,14 @@ use OCP\AppFramework\Http;
 use OCA\Notes\Service\NoteDoesNotExistException;
 use OCA\Notes\Db\Note;
 
-class NotesApiControllerTest extends PHPUnit_Framework_TestCase {
+class NotesApiControllerTest extends TestCase {
 	private $request;
 	private $service;
 	private $userId;
 	private $appName;
 	private $controller;
 
-	public function setUp() {
+	public function setUp(): void {
 		$this->request = $this->getMockBuilder('OCP\IRequest')
 			->disableOriginalConstructor()
 			->getMock();

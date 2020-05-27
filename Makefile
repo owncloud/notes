@@ -41,6 +41,11 @@
 #        "build": "node node_modules/gulp-cli/bin/gulp.js"
 #    },
 
+COMPOSER_BIN := $(shell command -v composer 2> /dev/null)
+ifndef COMPOSER_BIN
+    $(error composer is not available on your system, please install composer)
+endif
+
 app_name=$(notdir $(CURDIR))
 build_tools_directory=$(CURDIR)/build/tools
 source_build_directory=$(CURDIR)/build/source/notes
@@ -78,6 +83,11 @@ endif
 endif
 endif
 
+# bin file definitions
+PHPUNIT=php -d zend.enable_gc=0  "$(PWD)/../../lib/composer/bin/phpunit"
+PHPUNITDBG=phpdbg -qrr -d memory_limit=4096M -d zend.enable_gc=0 "$(PWD)/../../lib/composer/bin/phpunit"
+PHP_CS_FIXER=php -d zend.enable_gc=0 vendor-bin/owncloud-codestyle/vendor/bin/php-cs-fixer
+
 all: build
 
 # Fetches the PHP and JS dependencies and compiles the JS. If no composer.json
@@ -104,6 +114,7 @@ clean:
 .PHONY: distclean
 distclean: clean
 	rm -rf vendor
+	rm -Rf vendor-bin/**/vendor vendor-bin/**/composer.lock
 	rm -rf node_modules
 	rm -rf js/vendor
 	rm -rf js/node_modules
@@ -160,16 +171,60 @@ else
 endif
 	tar -czf $(appstore_package_name).tar.gz -C $(appstore_build_directory)/../ $(app_name)
 
+##---------------------
+## Tests
+##---------------------
 
-# Command for running JS and PHP tests. Works for package.json files in the js/
-# and root directory. If phpunit is not installed systemwide, a copy is fetched
-# from the internet
-.PHONY: test
-test:
-	cd js && $(npm) run test
-ifneq ("$(wildcard $(phpunit_oc10))","")
-	php $(phpunit_oc10) -c phpunit.xml --coverage-clover coverage.clover
-else
-	phpunit -c phpunit.xml --coverage-clover coverage.clover
-	# phpunit -c phpunit.integration.xml --coverage-clover build/php-unit.clover
-endif
+.PHONY: test-php-unit
+test-php-unit: ## Run php unit tests
+test-php-unit:
+	$(PHPUNIT) --configuration ./phpunit.xml --testsuite unit
+
+.PHONY: test-php-unit-dbg
+test-php-unit-dbg: ## Run php unit tests using phpdbg
+test-php-unit-dbg:
+	$(PHPUNITDBG) --configuration ./phpunit.xml --testsuite unit
+
+.PHONY: test-php-integration
+test-php-integration: ## Run php integration tests
+test-php-integration:
+	$(PHPUNIT) --configuration ./phpunit.integration.xml --testsuite integration
+
+.PHONY: test-php-integration-dbg
+test-php-integration-dbg: ## Run php integration tests using phpdbg
+test-php-integration-dbg:
+	$(PHPUNITDBG) --configuration ./phpunit.integration.xml --testsuite integration
+
+.PHONY: test-php-style
+test-php-style: ## Run php-cs-fixer and check owncloud code-style
+test-php-style: vendor-bin/owncloud-codestyle/vendor
+	$(PHP_CS_FIXER) fix -v --diff --diff-format udiff --allow-risky yes --dry-run
+
+.PHONY: test-php-style-fix
+test-php-style-fix: ## Run php-cs-fixer and fix code style issues
+test-php-style-fix: vendor-bin/owncloud-codestyle/vendor
+	$(PHP_CS_FIXER) fix -v --diff --diff-format udiff --allow-risky yes
+
+.PHONY: test-js
+test-js: ## Test js files
+test-js: npm
+	cd js && npm run test
+
+#
+# Dependency management
+#--------------------------------------
+
+composer.lock: composer.json
+	@echo composer.lock is not up to date.
+
+vendor: composer.lock
+	composer install --no-dev
+
+vendor/bamarni/composer-bin-plugin: composer.lock
+	composer install
+
+vendor-bin/owncloud-codestyle/vendor: vendor/bamarni/composer-bin-plugin vendor-bin/owncloud-codestyle/composer.lock
+	composer bin owncloud-codestyle install --no-progress
+
+vendor-bin/owncloud-codestyle/composer.lock: vendor-bin/owncloud-codestyle/composer.json
+	@echo owncloud-codestyle composer.lock is not up to date.
