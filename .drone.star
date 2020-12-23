@@ -784,6 +784,7 @@ def acceptance(ctx):
 		'runCoreTests': False,
 		'numberOfParts': 1,
 		'cron': '',
+		'pullRequestAndCron': 'nightly',
 	}
 
 	if 'defaults' in config:
@@ -951,13 +952,16 @@ def acceptance(ctx):
 					'trigger': {}
 				}
 
-				if (testConfig['cron'] == ''):
-					result['trigger']['ref'] = [
-						'refs/pull/**',
-						'refs/tags/**'
-					]
-				else:
+				if (testConfig['cron'] != ''):
 					result['trigger']['cron'] = testConfig['cron']
+				else:
+					if ((testConfig['pullRequestAndCron'] != '') and (ctx.build.event != 'pull_request')):
+						result['trigger']['cron'] = testConfig['pullRequestAndCron']
+					else:
+						result['trigger']['ref'] = [
+							'refs/pull/**',
+							'refs/tags/**'
+						]
 
 				pipelines.append(result)
 
@@ -982,7 +986,7 @@ def sonarAnalysis(ctx, phpVersion = '7.4'):
 		[
 			{
 				'name': 'sync-from-cache',
-				'image': 'minio/mc',
+				'image': 'minio/mc:RELEASE.2020-12-18T10-53-53Z',
 				'pull': 'always',
 				'environment': {
 					'MC_HOST_cache': {
@@ -1024,7 +1028,7 @@ def sonarAnalysis(ctx, phpVersion = '7.4'):
 			},
 			{
 				'name': 'purge-cache',
-				'image': 'minio/mc',
+				'image': 'minio/mc:RELEASE.2020-12-18T10-53-53Z',
 				'environment': {
 					'MC_HOST_cache': {
 						'from_secret': 'cache_s3_connection_url'
