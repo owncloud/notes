@@ -1,7 +1,9 @@
 # Notes
 
 [![Build Status](https://drone.owncloud.com/api/badges/owncloud/notes/status.svg?branch=master)](https://drone.owncloud.com/owncloud/notes)
-[![codecov](https://codecov.io/gh/owncloud/notes/branch/master/graph/badge.svg)](https://codecov.io/gh/owncloud/notes) 
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=owncloud_notes&metric=alert_status)](https://sonarcloud.io/dashboard?id=owncloud_notes)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=owncloud_notes&metric=security_rating)](https://sonarcloud.io/dashboard?id=owncloud_notes)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=owncloud_notes&metric=coverage)](https://sonarcloud.io/dashboard?id=owncloud_notes)
 
 The Notes app is a distraction free notes taking app. It offers a [RESTful API](https://github.com/owncloud/notes/wiki/API-0.2) for app developers. The source code is [available on GitHub](https://github.com/owncloud/notes)
 
