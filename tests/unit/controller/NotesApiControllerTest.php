@@ -44,7 +44,10 @@ class NotesApiControllerTest extends TestCase {
 			->getMock();
 		$userSession->method('getUser')->willReturn($user);
 		$this->controller = new NotesApiController(
-			$this->appName, $this->request, $this->service, $userSession
+			$this->appName,
+			$this->request,
+			$this->service,
+			$userSession
 		);
 	}
 
@@ -113,8 +116,10 @@ class NotesApiControllerTest extends TestCase {
 
 		$this->service->expects($this->once())
 			->method('get')
-			->with($this->equalTo($id),
-				$this->equalTo($this->userId))
+			->with(
+				$this->equalTo($id),
+				$this->equalTo($this->userId)
+			)
 			->will($this->returnValue($expected));
 
 		$response = $this->controller->get($id);
@@ -133,8 +138,10 @@ class NotesApiControllerTest extends TestCase {
 
 		$this->service->expects($this->once())
 			->method('get')
-			->with($this->equalTo(3),
-				$this->equalTo($this->userId))
+			->with(
+				$this->equalTo(3),
+				$this->equalTo($this->userId)
+			)
 			->will($this->returnValue($note));
 
 		$response = $this->controller->get(3, 'title,content');
@@ -153,8 +160,10 @@ class NotesApiControllerTest extends TestCase {
 
 		$this->service->expects($this->once())
 			->method('get')
-			->with($this->equalTo($id),
-				$this->equalTo($this->userId))
+			->with(
+				$this->equalTo($id),
+				$this->equalTo($this->userId)
+			)
 			->will($this->throwException(new NoteDoesNotExistException()));
 
 		$response = $this->controller->get($id);
@@ -178,9 +187,11 @@ class NotesApiControllerTest extends TestCase {
 
 		$this->service->expects($this->once())
 			->method('update')
-			->with($this->equalTo($note->getId()),
+			->with(
+				$this->equalTo($note->getId()),
 				$this->equalTo($content),
-				$this->equalTo($this->userId))
+				$this->equalTo($this->userId)
+			)
 			->will($this->returnValue($note));
 
 		$response = $this->controller->create($content);
@@ -199,9 +210,11 @@ class NotesApiControllerTest extends TestCase {
 
 		$this->service->expects($this->once())
 			->method('update')
-			->with($this->equalTo($id),
+			->with(
+				$this->equalTo($id),
 				$this->equalTo($content),
-				$this->equalTo($this->userId))
+				$this->equalTo($this->userId)
+			)
 			->will($this->returnValue($expected));
 
 		$response = $this->controller->update($id, $content);
@@ -216,9 +229,11 @@ class NotesApiControllerTest extends TestCase {
 
 		$this->service->expects($this->once())
 			->method('update')
-			->with($this->equalTo($id),
+			->with(
+				$this->equalTo($id),
 				$this->equalTo($content),
-				$this->equalTo($this->userId))
+				$this->equalTo($this->userId)
+			)
 			->will($this->throwException(new NoteDoesNotExistException()));
 
 		$response = $this->controller->update($id, $content);
@@ -235,8 +250,10 @@ class NotesApiControllerTest extends TestCase {
 
 		$this->service->expects($this->once())
 			->method('delete')
-			->with($this->equalTo(1),
-				$this->equalTo($this->userId));
+			->with(
+				$this->equalTo(1),
+				$this->equalTo($this->userId)
+			);
 
 		$response = $this->controller->destroy($id);
 
@@ -248,8 +265,10 @@ class NotesApiControllerTest extends TestCase {
 
 		$this->service->expects($this->once())
 			->method('delete')
-			->with($this->equalTo(1),
-				$this->equalTo($this->userId))
+			->with(
+				$this->equalTo(1),
+				$this->equalTo($this->userId)
+			)
 			->will($this->throwException(new NoteDoesNotExistException()));
 
 		$response = $this->controller->destroy($id);

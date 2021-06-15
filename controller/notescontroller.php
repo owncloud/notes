@@ -40,9 +40,13 @@ class NotesController extends Controller {
 	 * @param IConfig $settings
 	 * @param string $UserId
 	 */
-	public function __construct($AppName, IRequest $request,
-								NotesService $service, IConfig $settings,
-								$UserId) {
+	public function __construct(
+		$AppName,
+		IRequest $request,
+		NotesService $service,
+		IConfig $settings,
+		$UserId
+	) {
 		parent::__construct($AppName, $request);
 		$this->notesService = $service;
 		$this->settings = $settings;
@@ -65,7 +69,10 @@ class NotesController extends Controller {
 	public function get($id) {
 		// save the last viewed note
 		$this->settings->setUserValue(
-			$this->userId, $this->appName, 'notesLastViewedNote', $id
+			$this->userId,
+			$this->appName,
+			'notesLastViewedNote',
+			$id
 		);
 
 		return $this->respond(function () use ($id) {
@@ -81,7 +88,9 @@ class NotesController extends Controller {
 	public function create($content) {
 		$note = $this->notesService->create($this->userId);
 		$note = $this->notesService->update(
-			$note->getId(), $content, $this->userId
+			$note->getId(),
+			$content,
+			$this->userId
 		);
 		return new DataResponse($note);
 	}

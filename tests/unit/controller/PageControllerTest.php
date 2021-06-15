@@ -38,8 +38,11 @@ class PageControllerTest extends TestCase {
 		$this->userId = 'john';
 		$this->appName = 'notes';
 		$this->controller = new PageController(
-			$this->appName, $this->request, $this->userId,
-			$this->service, $this->config
+			$this->appName,
+			$this->request,
+			$this->userId,
+			$this->service,
+			$this->config
 		);
 	}
 
@@ -51,9 +54,11 @@ class PageControllerTest extends TestCase {
 	public function testIndexShouldSendTheCorrectTemplate() {
 		$this->config->expects($this->once())
 			->method('getUserValue')
-			->with($this->equalTo($this->userId),
+			->with(
+				$this->equalTo($this->userId),
 				$this->equalTo($this->appName),
-				$this->equalTo('notesLastViewedNote'))
+				$this->equalTo('notesLastViewedNote')
+			)
 			->will($this->returnValue('3'));
 		$result = $this->controller->index();
 
@@ -64,9 +69,11 @@ class PageControllerTest extends TestCase {
 	public function testIndexShouldSendZeroWhenNoLastViewedNote() {
 		$this->config->expects($this->once())
 			->method('getUserValue')
-			->with($this->equalTo($this->userId),
+			->with(
+				$this->equalTo($this->userId),
 				$this->equalTo($this->appName),
-				$this->equalTo('notesLastViewedNote'))
+				$this->equalTo('notesLastViewedNote')
+			)
 			->will($this->returnValue(''));
 		$result = $this->controller->index();
 
@@ -76,14 +83,18 @@ class PageControllerTest extends TestCase {
 	public function testIndexShouldSetZeroWhenLastViewedNotDoesNotExist() {
 		$this->config->expects($this->once())
 			->method('getUserValue')
-			->with($this->equalTo($this->userId),
+			->with(
+				$this->equalTo($this->userId),
 				$this->equalTo($this->appName),
-				$this->equalTo('notesLastViewedNote'))
+				$this->equalTo('notesLastViewedNote')
+			)
 			->will($this->returnValue('3'));
 		$this->service->expects($this->once())
 			->method('get')
-			->with($this->equalTo(3),
-				   $this->equalTo($this->userId))
+			->with(
+				$this->equalTo(3),
+				$this->equalTo($this->userId)
+			)
 			->will($this->throwException(new NoteDoesNotExistException()));
 		$result = $this->controller->index();
 
