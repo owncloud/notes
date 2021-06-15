@@ -40,7 +40,10 @@ class NotesControllerTest extends TestCase {
 		$this->userId = 'john';
 		$this->appName = 'notes';
 		$this->controller = new NotesController(
-			$this->appName, $this->request, $this->service, $this->config,
+			$this->appName,
+			$this->request,
+			$this->service,
+			$this->config,
 			$this->userId
 		);
 	}
@@ -70,15 +73,19 @@ class NotesControllerTest extends TestCase {
 
 		$this->config->expects($this->once())
 			->method('setUserValue')
-			->with($this->equalTo($this->userId),
+			->with(
+				$this->equalTo($this->userId),
 				$this->equalTo($this->appName),
 				$this->equalTo('notesLastViewedNote'),
-				$this->equalTo($id));
+				$this->equalTo($id)
+			);
 
 		$this->service->expects($this->once())
 			->method('get')
-			->with($this->equalTo($id),
-				   $this->equalTo($this->userId))
+			->with(
+				$this->equalTo($id),
+				$this->equalTo($this->userId)
+			)
 			->will($this->returnValue($expected));
 
 		$response = $this->controller->get($id);
@@ -93,15 +100,19 @@ class NotesControllerTest extends TestCase {
 
 		$this->config->expects($this->once())
 			->method('setUserValue')
-			->with($this->equalTo($this->userId),
+			->with(
+				$this->equalTo($this->userId),
 				$this->equalTo($this->appName),
 				$this->equalTo('notesLastViewedNote'),
-				$this->equalTo($id));
+				$this->equalTo($id)
+			);
 
 		$this->service->expects($this->once())
 			->method('get')
-			->with($this->equalTo($id),
-				   $this->equalTo($this->userId))
+			->with(
+				$this->equalTo($id),
+				$this->equalTo($this->userId)
+			)
 			->will($this->throwException(new NoteDoesNotExistException()));
 
 		$response = $this->controller->get($id);
@@ -144,9 +155,11 @@ class NotesControllerTest extends TestCase {
 
 		$this->service->expects($this->once())
 			->method('update')
-			->with($this->equalTo($id),
-				   $this->equalTo($content),
-				   $this->equalTo($this->userId))
+			->with(
+				$this->equalTo($id),
+				$this->equalTo($content),
+				$this->equalTo($this->userId)
+			)
 			->will($this->returnValue($expected));
 
 		$response = $this->controller->update($id, $content);
@@ -161,9 +174,11 @@ class NotesControllerTest extends TestCase {
 
 		$this->service->expects($this->once())
 			->method('update')
-			->with($this->equalTo($id),
-				   $this->equalTo($content),
-				   $this->equalTo($this->userId))
+			->with(
+				$this->equalTo($id),
+				$this->equalTo($content),
+				$this->equalTo($this->userId)
+			)
 			->will($this->throwException(new NoteDoesNotExistException()));
 
 		$response = $this->controller->update($id, $content);
@@ -180,8 +195,10 @@ class NotesControllerTest extends TestCase {
 
 		$this->service->expects($this->once())
 			->method('delete')
-			->with($this->equalTo($id),
-				   $this->equalTo($this->userId));
+			->with(
+				$this->equalTo($id),
+				$this->equalTo($this->userId)
+			);
 
 		$response = $this->controller->destroy($id);
 
@@ -193,8 +210,10 @@ class NotesControllerTest extends TestCase {
 
 		$this->service->expects($this->once())
 			->method('delete')
-			->with($this->equalTo($id),
-				   $this->equalTo($this->userId))
+			->with(
+				$this->equalTo($id),
+				$this->equalTo($this->userId)
+			)
 			->will($this->throwException(new NoteDoesNotExistException()));
 
 		$response = $this->controller->destroy($id);

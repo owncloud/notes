@@ -240,8 +240,11 @@ class NotesService {
 			$match = \preg_match('/\((?P<id>\d+)\)$/', $title, $matches);
 			if ($match) {
 				$newId = ((int) $matches['id']) + 1;
-				$newTitle = \preg_replace('/(.*)\s\((\d+)\)$/',
-					'$1 (' . $newId . ')', $title);
+				$newTitle = \preg_replace(
+					'/(.*)\s\((\d+)\)$/',
+					'$1 (' . $newId . ')',
+					$title
+				);
 			} else {
 				$newTitle = $title . ' (2)';
 			}

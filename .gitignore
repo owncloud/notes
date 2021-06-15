@@ -6,6 +6,7 @@ report
 build
 /l10n/.transifexrc
 .php_cs.cache
+.php-cs-fixer.cache
 
 # Composer
 /vendor/
