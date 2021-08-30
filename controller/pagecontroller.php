@@ -41,8 +41,13 @@ class PageController extends Controller {
 	 * @param IConfig $settings
 	 * @param string $UserId
 	 */
-	public function __construct($AppName, IRequest $request, $UserId,
-								NotesService $notesService, IConfig $settings) {
+	public function __construct(
+		$AppName,
+		IRequest $request,
+		$UserId,
+		NotesService $notesService,
+		IConfig $settings
+	) {
 		parent::__construct($AppName, $request);
 		$this->notesService = $notesService;
 		$this->userId = $UserId;
@@ -56,8 +61,11 @@ class PageController extends Controller {
 	 * @return TemplateResponse
 	 */
 	public function index() {
-		$lastViewedNote = (int) $this->settings->getUserValue($this->userId,
-			$this->appName, 'notesLastViewedNote');
+		$lastViewedNote = (int) $this->settings->getUserValue(
+			$this->userId,
+			$this->appName,
+			'notesLastViewedNote'
+		);
 		// check if note exists
 		try {
 			$this->notesService->get($lastViewedNote, $this->userId);
