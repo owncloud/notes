@@ -591,7 +591,7 @@ def javascript(ctx, withCoverage):
                  [
                      {
                          "name": "js-tests",
-                         "image": "owncloudci/nodejs:%s" % getNodeJsVersion(),
+                         "image": "owncloudci/php:8.0",
                          "pull": "always",
                          "environment": params["extraEnvironment"],
                          "commands": params["extraCommandsBeforeTestRun"] + [
