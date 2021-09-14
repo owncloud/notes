@@ -27,8 +27,6 @@ var wrappers = '(function(angular, $, requestToken, mdEdit, undefined){'+
 /**
  * Task definitions
  */
-gulp.task('default', ['lint', 'build']);
-
 gulp.task('lint', function () {
     'use strict';
     var jshint = require('gulp-jshint');
@@ -58,14 +56,14 @@ gulp.task('build', function () {
         .pipe(gulp.dest(buildFolder));
 });
 
+gulp.task('default', gulp.series('lint', 'build'));
+
 gulp.task('clean', function () {
     'use strict';
     var del = require('del');
     del(buildFolder);
 });
 
-
-gulp.task('test-all', ['test', 'test-php', 'test-php-integration']);
 
 gulp.task('test', function (done) {
     'use strict';
@@ -93,9 +91,11 @@ gulp.task('test-php-integration', function () {
         .pipe(phpunit(phpunitBinary));
 });
 
+gulp.task('test-all', gulp.series('test', 'test-php', 'test-php-integration'));
+
 
 // watch tasks
-gulp.task('watch', ['default'], function () {
+gulp.task('watch', gulp.series('default'), function () {
     'use strict';
     gulp.watch(sources.js
         .concat(sources.tests)
