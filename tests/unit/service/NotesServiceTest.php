@@ -65,13 +65,13 @@ class NotesServiceTest extends TestCase {
 		return $node;
 	}
 
-	private function expectUserFolder($at=0) {
+	private function expectUserFolder() {
 		$path = '/' . $this->userId . '/files/Notes';
-		$this->root->expects($this->at($at))
+		$this->root->expects($this->once())
 			->method('nodeExists')
 			->with($this->equalTo($path))
 			->will($this->returnValue(true));
-		$this->root->expects($this->any($at + 1))
+		$this->root->expects($this->any())
 			->method('get')
 			->with($this->equalTo($path))
 			->will($this->returnValue($this->userFolder));
@@ -189,42 +189,47 @@ class NotesServiceTest extends TestCase {
 
 	private function expectGenerateFileName($at=0, $title, $id=0, $branch=0) {
 		if ($branch === 0) {
-			$this->userFolder->expects($this->at($at))
+			$this->userFolder->expects($this->once())
 				->method('nodeExists')
 				->with($this->equalTo($title . '.txt'))
 				->will($this->returnValue(false));
 		} elseif ($branch === 1) {
-			$this->userFolder->expects($this->at($at))
+			$this->userFolder->expects($this->once())
 				->method('nodeExists')
 				->with($this->equalTo($title . '.txt'))
 				->will($this->returnValue(true));
 			$file = $this->createNode('file1.txt', 'file', 'text/plain', 0, '', 0);
-			$this->userFolder->expects($this->at($at+1))
+			$this->userFolder->expects($this->once())
 				->method('get')
 				->with($this->equalTo($title . '.txt'))
 				->will($this->returnValue($file));
 		} elseif ($branch === 2) {
-			$this->userFolder->expects($this->at($at))
+			$this->userFolder
+				->expects($this->exactly(3))
 				->method('nodeExists')
-				->with($this->equalTo($title . '.txt'))
-				->will($this->returnValue(true));
+				->withConsecutive(
+					[$this->equalTo($title . '.txt')],
+					[$this->equalTo($title . ' (2).txt')],
+					[$this->equalTo($title . ' (3).txt')],
+				)
+				->willReturnOnConsecutiveCalls(
+					true,
+					true,
+					false,
+				);
+
 			$file = $this->createNode('file1.txt', 'file', 'text/plain', 0, '', 0);
-			$this->userFolder->expects($this->at($at+1))
+			$this->userFolder
+				->expects($this->exactly(2))
 				->method('get')
-				->with($this->equalTo($title . '.txt'))
-				->will($this->returnValue($file));
-			$this->userFolder->expects($this->at($at+2))
-				->method('nodeExists')
-				->with($this->equalTo($title . ' (2).txt'))
-				->will($this->returnValue(true));
-			$this->userFolder->expects($this->at($at+3))
-				->method('get')
-				->with($this->equalTo($title . ' (2).txt'))
-				->will($this->returnValue($file));
-			$this->userFolder->expects($this->at($at+4))
-				->method('nodeExists')
-				->with($this->equalTo($title . ' (3).txt'))
-				->will($this->returnValue(false));
+				->withConsecutive(
+					[$this->equalTo($title . '.txt')],
+					[$this->equalTo($title . ' (2).txt')],
+				)
+				->willReturnOnConsecutiveCalls(
+					$file,
+					$file,
+				);
 		}
 	}
 
@@ -273,7 +278,7 @@ class NotesServiceTest extends TestCase {
 		$nodes[] = $this->createNode('file1.txt', 'file', 'text/plain');
 
 		$this->expectUserFolder();
-		$this->userFolder->expects($this->at(0))
+		$this->userFolder->expects($this->once())
 			->method('getById')
 			->with($this->equalTo(3))
 			->will($this->returnValue($nodes));
@@ -301,7 +306,7 @@ class NotesServiceTest extends TestCase {
 		$nodes[] = $this->createNode('file1.txt', 'file', 'text/plain');
 
 		$this->expectUserFolder();
-		$this->userFolder->expects($this->at(0))
+		$this->userFolder->expects($this->once())
 			->method('getById')
 			->with($this->equalTo(3))
 			->will($this->returnValue($nodes));

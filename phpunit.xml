@@ -1,29 +1,33 @@
+<?xml version="1.0"?>
 <phpunit bootstrap="../../tests/bootstrap.php"
-         verbose="true"
-         failOnRisky="true"
-         failOnWarning="true"
-         timeoutForSmallTests="900"
-         timeoutForMediumTests="900"
-         timeoutForLargeTests="900"
-         colors="true"
->
-    <testsuites>
-        <testsuite name='unit'>
-            <directory suffix='Test.php'>./tests/unit</directory>
-        </testsuite>
-    </testsuites>
-    <!-- filters for code coverage -->
-    <filter>
-        <whitelist>
-            <directory suffix=".php">.</directory>
-            <exclude>
-                <directory suffix=".php">./l10n</directory>
-                <directory suffix=".php">./tests</directory>
-            </exclude>
-        </whitelist>
-    </filter>
-    <logging>
-        <!-- and this is where your report will be written -->
-        <log type="coverage-clover" target="./tests/output/clover.xml"/>
-    </logging>
+        verbose="true"
+        failOnRisky="true"
+        failOnWarning="true"
+        timeoutForSmallTests="900"
+        timeoutForMediumTests="900"
+        timeoutForLargeTests="900"
+        colors="true"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd">
+  <coverage>
+    <include>
+      <directory suffix=".php">.</directory>
+    </include>
+    <exclude>
+      <directory suffix=".php">./l10n</directory>
+      <directory suffix=".php">./tests</directory>
+    </exclude>
+    <report>
+      <clover outputFile="./tests/output/clover.xml"/>
+    </report>
+  </coverage>
+  <testsuites>
+    <testsuite name="unit">
+      <directory suffix="Test.php">./tests/unit</directory>
+    </testsuite>
+  </testsuites>
+  <!-- filters for code coverage -->
+  <logging>
+    <!-- and this is where your report will be written -->
+  </logging>
 </phpunit>
