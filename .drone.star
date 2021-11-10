@@ -873,6 +873,7 @@ def acceptance(ctx):
         "skipExceptParts": [],
         "earlyFail": True,
         "enableApp": True,
+        "selUserNeeded": False,
     }
 
     if "defaults" in config:
@@ -1033,6 +1034,7 @@ def acceptance(ctx):
 
                 environment["TEST_SERVER_URL"] = "http://server"
                 environment["BEHAT_FILTER_TAGS"] = testConfig["filterTags"]
+                environment["DOWNLOADS_DIRECTORY"] = "%s/downloads" % dir["server"]
 
                 if (testConfig["runAllSuites"] == False):
                     environment["BEHAT_SUITE"] = suite
@@ -1096,7 +1098,7 @@ def acceptance(ctx):
                              setupScality(testConfig["scalityS3"]) +
                              setupElasticSearch(testConfig["esVersion"]) +
                              testConfig["extraSetup"] +
-                             fixPermissions(testConfig["phpVersion"], testConfig["federatedServerNeeded"]) +
+                             fixPermissions(testConfig["phpVersion"], testConfig["federatedServerNeeded"], params["selUserNeeded"]) +
                              waitForBrowserService(testConfig["phpVersion"], isWebUI) +
                              [
                                  ({
@@ -1109,6 +1111,10 @@ def acceptance(ctx):
                                          ". %s/saved-settings.sh" % dir["base"],
                                          "make %s" % makeParameter,
                                      ],
+                                     "volumes": [{
+                                         "name": "downloads",
+                                         "path": "%s/downloads" % dir["server"],
+                                     }],
                                  }),
                              ] + testConfig["extraTeardown"] + buildGithubCommentForBuildStopped(name, params["earlyFail"]) + githubComment(params["earlyFail"]) + stopBuild(ctx, params["earlyFail"]),
                     "services": databaseService(testConfig["database"]) +
@@ -1126,6 +1132,10 @@ def acceptance(ctx):
                                 ) if testConfig["federatedServerNeeded"] else []),
                     "depends_on": [],
                     "trigger": {},
+                    "volumes": [{
+                        "name": "downloads",
+                        "temp": {},
+                    }],
                 }
 
                 if (testConfig["cron"] != ""):
@@ -1341,6 +1351,10 @@ def browserService(browser):
             "environment": {
                 "JAVA_OPTS": "-Dselenium.LOGGER.level=WARNING",
             },
+            "volumes": [{
+                "name": "downloads",
+                "path": "/home/seluser/Downloads",
+            }],
         }]
 
     if browser == "firefox":
@@ -1352,6 +1366,10 @@ def browserService(browser):
                 "JAVA_OPTS": "-Dselenium.LOGGER.level=WARNING",
                 "SE_OPTS": "-enablePassThrough false",
             },
+            "volumes": [{
+                "name": "downloads",
+                "path": "/home/seluser/Downloads",
+            }],
         }]
 
     return []
@@ -1772,7 +1790,7 @@ def setupElasticSearch(esVersion):
         ],
     }]
 
-def fixPermissions(phpVersion, federatedServerNeeded):
+def fixPermissions(phpVersion, federatedServerNeeded, selUserNeeded = False):
     return [{
         "name": "fix-permissions",
         "image": "owncloudci/php:%s" % phpVersion,
@@ -1783,7 +1801,13 @@ def fixPermissions(phpVersion, federatedServerNeeded):
         ] + ([
             "chown -R www-data %s" % dir["federated"],
             "wait-for-it -t 600 federated:80",
-        ] if federatedServerNeeded else []),
+        ] if federatedServerNeeded else []) + ([
+            "chmod 777 /home/seluser/Downloads/",
+        ] if selUserNeeded else []),
+        "volumes": [{
+            "name": "downloads",
+            "path": "/home/seluser/Downloads/",
+        }],
     }]
 
 def owncloudLog(server):
