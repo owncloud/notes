@@ -9,6 +9,11 @@
         colors="true"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd">
+  <testsuites>
+    <testsuite name="unit">
+      <directory suffix="Test.php">./tests/unit</directory>
+    </testsuite>
+  </testsuites>
   <coverage>
     <include>
       <directory suffix=".php">.</directory>
@@ -21,13 +26,4 @@
       <clover outputFile="./tests/output/clover.xml"/>
     </report>
   </coverage>
-  <testsuites>
-    <testsuite name="unit">
-      <directory suffix="Test.php">./tests/unit</directory>
-    </testsuite>
-  </testsuites>
-  <!-- filters for code coverage -->
-  <logging>
-    <!-- and this is where your report will be written -->
-  </logging>
 </phpunit>
