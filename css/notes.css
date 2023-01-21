@@ -141,6 +141,12 @@
     z-index: -1;
     border-top: 1px solid rgba(120, 120, 120, 0.5);
 }
+.mdedit .code-block {
+    background: rgba(120, 120, 120, 0.1);
+    padding: 0 0.5em;
+    margin: 0.5em 0;
+    display: block;
+}
 
 
 /* hanging punctuation */
