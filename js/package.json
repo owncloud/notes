@@ -26,9 +26,8 @@
     "jshint": "^2.13.1",
     "jshint-stylish": "^2.2.1",
     "karma": "^6.3.4",
-    "karma-jasmine": "^4.0.1",
-    "karma-phantomjs-launcher": "*",
-    "phantomjs-prebuilt": "*"
+    "karma-chrome-launcher": "^3.1.1",
+    "karma-jasmine": "^4.0.1"
   },
   "engine": "node >= 0.8",
   "scripts": {
