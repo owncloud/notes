@@ -42,7 +42,7 @@ config(function($provide, $routeProvider, RestangularProvider, $httpProvider,
                     is.loading = false;
 
                     // Token expired
-                    if (response.status == 412) {
+                    if (response.status === 412) {
                         OC.reload();
                     }
                     else {

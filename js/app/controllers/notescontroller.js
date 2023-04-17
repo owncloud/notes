@@ -46,23 +46,35 @@ app.controller('NotesController', function($routeParams, $scope, $location,
     var searchform = $('.searchbox');
 	var searchbox = $('#searchbox');
 
-    initSearch();
+	function setQueryString(query) {
+		$scope.$apply(() => {
+			$scope.queryString = query;
+		});
+	}
 
-    function initSearch() {
-		$scope.queryString = searchbox.val().trim();
+	function onEnterSearchString() {
+		setQueryString(searchbox.val().trim());
+	}
+
+	function initSearch() {
+		$scope.queryString = '';
+		if (searchbox.val()) {
+			$scope.queryString = searchbox.val().trim();
+		}
 
 		/** Conduct the search when there is a pause in typing in text */
 		var checkQueryChange = _.debounce(function() {
-			if ($scope.queryString != searchbox.val().trim()) {
+			if ($scope.queryString !== searchbox.val().trim()) {
 				onEnterSearchString();
 			}
 		}, 250);
-		searchbox.bind('propertychange change keyup input paste', checkQueryChange);
+		searchbox.bind('propertychange change keyup input paste',
+			checkQueryChange);
 
-		/** Handle clearing the searchbox. This has to be registered to the parent form
-		 *  of the #searchbox element.
+		/** Handle clearing the searchbox. This has to be registered to the
+		 *  parent form of the #searchbox element.
 		 */
-		searchform.on('reset', function() {
+		searchform.on('reset', function(event) {
 			setQueryString('');
 		});
 
@@ -74,14 +86,6 @@ app.controller('NotesController', function($routeParams, $scope, $location,
 		});
 	}
 
-    function onEnterSearchString() {
-        setQueryString(searchbox.val().trim());
-	}
-
-    function setQueryString(query) {
-        $scope.$apply(() => {
-            $scope.queryString = query;
-        });
-    }
+	initSearch();
 
 });
