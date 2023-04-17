@@ -5,9 +5,6 @@ var gulp = require('gulp');
  */
 var jsHintRc = '.jshintrc';
 var karmaConfig = __dirname + '/karma.conf.js';  // karma needs absolute path
-var phpunitBinary = 'phpunit';
-var phpunitConfig = '../phpunit.xml';
-var phpunitIntegrationConfig = '../phpunit.integration.xml';
 var buildFolder = 'public';
 var buildTarget = 'app.min.js';
 
@@ -74,25 +71,6 @@ gulp.task('test', function (done) {
         singleRun: true
     }, done).start();
 });
-
-gulp.task('test-php', function () {
-    'use strict';
-    var phpunit = require('gulp-phpunit');
-
-    gulp.src(phpunitConfig)
-        .pipe(phpunit(phpunitBinary, {silent: true}));
-});
-
-gulp.task('test-php-integration', function () {
-    'use strict';
-    var phpunit = require('gulp-phpunit');
-
-    gulp.src(phpunitIntegrationConfig)
-        .pipe(phpunit(phpunitBinary));
-});
-
-gulp.task('test-all', gulp.series('test', 'test-php', 'test-php-integration'));
-
 
 // watch tasks
 gulp.task('watch', gulp.series('default'), function () {
