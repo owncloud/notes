@@ -56,7 +56,10 @@ class NotesService {
 		}
 
 		$notes = [];
-		foreach ($filesById as $id=>$file) {
+		foreach ($filesById as $id => $file) {
+			/**
+			 * @var \OCP\Files\File $file
+			 */
 			$notes[] = Note::fromFile($file, \array_key_exists($id, $tags) ? $tags[$id] : []);
 		}
 
@@ -255,7 +258,7 @@ class NotesService {
 	/**
 	 * test if file is a note
 	 *
-	 * @param \OCP\Files\File $file
+	 * @param \OCP\Files\File|\OCP\Files\Node $file
 	 * @return bool
 	 */
 	private function isNote($file) {
