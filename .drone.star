@@ -54,6 +54,7 @@ config = {
             ],
         },
     },
+    "phpstan": True,
     "javascript": True,
     "phpunit": True,
     "phpintegration": True,
