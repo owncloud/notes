@@ -6,12 +6,16 @@ parameters:
     -
       message: '#Unsafe usage of new static\(\).#'
       path: db/note.php
+      count: 1
     -
       message: '#Strict comparison using === between string and null will always evaluate to false.#'
       path: service/notesservice.php
+      count: 1
     -
       message: '#Method OCA\\Notes\\Service\\NotesService::getFileById\(\) should return OCP\\Files\\File but returns OCP\\Files\\Node.#'
       path: service/notesservice.php
+      count: 1
     -
       message: '#Method OCA\\Notes\\Service\\NotesService::getFolderForUser\(\) should return OCP\\Files\\Folder but returns OCP\\Files\\Node.#'
       path: service/notesservice.php
+      count: 1

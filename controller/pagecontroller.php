@@ -26,7 +26,6 @@ use OCA\Notes\Service\NoteDoesNotExistException;
  * @package OCA\Notes\Controller
  */
 class PageController extends Controller {
-
 	/** @var NotesService */
 	private $notesService;
 	/** @var IConfig */
