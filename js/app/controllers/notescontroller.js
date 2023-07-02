@@ -43,8 +43,7 @@ app.controller('NotesController', function($routeParams, $scope, $location,
         });
     };
 
-    var searchform = $('.searchbox');
-	var searchbox = $('#searchbox');
+	var searchbox = $('#searchnotes');
 
     initSearch();
 
@@ -58,13 +57,6 @@ app.controller('NotesController', function($routeParams, $scope, $location,
 			}
 		}, 250);
 		searchbox.bind('propertychange change keyup input paste', checkQueryChange);
-
-		/** Handle clearing the searchbox. This has to be registered to the parent form
-		 *  of the #searchbox element.
-		 */
-		searchform.on('reset', function() {
-			setQueryString('');
-		});
 
 		/** Run search when enter pressed within the searchbox */
 		searchbox.bind('keydown', function (event) {

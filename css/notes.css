@@ -173,3 +173,9 @@
         padding-left: 90px;
     }
 }
+
+#searchnotes {
+    width: 100%;
+    border-left: 0px;
+    padding-left: 12px;
+}

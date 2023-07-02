@@ -40,6 +40,10 @@ style('notes', [
                 oc-click-focus="{ selector: '#app-content textarea' }">
                 <a href='#'>+ <span><?php p($l->t('New note')); ?></span></a>
             </li>
+            <!-- search notes button -->
+            <li>
+                <input id="searchnotes" type="search" name="searchnotes" value="" autocomplete="off" placeholder="Search in notes" />
+            </li>
             <!-- notes list -->
             <li ng-repeat="note in notes|orderBy:['-favorite','-modified']|noteFilter:queryString"
                 ng-class="{ active: note.id == route.noteId }">
@@ -67,7 +71,4 @@ style('notes', [
     <div id="app-content" ng-class="{loading: is.loading}">
         <div id="app-content-container" ng-view></div>
     </div>
-
-    <!-- Show search button in header -->
-    <div id="searchresults" class="hidden" data-appfilter="notes"></div>
 </div>
