@@ -1,12 +1,10 @@
 BANST_AWS_CLI = "banst/awscli"
-DRONE_CLI = "drone/cli:alpine"
 INBUCKET_INBUCKET = "inbucket/inbucket"
 MINIO_MC = "minio/mc:RELEASE.2020-12-18T10-53-53Z"
 OC_CI_ALPINE = "owncloudci/alpine:latest"
 OC_CI_BAZEL_BUILDIFIER = "owncloudci/bazel-buildifier"
 OC_CI_CEPH = "owncloudci/ceph:tag-build-master-jewel-ubuntu-16.04"
 OC_CI_CORE = "owncloudci/core"
-OC_CI_DRONE_CANCEL_PREVIOUS_BUILDS = "owncloudci/drone-cancel-previous-builds"
 OC_CI_DRONE_SKIP_PIPELINE = "owncloudci/drone-skip-pipeline"
 OC_CI_NODEJS = "owncloudci/nodejs:%s"
 OC_CI_ORACLE_XE = "owncloudci/oracle-xe:latest"
@@ -28,6 +26,22 @@ THEGEEKLAB_DRONE_GITHUB_COMMENT = "thegeeklab/drone-github-comment:1"
 DEFAULT_PHP_VERSION = "7.4"
 DEFAULT_NODEJS_VERSION = "14"
 
+# minio mc environment variables
+MINIO_MC_ENV = {
+    "CACHE_BUCKET": {
+        "from_secret": "cache_s3_bucket",
+    },
+    "MC_HOST": {
+        "from_secret": "cache_s3_server",
+    },
+    "AWS_ACCESS_KEY_ID": {
+        "from_secret": "cache_s3_access_key",
+    },
+    "AWS_SECRET_ACCESS_KEY": {
+        "from_secret": "cache_s3_secret_key",
+    },
+}
+
 dir = {
     "base": "/var/www/owncloud",
     "federated": "/var/www/owncloud/federated",
@@ -40,7 +54,7 @@ dir = {
 config = {
     "rocketchat": {
         "channel": "builds",
-        "from_secret": "private_rocketchat",
+        "from_secret": "rocketchat_chat_webhook",
     },
     "branches": [
         "master",
@@ -97,7 +111,7 @@ def main(ctx):
     return before + coverageTests + afterCoverageTests + nonCoverageTests + stages + after
 
 def beforePipelines(ctx):
-    return validateDailyTarballBuild() + codestyle(ctx) + jscodestyle(ctx) + cancelPreviousBuilds() + phpstan(ctx) + phan(ctx) + phplint(ctx) + checkStarlark()
+    return validateDailyTarballBuild() + codestyle(ctx) + jscodestyle(ctx) + phpstan(ctx) + phan(ctx) + phplint(ctx) + checkStarlark()
 
 def coveragePipelines(ctx):
     # All unit test pipelines that have coverage or other test analysis reported
@@ -250,31 +264,6 @@ def jscodestyle(ctx):
     pipelines.append(result)
 
     return pipelines
-
-def cancelPreviousBuilds():
-    return [{
-        "kind": "pipeline",
-        "type": "docker",
-        "name": "cancel-previous-builds",
-        "clone": {
-            "disable": True,
-        },
-        "steps": [{
-            "name": "cancel-previous-builds",
-            "image": OC_CI_DRONE_CANCEL_PREVIOUS_BUILDS,
-            "settings": {
-                "DRONE_TOKEN": {
-                    "from_secret": "drone_token",
-                },
-            },
-        }],
-        "depends_on": [],
-        "trigger": {
-            "ref": [
-                "refs/pull/**",
-            ],
-        },
-    }]
 
 def phpstan(ctx):
     pipelines = []
@@ -599,7 +588,7 @@ def javascript(ctx, withCoverage):
             "image": PLUGINS_S3,
             "settings": {
                 "endpoint": {
-                    "from_secret": "cache_s3_endpoint",
+                    "from_secret": "cache_s3_server",
                 },
                 "bucket": "cache",
                 "source": "./coverage/lcov.info",
@@ -827,7 +816,7 @@ def phpTests(ctx, testType, withCoverage):
                             "image": PLUGINS_S3,
                             "settings": {
                                 "endpoint": {
-                                    "from_secret": "cache_s3_endpoint",
+                                    "from_secret": "cache_s3_server",
                                 },
                                 "bucket": "cache",
                                 "source": "tests/output/clover-%s.xml" % (name),
@@ -1155,7 +1144,7 @@ def acceptance(ctx):
                                          "path": "%s/downloads" % dir["server"],
                                      }],
                                  }),
-                             ] + testConfig["extraTeardown"] + githubComment(params["earlyFail"]) + stopBuild(ctx, params["earlyFail"]),
+                             ] + testConfig["extraTeardown"] + githubComment(params["earlyFail"]),
                     "services": databaseService(testConfig["database"]) +
                                 browserService(testConfig["browser"]) +
                                 emailService(testConfig["emailNeeded"]) +
@@ -1240,13 +1229,10 @@ def sonarAnalysis(ctx, phpVersion = DEFAULT_PHP_VERSION):
                      {
                          "name": "sync-from-cache",
                          "image": MINIO_MC,
-                         "environment": {
-                             "MC_HOST_cache": {
-                                 "from_secret": "cache_s3_connection_url",
-                             },
-                         },
+                         "environment": MINIO_MC_ENV,
                          "commands": [
                              "mkdir -p results",
+                             "mc alias set cache $MC_HOST $AWS_ACCESS_KEY_ID $AWS_SECRET_ACCESS_KEY",
                              "mc mirror cache/cache/%s/%s results/" % (ctx.repo.slug, ctx.build.commit + "-${DRONE_BUILD_NUMBER}"),
                          ],
                      },
@@ -1271,12 +1257,9 @@ def sonarAnalysis(ctx, phpVersion = DEFAULT_PHP_VERSION):
                      {
                          "name": "purge-cache",
                          "image": MINIO_MC,
-                         "environment": {
-                             "MC_HOST_cache": {
-                                 "from_secret": "cache_s3_connection_url",
-                             },
-                         },
+                         "environment": MINIO_MC_ENV,
                          "commands": [
+                             "mc alias set cache $MC_HOST $AWS_ACCESS_KEY_ID $AWS_SECRET_ACCESS_KEY",
                              "mc rm --recursive --force cache/cache/%s/%s" % (ctx.repo.slug, ctx.build.commit + "-${DRONE_BUILD_NUMBER}"),
                          ],
                      },
@@ -1608,7 +1591,7 @@ def cacheRestore():
                 "from_secret": "cache_s3_access_key",
             },
             "endpoint": {
-                "from_secret": "cache_s3_endpoint",
+                "from_secret": "cache_s3_server",
             },
             "restore": True,
             "secret_key": {
@@ -1987,33 +1970,6 @@ def buildTestConfig(params):
                             config["runPart"] = runPart
                             configs.append(config)
     return configs
-
-def stopBuild(ctx, earlyFail):
-    if (earlyFail):
-        return [{
-            "name": "stop-build",
-            "image": DRONE_CLI,
-            "environment": {
-                "DRONE_SERVER": "https://drone.owncloud.com",
-                "DRONE_TOKEN": {
-                    "from_secret": "drone_token",
-                },
-            },
-            "commands": [
-                "drone build stop owncloud/%s ${DRONE_BUILD_NUMBER}" % ctx.repo.name,
-            ],
-            "when": {
-                "status": [
-                    "failure",
-                ],
-                "event": [
-                    "pull_request",
-                ],
-            },
-        }]
-
-    else:
-        return []
 
 def githubComment(earlyFail):
     if (earlyFail):
