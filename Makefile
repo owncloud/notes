@@ -85,6 +85,7 @@ PHPUNIT=php -d zend.enable_gc=0  "$(PWD)/../../lib/composer/bin/phpunit"
 PHPUNITDBG=phpdbg -qrr -d memory_limit=4096M -d zend.enable_gc=0 "$(PWD)/../../lib/composer/bin/phpunit"
 PHP_CS_FIXER=php -d zend.enable_gc=0 vendor-bin/owncloud-codestyle/vendor/bin/php-cs-fixer
 PHAN=php -d zend.enable_gc=0 vendor-bin/phan/vendor/bin/phan
+PHPSTAN=php -d zend.enable_gc=0 vendor-bin/phpstan/vendor/bin/phpstan
 
 all: build
 
@@ -208,6 +209,11 @@ test-php-phan: ## Run phan
 test-php-phan: vendor-bin/phan/vendor
 	$(PHAN) --config-file .phan/config.php --require-config-exists
 
+.PHONY: test-php-phpstan
+test-php-phpstan: ## Run phpstan
+test-php-phpstan: vendor-bin/phpstan/vendor
+	$(PHPSTAN) analyse --memory-limit=4G --configuration=./phpstan.neon --no-progress --level=5 appinfo controller db service
+
 .PHONY: test-js
 test-js: ## Test js files
 test-js: npm
@@ -237,3 +243,9 @@ vendor-bin/phan/vendor: vendor/bamarni/composer-bin-plugin vendor-bin/phan/compo
 
 vendor-bin/phan/composer.lock: vendor-bin/phan/composer.json
 	@echo phan composer.lock is not up to date.
+
+vendor-bin/phpstan/vendor: vendor/bamarni/composer-bin-plugin vendor-bin/phpstan/composer.lock
+	composer bin phpstan install --no-progress
+
+vendor-bin/phpstan/composer.lock: vendor-bin/phpstan/composer.json
+	@echo phpstan composer.lock is not up to date.

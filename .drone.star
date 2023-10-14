@@ -1,12 +1,10 @@
 BANST_AWS_CLI = "banst/awscli"
-DRONE_CLI = "drone/cli:alpine"
 INBUCKET_INBUCKET = "inbucket/inbucket"
 MINIO_MC = "minio/mc:RELEASE.2020-12-18T10-53-53Z"
 OC_CI_ALPINE = "owncloudci/alpine:latest"
 OC_CI_BAZEL_BUILDIFIER = "owncloudci/bazel-buildifier"
 OC_CI_CEPH = "owncloudci/ceph:tag-build-master-jewel-ubuntu-16.04"
 OC_CI_CORE = "owncloudci/core"
-OC_CI_DRONE_CANCEL_PREVIOUS_BUILDS = "owncloudci/drone-cancel-previous-builds"
 OC_CI_DRONE_SKIP_PIPELINE = "owncloudci/drone-skip-pipeline"
 OC_CI_NODEJS = "owncloudci/nodejs:%s"
 OC_CI_ORACLE_XE = "owncloudci/oracle-xe:latest"
@@ -23,10 +21,25 @@ PLUGINS_SLACK = "plugins/slack:1"
 SELENIUM_STANDALONE_CHROME_DEBUG = "selenium/standalone-chrome-debug:3.141.59-oxygen"
 SELENIUM_STANDALONE_FIREFOX_DEBUG = "selenium/standalone-firefox-debug:3.8.1"
 SONARSOURCE_SONAR_SCANNER_CLI = "sonarsource/sonar-scanner-cli"
-THEGEEKLAB_DRONE_GITHUB_COMMENT = "thegeeklab/drone-github-comment:1"
 
 DEFAULT_PHP_VERSION = "7.4"
 DEFAULT_NODEJS_VERSION = "14"
+
+# minio mc environment variables
+MINIO_MC_ENV = {
+    "CACHE_BUCKET": {
+        "from_secret": "cache_s3_bucket",
+    },
+    "MC_HOST": {
+        "from_secret": "cache_s3_server",
+    },
+    "AWS_ACCESS_KEY_ID": {
+        "from_secret": "cache_s3_access_key",
+    },
+    "AWS_SECRET_ACCESS_KEY": {
+        "from_secret": "cache_s3_secret_key",
+    },
+}
 
 dir = {
     "base": "/var/www/owncloud",
@@ -40,7 +53,7 @@ dir = {
 config = {
     "rocketchat": {
         "channel": "builds",
-        "from_secret": "private_rocketchat",
+        "from_secret": "rocketchat_chat_webhook",
     },
     "branches": [
         "master",
@@ -54,6 +67,7 @@ config = {
             ],
         },
     },
+    "phpstan": True,
     "javascript": True,
     "phpunit": True,
     "phpintegration": True,
@@ -96,7 +110,7 @@ def main(ctx):
     return before + coverageTests + afterCoverageTests + nonCoverageTests + stages + after
 
 def beforePipelines(ctx):
-    return codestyle(ctx) + jscodestyle(ctx) + cancelPreviousBuilds() + phpstan(ctx) + phan(ctx) + phplint(ctx) + checkStarlark()
+    return validateDailyTarballBuild() + codestyle(ctx) + jscodestyle(ctx) + phpstan(ctx) + phan(ctx) + phplint(ctx) + checkStarlark()
 
 def coveragePipelines(ctx):
     # All unit test pipelines that have coverage or other test analysis reported
@@ -249,31 +263,6 @@ def jscodestyle(ctx):
     pipelines.append(result)
 
     return pipelines
-
-def cancelPreviousBuilds():
-    return [{
-        "kind": "pipeline",
-        "type": "docker",
-        "name": "cancel-previous-builds",
-        "clone": {
-            "disable": True,
-        },
-        "steps": [{
-            "name": "cancel-previous-builds",
-            "image": OC_CI_DRONE_CANCEL_PREVIOUS_BUILDS,
-            "settings": {
-                "DRONE_TOKEN": {
-                    "from_secret": "drone_token",
-                },
-            },
-        }],
-        "depends_on": [],
-        "trigger": {
-            "ref": [
-                "refs/pull/**",
-            ],
-        },
-    }]
 
 def phpstan(ctx):
     pipelines = []
@@ -598,7 +587,7 @@ def javascript(ctx, withCoverage):
             "image": PLUGINS_S3,
             "settings": {
                 "endpoint": {
-                    "from_secret": "cache_s3_endpoint",
+                    "from_secret": "cache_s3_server",
                 },
                 "bucket": "cache",
                 "source": "./coverage/lcov.info",
@@ -826,7 +815,7 @@ def phpTests(ctx, testType, withCoverage):
                             "image": PLUGINS_S3,
                             "settings": {
                                 "endpoint": {
-                                    "from_secret": "cache_s3_endpoint",
+                                    "from_secret": "cache_s3_server",
                                 },
                                 "bucket": "cache",
                                 "source": "tests/output/clover-%s.xml" % (name),
@@ -871,6 +860,7 @@ def acceptance(ctx):
         "databases": ["mariadb:10.2"],
         "esVersions": ["none"],
         "federatedServerNeeded": False,
+        "federatedServerVersion": "",
         "filterTags": "",
         "logLevel": "2",
         "emailNeeded": False,
@@ -896,7 +886,6 @@ def acceptance(ctx):
         "skip": False,
         "debugSuites": [],
         "skipExceptParts": [],
-        "earlyFail": True,
         "enableApp": True,
         "selUserNeeded": False,
     }
@@ -933,14 +922,6 @@ def acceptance(ctx):
 
             if params["skip"]:
                 continue
-
-            # switch off earlyFail if the PR title contains full-ci
-            if ("full-ci" in ctx.build.title.lower()):
-                params["earlyFail"] = False
-
-            # switch off earlyFail when running cron builds (for example, nightly CI)
-            if (ctx.build.event == "cron"):
-                params["earlyFail"] = False
 
             if "externalScality" in params and len(params["externalScality"]) != 0:
                 # We want to use an external scality server for this pipeline.
@@ -1106,7 +1087,11 @@ def acceptance(ctx):
                         environment["S3_TYPE"] = "ceph"
                     if (testConfig["scalityS3"] != False):
                         environment["S3_TYPE"] = "scality"
+
                 federationDbSuffix = "-federated"
+
+                if len(testConfig["federatedServerVersion"]) == 0:
+                    testConfig["federatedServerVersion"] = testConfig["server"]
 
                 result = {
                     "kind": "pipeline",
@@ -1119,7 +1104,7 @@ def acceptance(ctx):
                     "steps": skipIfUnchanged(ctx, "acceptance-tests") +
                              installCore(ctx, testConfig["server"], testConfig["database"], testConfig["useBundledApp"]) +
                              installTestrunner(ctx, DEFAULT_PHP_VERSION, testConfig["useBundledApp"]) +
-                             (installFederated(testConfig["server"], phpVersionForDocker, testConfig["logLevel"], testConfig["database"], federationDbSuffix) + owncloudLog("federated") if testConfig["federatedServerNeeded"] else []) +
+                             (installFederated(testConfig["federatedServerVersion"], phpVersionForDocker, testConfig["logLevel"], testConfig["database"], federationDbSuffix) + owncloudLog("federated") if testConfig["federatedServerNeeded"] else []) +
                              installAppPhp(ctx, phpVersionForDocker) +
                              installAppJavaScript(ctx) +
                              installExtraApps(phpVersionForDocker, testConfig["extraApps"]) +
@@ -1149,7 +1134,7 @@ def acceptance(ctx):
                                          "path": "%s/downloads" % dir["server"],
                                      }],
                                  }),
-                             ] + testConfig["extraTeardown"] + githubComment(params["earlyFail"]) + stopBuild(ctx, params["earlyFail"]),
+                             ] + testConfig["extraTeardown"],
                     "services": databaseService(testConfig["database"]) +
                                 browserService(testConfig["browser"]) +
                                 emailService(testConfig["emailNeeded"]) +
@@ -1160,7 +1145,7 @@ def acceptance(ctx):
                                 testConfig["extraServices"] +
                                 owncloudService(testConfig["server"], phpVersionForDocker, "server", dir["server"], testConfig["ssl"], testConfig["xForwardedFor"]) +
                                 ((
-                                    owncloudService(testConfig["server"], phpVersionForDocker, "federated", dir["federated"], testConfig["ssl"], testConfig["xForwardedFor"]) +
+                                    owncloudService(testConfig["federatedServerVersion"], phpVersionForDocker, "federated", dir["federated"], testConfig["ssl"], testConfig["xForwardedFor"]) +
                                     databaseServiceForFederation(testConfig["database"], federationDbSuffix)
                                 ) if testConfig["federatedServerNeeded"] else []),
                     "depends_on": [],
@@ -1234,13 +1219,10 @@ def sonarAnalysis(ctx, phpVersion = DEFAULT_PHP_VERSION):
                      {
                          "name": "sync-from-cache",
                          "image": MINIO_MC,
-                         "environment": {
-                             "MC_HOST_cache": {
-                                 "from_secret": "cache_s3_connection_url",
-                             },
-                         },
+                         "environment": MINIO_MC_ENV,
                          "commands": [
                              "mkdir -p results",
+                             "mc alias set cache $MC_HOST $AWS_ACCESS_KEY_ID $AWS_SECRET_ACCESS_KEY",
                              "mc mirror cache/cache/%s/%s results/" % (ctx.repo.slug, ctx.build.commit + "-${DRONE_BUILD_NUMBER}"),
                          ],
                      },
@@ -1265,12 +1247,9 @@ def sonarAnalysis(ctx, phpVersion = DEFAULT_PHP_VERSION):
                      {
                          "name": "purge-cache",
                          "image": MINIO_MC,
-                         "environment": {
-                             "MC_HOST_cache": {
-                                 "from_secret": "cache_s3_connection_url",
-                             },
-                         },
+                         "environment": MINIO_MC_ENV,
                          "commands": [
+                             "mc alias set cache $MC_HOST $AWS_ACCESS_KEY_ID $AWS_SECRET_ACCESS_KEY",
                              "mc rm --recursive --force cache/cache/%s/%s" % (ctx.repo.slug, ctx.build.commit + "-${DRONE_BUILD_NUMBER}"),
                          ],
                      },
@@ -1602,7 +1581,7 @@ def cacheRestore():
                 "from_secret": "cache_s3_access_key",
             },
             "endpoint": {
-                "from_secret": "cache_s3_endpoint",
+                "from_secret": "cache_s3_server",
             },
             "restore": True,
             "secret_key": {
@@ -1849,7 +1828,7 @@ def setupElasticSearch(esVersion):
             "image": OC_CI_PHP % DEFAULT_PHP_VERSION,
             "commands": [
                 "cd %s" % dir["server"],
-                "php occ config:app:set search_elastic servers --value elasticsearch",
+                "php occ config:app:set search_elastic servers --value http://elasticsearch:9200",
                 "php occ search:index:reset --force",
             ],
         },
@@ -1981,60 +1960,6 @@ def buildTestConfig(params):
                             config["runPart"] = runPart
                             configs.append(config)
     return configs
-
-def stopBuild(ctx, earlyFail):
-    if (earlyFail):
-        return [{
-            "name": "stop-build",
-            "image": DRONE_CLI,
-            "environment": {
-                "DRONE_SERVER": "https://drone.owncloud.com",
-                "DRONE_TOKEN": {
-                    "from_secret": "drone_token",
-                },
-            },
-            "commands": [
-                "drone build stop owncloud/%s ${DRONE_BUILD_NUMBER}" % ctx.repo.name,
-            ],
-            "when": {
-                "status": [
-                    "failure",
-                ],
-                "event": [
-                    "pull_request",
-                ],
-            },
-        }]
-
-    else:
-        return []
-
-def githubComment(earlyFail):
-    if (earlyFail):
-        return [{
-            "name": "github-comment",
-            "image": THEGEEKLAB_DRONE_GITHUB_COMMENT,
-            "pull": "if-not-exists",
-            "settings": {
-                "message": ":boom: Acceptance tests pipeline <strong>${DRONE_STAGE_NAME}</strong> failed. The build has been cancelled.\\n\\n${DRONE_BUILD_LINK}/${DRONE_JOB_NUMBER}${DRONE_STAGE_NUMBER}",
-                "key": "pr-${DRONE_PULL_REQUEST}",
-                "update": "true",
-                "api_key": {
-                    "from_secret": "github_token",
-                },
-            },
-            "when": {
-                "status": [
-                    "failure",
-                ],
-                "event": [
-                    "pull_request",
-                ],
-            },
-        }]
-
-    else:
-        return []
 
 def checkStarlark():
     return [{
@@ -2230,3 +2155,33 @@ def skipIfUnchanged(ctx, type):
         return [skip_step]
 
     return []
+
+def validateDailyTarballBuild():
+    if "validateDailyTarball" not in config:
+        return []
+
+    if not config["validateDailyTarball"]:
+        return []
+
+    pipeline = {
+        "kind": "pipeline",
+        "type": "docker",
+        "name": "check-tarball-build-date",
+        "steps": [{
+            "name": "check-build-date",
+            "image": OC_CI_ALPINE,
+            "commands": [
+                "chmod +x ./tests/drone/check-daily-update.sh",
+                "./tests/drone/check-daily-update.sh %s %s" % ("daily-master", "daily-master-qa"),
+            ],
+        }],
+        "depends_on": [],
+        "trigger": {
+            "ref": [],
+        },
+    }
+
+    for branch in config["branches"]:
+        pipeline["trigger"]["ref"].append("refs/heads/%s" % branch)
+
+    return [pipeline]
