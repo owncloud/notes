@@ -10,8 +10,10 @@
 		{
 			"src": "./favicon-touch.svg",
 			"type": "image/svg+xml",
-			"sizes": "16x16"
+			"sizes": "any"
 		}
 	],
-	"display": "standalone"
+	"display": "standalone",
+	"theme_color": "#041e42",
+	"background_color": "#ffffff"
 }
