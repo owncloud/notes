@@ -1,6 +1,6 @@
 {
 	"name": "Notes",
-	"start_url": "../../../apps/notes",
+	"start_url": "../../../apps/notes/#/",
 	"icons": [
 		{
 			"src": "./favicon-touch.png",
