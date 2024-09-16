@@ -11,6 +11,7 @@
 
 namespace OCA\Notes\Service;
 
+use OCP\IConfig;
 use OCP\IL10N;
 use OCP\Files\IRootFolder;
 use OCP\Files\Folder;
@@ -23,16 +24,21 @@ use OCA\Notes\Db\Note;
  * @package OCA\Notes\Service
  */
 class NotesService {
+	/** @var IL10N */
 	private $l10n;
+	/** @var IRootFolder */
 	private $root;
+	/** @var IConfig */
+	private $config;
 
 	/**
 	 * @param IRootFolder $root
 	 * @param IL10N $l10n
 	 */
-	public function __construct(IRootFolder $root, IL10N $l10n) {
+	public function __construct(IRootFolder $root, IL10N $l10n, IConfig $config) {
 		$this->root = $root;
 		$this->l10n = $l10n;
+		$this->config = $config;
 	}
 
 	/**
@@ -49,7 +55,7 @@ class NotesService {
 			}
 		}
 		$tagger = \OC::$server->getTagManager()->load('files');
-		if ($tagger==null) {
+		if ($tagger == null) {
 			$tags = [];
 		} else {
 			$tags = $tagger->getTagsForObjects(\array_keys($filesById));
@@ -80,7 +86,7 @@ class NotesService {
 
 	private function getTags($id) {
 		$tagger = \OC::$server->getTagManager()->load('files');
-		if ($tagger==null) {
+		if ($tagger == null) {
 			$tags = [];
 		} else {
 			$tags = $tagger->getTagsForObjects([$id]);
@@ -138,7 +144,9 @@ class NotesService {
 
 		// generate filename if there were collisions
 		$currentFilePath = $file->getPath();
-		$basePath = '/' . $userId . '/files/Notes/';
+		$notesRoot = $this->config->getUserValue($userId, 'notes', 'notesRoot', 'Notes');
+
+		$basePath = '/' . $userId . "/files/$notesRoot/";
 		$fileExtension = \pathinfo($file->getName(), PATHINFO_EXTENSION);
 		$newFilePath = $basePath . $this->generateFileName($folder, $title, $fileExtension, $id);
 
@@ -209,12 +217,23 @@ class NotesService {
 	 * @return Folder
 	 */
 	private function getFolderForUser($userId) {
-		$path = '/' . $userId . '/files/Notes';
-		if ($this->root->nodeExists($path)) {
-			$folder = $this->root->get($path);
-		} else {
-			$folder = $this->root->newFolder($path);
+		$notesRoot = $this->config->getUserValue($userId, 'notes', 'notesRoot', 'Notes');
+		$userFolder = $this->root->getUserFolder($userId);
+
+		if (!$userFolder->nodeExists($notesRoot)) {
+			return $userFolder->newFolder($notesRoot);
 		}
+
+		$folder = $userFolder->get($notesRoot);
+		$isFolder = $folder->getType() === 'dir';
+		$isShared = $folder->isShared();
+		if (!$isFolder || $isShared) {
+			$userFolder = $this->root->getUserFolder($userId);
+			$newName = $userFolder->getNonExistingName('Notes');
+			$folder = $userFolder->newFolder($newName);
+			$this->config->setUserValue($userId, 'notes', 'notesRoot', $newName);
+		}
+
 		return $folder;
 	}
 
@@ -238,21 +257,21 @@ class NotesService {
 		// need to handle file collisions if it is the filename did not change
 		if (!$folder->nodeExists($path) || $folder->get($path)->getId() === $id) {
 			return $path;
-		} else {
-			// increments name (2) to name (3)
-			$match = \preg_match('/\((?P<id>\d+)\)$/', $title, $matches);
-			if ($match) {
-				$newId = ((int) $matches['id']) + 1;
-				$newTitle = \preg_replace(
-					'/(.*)\s\((\d+)\)$/',
-					'$1 (' . $newId . ')',
-					$title
-				);
-			} else {
-				$newTitle = $title . ' (2)';
-			}
-			return $this->generateFileName($folder, $newTitle, $extension, $id);
 		}
+
+		// increments name (2) to name (3)
+		$match = \preg_match('/\((?P<id>\d+)\)$/', $title, $matches);
+		if ($match) {
+			$newId = ((int) $matches['id']) + 1;
+			$newTitle = \preg_replace(
+				'/(.*)\s\((\d+)\)$/',
+				'$1 (' . $newId . ')',
+				$title
+			);
+		} else {
+			$newTitle = $title . ' (2)';
+		}
+		return $this->generateFileName($folder, $newTitle, $extension, $id);
 	}
 
 	/**
