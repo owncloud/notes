@@ -11,7 +11,11 @@
 
 namespace OCA\Notes\Service;
 
+use OCP\IConfig;
 use PHPUnit\Framework\TestCase;
+use OCP\Files\IRootFolder;
+use OCP\Files\Folder;
+use OCP\IL10N;
 
 class NotesServiceTest extends TestCase {
 	private $root;
@@ -19,16 +23,22 @@ class NotesServiceTest extends TestCase {
 	private $userId;
 	private $l10n;
 	private $userFolder;
+	private $userHomeFolder;
 
 	public function setUp(): void {
-		$this->root = $this->getMockBuilder('OCP\Files\IRootFolder')
+		$this->root = $this->getMockBuilder(IRootFolder::class)
 			->getMock();
-		$this->userFolder = $this->getMockBuilder('OCP\Files\Folder')
+		$this->userFolder = $this->getMockBuilder(Folder::class)
 			->getMock();
-		$this->l10n = $this->getMockBuilder('OCP\IL10N')
+		$this->userHomeFolder = $this->getMockBuilder(Folder::class)
+			->getMock();
+		$this->l10n = $this->getMockBuilder(IL10N::class)
 			->getMock();
 		$this->userId = 'john';
-		$this->service = new NotesService($this->root, $this->l10n);
+		$config = $this->createMock(IConfig::class);
+		$config->method('getUserValue')->willReturn('Notes');
+
+		$this->service = new NotesService($this->root, $this->l10n, $config);
 	}
 
 	private function createNode($name, $type, $mime, $mtime=0, $content='', $id=0, $path='/') {
@@ -39,42 +49,48 @@ class NotesServiceTest extends TestCase {
 		}
 		$node = $this->getMockBuilder($iface)
 			->getMock();
-		$node->expects($this->any())
+		$node
 			->method('getType')
-			->will($this->returnValue($type));
-		$node->expects($this->any())
+			->willReturn($type);
+		$node
 			->method('getMimeType')
-			->will($this->returnValue($mime));
-		$node->expects($this->any())
+			->willReturn($mime);
+		$node
 			->method('getName')
-			->will($this->returnValue($name));
-		$node->expects($this->any())
+			->willReturn($name);
+		$node
 			->method('getMTime')
-			->will($this->returnValue($mtime));
+			->willReturn($mtime);
 		$node->expects($this->any())
 			->method('getId')
-			->will($this->returnValue($id));
-		$node->expects($this->any())
+			->willReturn($id);
+		$node
 			->method('getPath')
-			->will($this->returnValue($path));
+			->willReturn($path);
 		if ($type === 'file') {
-			$node->expects($this->any())
+			$node
 				->method('getContent')
-				->will($this->returnValue($content));
+				->willReturn($content);
 		}
 		return $node;
 	}
 
-	private function expectUserFolder() {
-		$path = '/' . $this->userId . '/files/Notes';
-		$this->root->expects($this->once())
+	private function expectUserFolder(): void {
+		$this->root
+			->method('getUserFolder')
+			->willReturn($this->userHomeFolder);
+
+		$this->userHomeFolder->expects($this->once())
 			->method('nodeExists')
-			->with($this->equalTo($path))
-			->will($this->returnValue(true));
-		$this->root->expects($this->any())
+			->with($this->equalTo('Notes'))
+			->willReturn(true);
+		$this->userHomeFolder
 			->method('get')
-			->with($this->equalTo($path))
-			->will($this->returnValue($this->userFolder));
+			->with($this->equalTo('Notes'))
+			->willReturn($this->userFolder);
+
+		$this->userFolder->method('getType')->willReturn('dir');
+		$this->userFolder->method('isShared')->willReturn(false);
 	}
 
 	public function testGetAll() {
@@ -119,7 +135,7 @@ class NotesServiceTest extends TestCase {
 		$this->userFolder->expects($this->once())
 			->method('getById')
 			->with($this->equalTo(2))
-			->will($this->returnValue($nodes));
+			->willReturn($nodes);
 		$this->service->get(2, $this->userId);
 	}
 
@@ -192,17 +208,17 @@ class NotesServiceTest extends TestCase {
 			$this->userFolder->expects($this->once())
 				->method('nodeExists')
 				->with($this->equalTo($title . '.txt'))
-				->will($this->returnValue(false));
+				->willReturn(false);
 		} elseif ($branch === 1) {
 			$this->userFolder->expects($this->once())
 				->method('nodeExists')
 				->with($this->equalTo($title . '.txt'))
-				->will($this->returnValue(true));
+				->willReturn(true);
 			$file = $this->createNode('file1.txt', 'file', 'text/plain', 0, '', 0);
 			$this->userFolder->expects($this->once())
 				->method('get')
 				->with($this->equalTo($title . '.txt'))
-				->will($this->returnValue($file));
+				->willReturn($file);
 		} elseif ($branch === 2) {
 			$this->userFolder
 				->expects($this->exactly(3))
@@ -237,7 +253,7 @@ class NotesServiceTest extends TestCase {
 		$this->l10n->expects($this->once())
 			->method('t')
 			->with($this->equalTo('New note'))
-			->will($this->returnValue('New note'));
+			->willReturn('New note');
 		$this->expectUserFolder();
 
 		$this->expectGenerateFileName(0, 'New note');
@@ -246,7 +262,12 @@ class NotesServiceTest extends TestCase {
 		$this->userFolder->expects($this->once())
 			->method('newFile')
 			->with($this->equalTo('New note.txt'))
-			->will($this->returnValue($file));
+			->willReturn($file);
+
+		$this->userFolder->expects($this->once())
+			->method('nodeExists')
+			->with($this->equalTo('New note.txt'))
+			->willReturn(false);
 
 		$note = $this->service->create($this->userId);
 
@@ -257,7 +278,7 @@ class NotesServiceTest extends TestCase {
 		$this->l10n->expects($this->once())
 			->method('t')
 			->with($this->equalTo('New note'))
-			->will($this->returnValue('New note'));
+			->willReturn('New note');
 		$this->expectUserFolder();
 
 		$this->expectGenerateFileName(0, 'New note', 0, 2);
@@ -266,7 +287,7 @@ class NotesServiceTest extends TestCase {
 		$this->userFolder->expects($this->once())
 			->method('newFile')
 			->with($this->equalTo('New note (3).txt'))
-			->will($this->returnValue($file));
+			->willReturn($file);
 
 		$note = $this->service->create($this->userId);
 
@@ -281,12 +302,12 @@ class NotesServiceTest extends TestCase {
 		$this->userFolder->expects($this->once())
 			->method('getById')
 			->with($this->equalTo(3))
-			->will($this->returnValue($nodes));
+			->willReturn($nodes);
 
 		$this->l10n->expects($this->once())
 			->method('t')
 			->with($this->equalTo('New note'))
-			->will($this->returnValue('New note'));
+			->willReturn('New note');
 		$this->expectUserFolder();
 
 		$this->expectGenerateFileName(1, 'New note', 0, 2);
@@ -309,7 +330,7 @@ class NotesServiceTest extends TestCase {
 		$this->userFolder->expects($this->once())
 			->method('getById')
 			->with($this->equalTo(3))
-			->will($this->returnValue($nodes));
+			->willReturn($nodes);
 
 		$this->l10n->expects($this->never())
 			->method('t');
