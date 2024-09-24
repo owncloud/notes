@@ -1,7 +1,31 @@
-owncloud-notes (2.0.6)
+# Changelog
+
+## [Unreleased] 
+
+
+
+## [2.0.7] - 2024-09-23
+
+### Fixed
+ * [#488](https://github.com/owncloud/notes/pull/488) - Fix: ensure that notes are not stored inside a shared folder
+ * Dependencies updated:
+   - [#398](https://github.com/owncloud/notes/pull/398)
+   - [#399](https://github.com/owncloud/notes/pull/399)
+   - [#400](https://github.com/owncloud/notes/pull/400)
+   - [#401](https://github.com/owncloud/notes/pull/401)
+   - [#402](https://github.com/owncloud/notes/pull/402)
+   - [#403](https://github.com/owncloud/notes/pull/403) 
+   - [#486](https://github.com/owncloud/notes/pull/486)
+ * Dropped support for PHP 7.2 in [#404](https://github.com/owncloud/notes/pull/404) 
+
+
+## owncloud-notes [2.0.6]
+
 * Fixing [App only visible for admins](https://github.com/owncloud/notes/issues/314)
 
-owncloud-notes (2.0.5)
+--
+
+owncloud-notes [2.0.5]
 * Ready for ownCloud 10.2+
 
 owncloud-notes (2.0.4)
@@ -48,3 +72,8 @@ owncloud-notes (0.2)
 * Move to App Framework and AngularJS
 * Remember last note
 * Fixed various bugs
+
+[Unreleased]: https://github.com/owncloud/notes/compare/v2.0.7...master
+[2.0.7]: https://github.com/owncloud/notes/compare/v2.0.6...v2.0.7
+[2.0.6]: https://github.com/owncloud/notes/compare/v2.0.5...v2.0.6
+[2.0.5]: https://github.com/owncloud/notes/compare/v2.0.4...v2.0.5
