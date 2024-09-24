@@ -20,7 +20,7 @@ PLUGINS_S3_CACHE = "plugins/s3-cache:1"
 PLUGINS_SLACK = "plugins/slack:1"
 SELENIUM_STANDALONE_CHROME_DEBUG = "selenium/standalone-chrome-debug:3.141.59-oxygen"
 SELENIUM_STANDALONE_FIREFOX_DEBUG = "selenium/standalone-firefox-debug:3.8.1"
-SONARSOURCE_SONAR_SCANNER_CLI = "sonarsource/sonar-scanner-cli"
+SONARSOURCE_SONAR_SCANNER_CLI = "sonarsource/sonar-scanner-cli:5"
 
 DEFAULT_PHP_VERSION = "7.4"
 DEFAULT_NODEJS_VERSION = "14"
