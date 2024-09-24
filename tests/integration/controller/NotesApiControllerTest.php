@@ -16,8 +16,11 @@ use PHPUnit\Framework\TestCase;
 
 use OCP\AppFramework\App;
 use OCP\Files\File;
+use Test\Traits\UserTrait;
 
 class NotesApiControllerTest extends TestCase {
+	use UserTrait;
+
 	private $controller;
 	private $mapper;
 	private $userId = 'test';
@@ -25,6 +28,8 @@ class NotesApiControllerTest extends TestCase {
 	private $fs;
 
 	public function setUp(): void {
+		$this->createUser($this->userId);
+
 		$app = new App('notes');
 		$container = $app->getContainer();
 		$container->registerService('UserId', function ($c) {
