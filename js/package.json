@@ -12,7 +12,7 @@
   "dependencies": {},
   "devDependencies": {
     "bower": "^1.8.12",
-    "del": "^7.1.0",
+    "del": "^8.0.0",
     "gulp": "^5.0.0",
     "gulp-cli": "^3.0.0",
     "gulp-concat": "^2.6.1",
