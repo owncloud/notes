@@ -158,6 +158,22 @@
     white-space: pre;
 }
 
+/* display code as monospace */
+.mdedit > div .token.p .token.code {
+    font-family: "Courier new", monospace;
+}
+.mdedit > div > .token.code-block.fenced {
+    line-height: 1.4em;
+    display: block;
+    font-family: "Courier new", monospace;
+}
+.mdedit > div > .token.code-block.indented {
+    position: relative;
+    left: -38px;
+    line-height: 1.4em;
+    display: block;
+    font-family: "Courier new", monospace;
+}
 
 /* larger screen sizes */
 @media only screen and (min-width: 769px) {
