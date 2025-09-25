@@ -43,4 +43,37 @@ app.controller('NotesController', function($routeParams, $scope, $location,
         });
     };
 
+	var searchbox = $('#searchnotes');
+
+    initSearch();
+
+    function initSearch() {
+		$scope.queryString = searchbox.val().trim();
+
+		/** Conduct the search when there is a pause in typing in text */
+		var checkQueryChange = _.debounce(function() {
+			if ($scope.queryString != searchbox.val().trim()) {
+				onEnterSearchString();
+			}
+		}, 250);
+		searchbox.bind('propertychange change keyup input paste', checkQueryChange);
+
+		/** Run search when enter pressed within the searchbox */
+		searchbox.bind('keydown', function (event) {
+			if (event.which === 13) {
+				onEnterSearchString();
+			}
+		});
+	}
+
+    function onEnterSearchString() {
+        setQueryString(searchbox.val().trim());
+	}
+
+    function setQueryString(query) {
+        $scope.$apply(() => {
+            $scope.queryString = query;
+        });
+    }
+
 });
