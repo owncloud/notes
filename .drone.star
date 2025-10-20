@@ -17,7 +17,6 @@ OSIXIA_OPEN_LDAP = "osixia/openldap"
 PLUGINS_GITHUB_RELEASE = "plugins/github-release"
 PLUGINS_S3 = "plugins/s3:1.4.0"
 PLUGINS_S3_CACHE = "plugins/s3-cache:1"
-PLUGINS_SLACK = "plugins/slack:1"
 SELENIUM_STANDALONE_CHROME_DEBUG = "selenium/standalone-chrome-debug:3.141.59-oxygen"
 SELENIUM_STANDALONE_FIREFOX_DEBUG = "selenium/standalone-firefox-debug:3.8.1"
 SONARSOURCE_SONAR_SCANNER_CLI = "sonarsource/sonar-scanner-cli:5"
@@ -51,10 +50,6 @@ dir = {
 }
 
 config = {
-    "rocketchat": {
-        "channel": "builds",
-        "from_secret": "rocketchat_talk_webhook",
-    },
     "branches": [
         "master",
     ],
@@ -104,10 +99,9 @@ def main(ctx):
         afterCoverageTests = afterCoveragePipelines(ctx)
         dependsOn(coverageTests, afterCoverageTests)
 
-    after = afterPipelines(ctx)
-    dependsOn(afterCoverageTests + nonCoverageTests + stages, after)
+    dependsOn(afterCoverageTests + nonCoverageTests + stages)
 
-    return before + coverageTests + afterCoverageTests + nonCoverageTests + stages + after
+    return before + coverageTests + afterCoverageTests + nonCoverageTests + stages
 
 def beforePipelines(ctx):
     return validateDailyTarballBuild() + codestyle(ctx) + jscodestyle(ctx) + phpstan(ctx) + phan(ctx) + phplint(ctx) + checkStarlark()
@@ -143,11 +137,6 @@ def stagePipelines(ctx):
 def afterCoveragePipelines(ctx):
     return [
         sonarAnalysis(ctx),
-    ]
-
-def afterPipelines(ctx):
-    return [
-        notify(),
     ]
 
 def codestyle(ctx):
@@ -1260,43 +1249,6 @@ def sonarAnalysis(ctx, phpVersion = DEFAULT_PHP_VERSION):
                 "refs/heads/master",
                 "refs/pull/**",
                 "refs/tags/**",
-            ],
-        },
-    }
-
-    for branch in config["branches"]:
-        result["trigger"]["ref"].append("refs/heads/%s" % branch)
-
-    return result
-
-def notify():
-    result = {
-        "kind": "pipeline",
-        "type": "docker",
-        "name": "chat-notifications",
-        "clone": {
-            "disable": True,
-        },
-        "steps": [
-            {
-                "name": "notify-rocketchat",
-                "image": PLUGINS_SLACK,
-                "settings": {
-                    "webhook": {
-                        "from_secret": config["rocketchat"]["from_secret"],
-                    },
-                    "channel": config["rocketchat"]["channel"],
-                },
-            },
-        ],
-        "depends_on": [],
-        "trigger": {
-            "ref": [
-                "refs/tags/**",
-            ],
-            "status": [
-                "success",
-                "failure",
             ],
         },
     }
