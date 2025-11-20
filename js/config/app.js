@@ -17,7 +17,7 @@ config(function($provide, $routeProvider, RestangularProvider, $httpProvider,
     // you have to use $provide inside the config method to provide a globally
     // shared and injectable object
     $provide.value('Constants', {
-        saveInterval: 5*1000  // miliseconds
+        saveInterval: 5*1000  // milliseconds
     });
 
     // define your routes that that load templates into the ng-view
