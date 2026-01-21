@@ -1,0 +1,19 @@
+{
+	"name": "Notes",
+	"start_url": "../../../apps/notes/#/",
+	"icons": [
+		{
+			"src": "./favicon-touch.png",
+			"type": "image/png",
+			"sizes": "128x128"
+		},
+		{
+			"src": "./favicon-touch.svg",
+			"type": "image/svg+xml",
+			"sizes": "any"
+		}
+	],
+	"display": "standalone",
+	"theme_color": "#041e42",
+	"background_color": "#ffffff"
+}

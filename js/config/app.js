@@ -38,9 +38,16 @@ config(function($provide, $routeProvider, RestangularProvider, $httpProvider,
                 Restangular.one('notes', noteId).get().then(function (note) {
                     is.loading = false;
                     deferred.resolve(note);
-                }, function () {
+                }, function (response) {
                     is.loading = false;
-                    deferred.reject();
+
+                    // Token expired
+                    if (response.status == 412) {
+                        OC.reload();
+                    }
+                    else {
+                        deferred.reject();
+                    }
                 });
 
                 return deferred.promise;
