@@ -68,3 +68,6 @@ nbproject
 
 # Generated from .drone.star
 .drone.yml
+js/package-lock.json
+js/public/app.min.js
+js/public/app.min.js.map
