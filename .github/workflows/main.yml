@@ -1,0 +1,65 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  APP_NAME: notes
+  PHP_VERSIONS: '["7.4"]'
+
+jobs:
+  get-vars:
+    runs-on: ubuntu-latest
+    outputs:
+      app-name: ${{ env.APP_NAME }}
+      php-versions: ${{ env.PHP_VERSIONS }}
+    steps:
+      - name: Set variables
+        run: |
+          echo "App name $APP_NAME"
+          echo "PHP versions string: $PHP_VERSIONS"
+
+  semantic-git-messages:
+    name: Commits
+    uses: owncloud/reusable-workflows/.github/workflows/semantic-git-message.yml@main
+
+  php-code-style:
+    name: PHP Code Style
+    needs:
+      - get-vars
+    uses: owncloud/reusable-workflows/.github/workflows/php-codestyle.yml@main
+    with:
+      app-name: ${{ needs.get-vars.outputs.app-name }}
+      php-versions: ${{ needs.get-vars.outputs.php-versions }}
+
+  php-unit:
+    name: PHP Unit
+    needs:
+      - get-vars
+    uses: owncloud/reusable-workflows/.github/workflows/php-unit.yml@main
+    with:
+      app-name: ${{ needs.get-vars.outputs.app-name }}
+      php-versions: ${{ needs.get-vars.outputs.php-versions }}
+
+  js-unit:
+    name: JS Unit
+    needs:
+      - get-vars
+    uses: owncloud/reusable-workflows/.github/workflows/js-unit.yml@main
+    with:
+      app-name: ${{ needs.get-vars.outputs.app-name }}
+      php-version: '7.4'
