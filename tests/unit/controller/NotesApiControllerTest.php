@@ -18,6 +18,9 @@ use OCP\AppFramework\Http;
 
 use OCA\Notes\Service\NoteDoesNotExistException;
 use OCA\Notes\Db\Note;
+use OCP\IRequest;
+use OCA\Notes\Service\NotesService;
+use OCP\IUser;
 
 class NotesApiControllerTest extends TestCase {
 	private $request;
@@ -27,15 +30,15 @@ class NotesApiControllerTest extends TestCase {
 	private $controller;
 
 	public function setUp(): void {
-		$this->request = $this->getMockBuilder('OCP\IRequest')
+		$this->request = $this->getMockBuilder(IRequest::class)
 			->disableOriginalConstructor()
 			->getMock();
-		$this->service = $this->getMockBuilder('OCA\Notes\Service\NotesService')
+		$this->service = $this->getMockBuilder(NotesService::class)
 			->disableOriginalConstructor()
 			->getMock();
 		$this->userId = 'john';
 		$this->appName = 'notes';
-		$user = $this->getMockBuilder('OCP\IUser')
+		$user = $this->getMockBuilder(IUser::class)
 			->disableOriginalConstructor()
 			->getMock();
 		$user->method('getUID')->willReturn($this->userId);
@@ -60,12 +63,12 @@ class NotesApiControllerTest extends TestCase {
 		$this->service->expects($this->once())
 			->method('getAll')
 			->with($this->equalTo($this->userId))
-			->will($this->returnValue($expected));
+			->willReturn($expected);
 
 		$response = $this->controller->index();
 
 		$this->assertEquals($expected, $response->getData());
-		$this->assertTrue($response instanceof DataResponse);
+		$this->assertInstanceOf(DataResponse::class, $response);
 	}
 
 	public function testGetAllHide() {
@@ -88,23 +91,23 @@ class NotesApiControllerTest extends TestCase {
 		$this->service->expects($this->once())
 			->method('getAll')
 			->with($this->equalTo($this->userId))
-			->will($this->returnValue($notes));
+			->willReturn($notes);
 
 		$response = $this->controller->index('title,content');
 
 		$this->assertEquals(\json_encode([
 			[
+				'id' => 3,
 				'modified' => 123,
 				'favorite' => false,
-				'id' => 3,
 			],
 			[
+				'id' => 4,
 				'modified' => 111,
 				'favorite' => false,
-				'id' => 4,
 			]
 		]), \json_encode($response->getData()));
-		$this->assertTrue($response instanceof DataResponse);
+		$this->assertInstanceOf(DataResponse::class, $response);
 	}
 
 	/**
@@ -120,12 +123,12 @@ class NotesApiControllerTest extends TestCase {
 				$this->equalTo($id),
 				$this->equalTo($this->userId)
 			)
-			->will($this->returnValue($expected));
+			->willReturn($expected);
 
 		$response = $this->controller->get($id);
 
 		$this->assertEquals($expected, $response->getData());
-		$this->assertTrue($response instanceof DataResponse);
+		$this->assertInstanceOf(DataResponse::class, $response);
 	}
 
 	public function testGetHide() {
@@ -142,16 +145,16 @@ class NotesApiControllerTest extends TestCase {
 				$this->equalTo(3),
 				$this->equalTo($this->userId)
 			)
-			->will($this->returnValue($note));
+			->willReturn($note);
 
 		$response = $this->controller->get(3, 'title,content');
 
 		$this->assertEquals(\json_encode([
+			'id' => 3,
 			'modified' => 123,
 			'favorite' => false,
-			'id' => 3,
 		]), \json_encode($response->getData()));
-		$this->assertTrue($response instanceof DataResponse);
+		$this->assertInstanceOf(DataResponse::class, $response);
 	}
 
 	public function testGetDoesNotExist() {
@@ -169,7 +172,7 @@ class NotesApiControllerTest extends TestCase {
 		$response = $this->controller->get($id);
 
 		$this->assertEquals(Http::STATUS_NOT_FOUND, $response->getStatus());
-		$this->assertTrue($response instanceof DataResponse);
+		$this->assertInstanceOf(DataResponse::class, $response);
 	}
 
 	/**
@@ -183,7 +186,7 @@ class NotesApiControllerTest extends TestCase {
 		$this->service->expects($this->once())
 			->method('create')
 			->with($this->equalTo($this->userId))
-			->will($this->returnValue($note));
+			->willReturn($note);
 
 		$this->service->expects($this->once())
 			->method('update')
@@ -192,12 +195,12 @@ class NotesApiControllerTest extends TestCase {
 				$this->equalTo($content),
 				$this->equalTo($this->userId)
 			)
-			->will($this->returnValue($note));
+			->willReturn($note);
 
 		$response = $this->controller->create($content);
 
 		$this->assertEquals($note, $response->getData());
-		$this->assertTrue($response instanceof DataResponse);
+		$this->assertInstanceOf(DataResponse::class, $response);
 	}
 
 	/**
@@ -215,12 +218,12 @@ class NotesApiControllerTest extends TestCase {
 				$this->equalTo($content),
 				$this->equalTo($this->userId)
 			)
-			->will($this->returnValue($expected));
+			->willReturn($expected);
 
 		$response = $this->controller->update($id, $content);
 
 		$this->assertEquals($expected, $response->getData());
-		$this->assertTrue($response instanceof DataResponse);
+		$this->assertInstanceOf(DataResponse::class, $response);
 	}
 
 	public function testUpdateDoesNotExist() {
@@ -239,7 +242,7 @@ class NotesApiControllerTest extends TestCase {
 		$response = $this->controller->update($id, $content);
 
 		$this->assertEquals(Http::STATUS_NOT_FOUND, $response->getStatus());
-		$this->assertTrue($response instanceof DataResponse);
+		$this->assertInstanceOf(DataResponse::class, $response);
 	}
 
 	/**
@@ -257,7 +260,7 @@ class NotesApiControllerTest extends TestCase {
 
 		$response = $this->controller->destroy($id);
 
-		$this->assertTrue($response instanceof DataResponse);
+		$this->assertInstanceOf(DataResponse::class, $response);
 	}
 
 	public function testDeleteDoesNotExist() {
@@ -274,6 +277,6 @@ class NotesApiControllerTest extends TestCase {
 		$response = $this->controller->destroy($id);
 
 		$this->assertEquals(Http::STATUS_NOT_FOUND, $response->getStatus());
-		$this->assertTrue($response instanceof DataResponse);
+		$this->assertInstanceOf(DataResponse::class, $response);
 	}
 }
