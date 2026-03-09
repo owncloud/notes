@@ -19,7 +19,7 @@ concurrency:
 
 env:
   APP_NAME: notes
-  PHP_VERSIONS: '["7.4"]'
+  PHP_VERSIONS: '["8.3"]'
 
 jobs:
   get-vars:
@@ -63,4 +63,4 @@ jobs:
     uses: owncloud/reusable-workflows/.github/workflows/js-unit.yml@main
     with:
       app-name: ${{ needs.get-vars.outputs.app-name }}
-      php-version: '7.4'
+      php-version: '8.3'
