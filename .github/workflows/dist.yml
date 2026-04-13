@@ -9,7 +9,8 @@ on:
       - synchronize
       - reopened
 
-permissions: {}
+permissions:
+  contents: read
 
 jobs:
   build:
