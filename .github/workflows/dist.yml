@@ -1,0 +1,17 @@
+name: Build dist
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    uses: owncloud/reusable-workflows/.github/workflows/build.yml@main
