@@ -4,6 +4,13 @@
 
 
 
+## [2.1.0] - 2026-07-06
+
+### Changed
+ * [#526](https://github.com/owncloud/notes/pull/526) - Compatible with ownCloud 11
+ * [#528](https://github.com/owncloud/notes/pull/528) - Require PHP 8.3
+ * Development dependencies updated
+
 ## [2.0.7] - 2024-09-23
 
 ### Fixed
