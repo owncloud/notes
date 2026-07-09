@@ -85,8 +85,14 @@ module.exports = function(config) {
             }
         },
 
-        // If browser does not capture in given timeout [ms], kill it
-        captureTimeout: 5000,
+        // If browser does not capture in given timeout [ms], kill it.
+        // Cold CI runners need ample time to download/spawn headless Chrome;
+        // the previous 5s value caused frequent flaky launch timeouts.
+        captureTimeout: 60000,
+
+        // Retry capturing the browser a few times before giving up, to ride
+        // out transient launch hiccups on CI.
+        browserDisconnectTolerance: 2,
 
         // Continuous Integration mode
         // if true, it capture browsers, run tests and exit
