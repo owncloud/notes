@@ -3,6 +3,11 @@
 ## [Unreleased] 
 
 
+## [2.1.2] - 2026-07-22
+
+### Changed
+- Maintenance release re-signed with the ownCloud G2 code-signing certificate for the ownCloud 11.0.0 release.
+
 ## [2.1.1] - 2026-07-22
 
 ### Changed
@@ -84,7 +89,8 @@ owncloud-notes (0.2)
 * Remember last note
 * Fixed various bugs
 
-[Unreleased]: https://github.com/owncloud/notes/compare/v2.1.1..master
+[Unreleased]: https://github.com/owncloud/notes/compare/v2.1.2..master
+[2.1.2]: https://github.com/owncloud/notes/compare/v2.1.1..v2.1.2
 [2.1.1]: https://github.com/owncloud/notes/compare/v2.1.0..v2.1.1
 [2.1.0]: https://github.com/owncloud/notes/compare/v2.0.7..v2.1.0
 [2.0.7]: https://github.com/owncloud/notes/compare/v2.0.6...v2.0.7
