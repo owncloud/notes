@@ -6,7 +6,7 @@
 ## [2.1.2] - 2026-07-22
 
 ### Changed
-- Maintenance release re-signed with the ownCloud G2 code-signing certificate for the ownCloud 11.0.0 release.
+- Re-release to correct a build error in the previous package for the ownCloud 11.0.0 release.
 
 ## [2.1.1] - 2026-07-22
 
