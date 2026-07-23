@@ -167,3 +167,11 @@
         padding-left: 90px;
     }
 }
+
+
+/* empty state shown when no note is selected */
+#app-content .emptycontent .icon-notes {
+    background: url('../img/notes.svg') no-repeat center;
+    background-size: 64px;
+    opacity: .4;
+}

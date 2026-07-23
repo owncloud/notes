@@ -46,6 +46,8 @@ config(function($provide, $routeProvider, RestangularProvider, $httpProvider,
                 return deferred.promise;
             }
         }
+    }).when('/', {
+        templateUrl: 'content.html'
     }).otherwise({
         redirectTo: '/'
     });

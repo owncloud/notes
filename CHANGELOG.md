@@ -2,6 +2,10 @@
 
 ## [Unreleased] 
 
+### Added
+- Show an empty-state placeholder in the content pane when no note is selected,
+  instead of a blank white area.
+
 ### Security
 - Upgrade vendored JS libraries to patched versions, resolving Trivy findings:
   - `underscore` 1.7.0 → 1.13.8 (CVE-2021-23358 critical, CVE-2026-27601 high)
