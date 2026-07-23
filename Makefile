@@ -170,6 +170,17 @@ else
 endif
 	tar -czf $(appstore_package_name).tar.gz -C $(appstore_build_directory)/../ $(app_name)
 
+# Installs dependencies and builds the JS so the app can run in CI.
+# NB: we call gulp directly instead of `npm run build` on purpose: the build
+# script has a `prebuild` hook that runs `bower install && bower update`, which
+# would re-fetch and re-pollute the committed, pinned js/vendor. js/vendor is
+# already committed, so we only need node deps + the gulp build to produce
+# js/public/app.min.js.
+.PHONY: ci
+ci: vendor
+	cd js && $(npm) install
+	cd js && node node_modules/gulp-cli/bin/gulp.js build
+
 ##---------------------
 ## Tests
 ##---------------------
