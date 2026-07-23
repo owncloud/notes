@@ -11,15 +11,23 @@ pre[data-line] {
 	margin-top: 1em; /* Same as .prism’s padding-top */
 
 	background: hsla(24, 20%, 50%,.08);
-	background: -moz-linear-gradient(left, hsla(24, 20%, 50%,.1) 70%, hsla(24, 20%, 50%,0));
-	background: -webkit-linear-gradient(left, hsla(24, 20%, 50%,.1) 70%, hsla(24, 20%, 50%,0));
-	background: -o-linear-gradient(left, hsla(24, 20%, 50%,.1) 70%, hsla(24, 20%, 50%,0));
-	background: linear-gradient(left, hsla(24, 20%, 50%,.1) 70%, hsla(24, 20%, 50%,0));
-	
+	background: linear-gradient(to right, hsla(24, 20%, 50%,.1) 70%, hsla(24, 20%, 50%,0));
+
 	pointer-events: none;
-	
+
 	line-height: inherit;
 	white-space: pre;
+}
+
+@media print {
+	.line-highlight {
+		/*
+		 * This will prevent browsers from replacing the background color with white.
+		 * It's necessary because the element is layered on top of the displayed code.
+		 */
+		-webkit-print-color-adjust: exact;
+		color-adjust: exact;
+	}
 }
 
 	.line-highlight:before,
@@ -39,9 +47,24 @@ pre[data-line] {
 		text-shadow: none;
 		box-shadow: 0 1px white;
 	}
-	
+
 	.line-highlight[data-end]:after {
 		content: attr(data-end);
 		top: auto;
 		bottom: .4em;
 	}
+
+.line-numbers .line-highlight:before,
+.line-numbers .line-highlight:after {
+	content: none;
+}
+
+pre[id].linkable-line-numbers span.line-numbers-rows {
+	pointer-events: all;
+}
+pre[id].linkable-line-numbers span.line-numbers-rows > span:before {
+	cursor: pointer;
+}
+pre[id].linkable-line-numbers span.line-numbers-rows > span:hover:before {
+	background-color: rgba(128, 128, 128, .2);
+}

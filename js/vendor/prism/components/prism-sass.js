@@ -1,7 +1,11 @@
-(function(Prism) {
+(function (Prism) {
 	Prism.languages.sass = Prism.languages.extend('css', {
 		// Sass comments don't need to be closed, only indented
-		'comment': /^([ \t]*)\/[\/*].*(?:(?:\r?\n|\r)\1[ \t]+.+)*/m
+		'comment': {
+			pattern: /^([ \t]*)\/[\/*].*(?:(?:\r?\n|\r)\1[ \t].+)*/m,
+			lookbehind: true,
+			greedy: true
+		}
 	});
 
 	Prism.languages.insertBefore('sass', 'atrule', {
@@ -9,22 +13,29 @@
 		'atrule-line': {
 			// Includes support for = and + shortcuts
 			pattern: /^(?:[ \t]*)[@+=].+/m,
+			greedy: true,
 			inside: {
-				'atrule': /^(?:[ \t]*)(?:@[\w-]+|[+=])/m
+				'atrule': /(?:@[\w-]+|[+=])/
 			}
 		}
 	});
 	delete Prism.languages.sass.atrule;
 
 
-	var variable = /((\$[-_\w]+)|(#\{\$[-_\w]+\}))/i;
-	var operator = /[-+]{1,2}|==?|!=|\|?\||\?|\*|\/|%/;
+	var variable = /\$[-\w]+|#\{\$[-\w]+\}/;
+	var operator = [
+		/[+*\/%]|[=!]=|<=?|>=?|\b(?:and|not|or)\b/,
+		{
+			pattern: /(\s)-(?=\s)/,
+			lookbehind: true
+		}
+	];
 
 	Prism.languages.insertBefore('sass', 'property', {
 		// We want to consume the whole line
 		'variable-line': {
-			pattern: /(^|(?:\r?\n|\r))[ \t]*\$.+/,
-			lookbehind: true,
+			pattern: /^[ \t]*\$.+/m,
+			greedy: true,
 			inside: {
 				'punctuation': /:/,
 				'variable': variable,
@@ -33,8 +44,8 @@
 		},
 		// We want to consume the whole line
 		'property-line': {
-			pattern: /(^|(?:\r?\n|\r))[ \t]*(?:[^:\s]+[ ]*:.*|:[^:\s]+.*)/i,
-			lookbehind: true,
+			pattern: /^[ \t]*(?:[^:\s]+ *:.*|:[^:\s].*)/m,
+			greedy: true,
 			inside: {
 				'property': [
 					/[^:\s]+(?=\s*:)/,
@@ -55,11 +66,11 @@
 
 	// Now that whole lines for other patterns are consumed,
 	// what's left should be selectors
-	delete Prism.languages.sass.selector;
 	Prism.languages.insertBefore('sass', 'punctuation', {
 		'selector': {
-			pattern: /([ \t]*).+(?:,(?:\r?\n|\r)\1[ \t]+.+)*/,
-			lookbehind: true
+			pattern: /^([ \t]*)\S(?:,[^,\r\n]+|[^,\r\n]*)(?:,[^,\r\n]+)*(?:,(?:\r?\n|\r)\1[ \t]+\S(?:,[^,\r\n]+|[^,\r\n]*)(?:,[^,\r\n]+)*)*/m,
+			lookbehind: true,
+			greedy: true
 		}
 	});
 

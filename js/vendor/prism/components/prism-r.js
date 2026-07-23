@@ -1,19 +1,22 @@
 Prism.languages.r = {
-	'comment': /#.+/,
-	'string': /(['"])(?:\\?.)*?\1/,
+	'comment': /#.*/,
+	'string': {
+		pattern: /(['"])(?:\\.|(?!\1)[^\\\r\n])*\1/,
+		greedy: true
+	},
 	'percent-operator': {
 		// Includes user-defined operators
 		// and %%, %*%, %/%, %in%, %o%, %x%
-		pattern: /%[^%]*?%/,
+		pattern: /%[^%\s]*%/,
 		alias: 'operator'
 	},
-	'boolean': /\b(?:TRUE|FALSE)\b/,
+	'boolean': /\b(?:FALSE|TRUE)\b/,
 	'ellipsis': /\.\.(?:\.|\d+)/,
 	'number': [
-		/\b(?:NaN|Inf)\b/,
-		/\b(?:0x[\dA-Fa-f]+(?:\.\d*)?|\d*\.?\d+)(?:[EePp][+-]??\d+)?[iL]?\b/
+		/\b(?:Inf|NaN)\b/,
+		/(?:\b0x[\dA-Fa-f]+(?:\.\d*)?|\b\d+(?:\.\d*)?|\B\.\d+)(?:[EePp][+-]?\d+)?[iL]?/
 	],
-	'keyword': /\b(?:if|else|repeat|while|function|for|in|next|break|NULL|NA|NA_integer_|NA_real_|NA_complex_|NA_character_)\b/,
-	'operator': /->>?|<?<-|[<>!=]=?|::?|&&?|\|\|?|[+\-*\/^$@~]/,
+	'keyword': /\b(?:NA|NA_character_|NA_complex_|NA_integer_|NA_real_|NULL|break|else|for|function|if|in|next|repeat|while)\b/,
+	'operator': /->?>?|<(?:=|<?-)?|[>=!]=?|::?|&&?|\|\|?|[+*\/^$@~]/,
 	'punctuation': /[(){}\[\],;]/
 };

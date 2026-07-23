@@ -14,26 +14,22 @@
   },
   "ignore": [
     "**/.*",
-    "img",
-    "templates",
+    "assets",
+    "docs",
+    "tests",
+    "benchmark",
     "CNAME",
     "*.html",
-    "style.css",
-    "favicon.png",
-    "logo.svg",
-    "download.js",
-    "prefixfree.min.js",
-    "utopia.js",
-    "code.js"
+    "*.svg"
   ],
-  "version": "1.0.1",
-  "_release": "1.0.1",
+  "version": "1.30.0",
+  "_release": "1.30.0",
   "_resolution": {
     "type": "version",
-    "tag": "v1.0.1",
-    "commit": "ed9d7e354c20a95755af7641e3a2a0c77a713791"
+    "tag": "v1.30.0",
+    "commit": "5d7a861f82f25cb3faf765a3122b0a1b08bc1ada"
   },
   "_source": "https://github.com/LeaVerou/prism.git",
-  "_target": "~1.0.1",
+  "_target": "1.30.*",
   "_originalSource": "prism"
 }

@@ -2,6 +2,12 @@
 
 ## [Unreleased] 
 
+### Security
+- Upgrade vendored JS libraries to patched versions, resolving Trivy findings:
+  - `underscore` 1.7.0 → 1.13.8 (CVE-2021-23358 critical, CVE-2026-27601 high)
+  - `angular` 1.4.14 → 1.8.3 (CVE-2019-10768 high)
+  - `prism` 1.0.1 → 1.30.0 (CVE-2021-23341, CVE-2021-32723 high)
+
 
 ## [2.1.2] - 2026-07-22
 
