@@ -2,6 +2,16 @@
 
 ## [Unreleased] 
 
+### Added
+- Show an empty-state placeholder in the content pane when no note is selected,
+  instead of a blank white area.
+
+### Fixed
+- Restore the empty AngularJS hash prefix so clicking a note in the sidebar
+  opens it again. The AngularJS 1.8 upgrade changed the default hash prefix to
+  `!`, which broke the `#/notes/{id}` sidebar links so only the first note (or
+  the last-viewed note) could be opened.
+
 ### Security
 - Upgrade vendored JS libraries to patched versions, resolving Trivy findings:
   - `underscore` 1.7.0 → 1.13.8 (CVE-2021-23358 critical, CVE-2026-27601 high)

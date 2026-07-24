@@ -7,9 +7,14 @@
 
 /* jshint unused: false */
 var app = angular.module('Notes', ['restangular', 'ngRoute']).
-config(function($provide, $routeProvider, RestangularProvider, $httpProvider,
-                $windowProvider) {
+config(function($provide, $routeProvider, $locationProvider,
+                RestangularProvider, $httpProvider, $windowProvider) {
     'use strict';
+
+    // AngularJS 1.6+ defaults the hash prefix to '!', but the sidebar note
+    // links are authored as href="#/notes/{{id}}" (no '!'). Keep the empty
+    // prefix so those links continue to match the /notes/:noteId route.
+    $locationProvider.hashPrefix('');
 
     // Always send the CSRF token by default
     $httpProvider.defaults.headers.common.requesttoken = requestToken;
@@ -46,6 +51,8 @@ config(function($provide, $routeProvider, RestangularProvider, $httpProvider,
                 return deferred.promise;
             }
         }
+    }).when('/', {
+        templateUrl: 'content.html'
     }).otherwise({
         redirectTo: '/'
     });

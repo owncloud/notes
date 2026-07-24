@@ -41,9 +41,14 @@
 #        "build": "node node_modules/gulp-cli/bin/gulp.js"
 #    },
 
+SHELL := /bin/bash
+
 COMPOSER_BIN := $(shell command -v composer 2> /dev/null)
 
 app_name=$(notdir $(CURDIR))
+
+# dependency folders needed to run the acceptance tests
+acceptance_test_deps=vendor-bin/behat/vendor
 build_tools_directory=$(CURDIR)/build/tools
 source_build_directory=$(CURDIR)/build/source/notes
 source_artifact_directory=$(CURDIR)/build/artifacts/source
@@ -86,6 +91,7 @@ PHPUNITDBG=phpdbg -qrr -d memory_limit=4096M -d zend.enable_gc=0 "$(PWD)/../../l
 PHP_CS_FIXER=php -d zend.enable_gc=0 vendor-bin/owncloud-codestyle/vendor/bin/php-cs-fixer
 PHAN=php -d zend.enable_gc=0 vendor-bin/phan/vendor/bin/phan
 PHPSTAN=php -d zend.enable_gc=0 vendor-bin/phpstan/vendor/bin/phpstan
+BEHAT_BIN=vendor-bin/behat/vendor/bin/behat
 
 all: build
 
@@ -170,6 +176,17 @@ else
 endif
 	tar -czf $(appstore_package_name).tar.gz -C $(appstore_build_directory)/../ $(app_name)
 
+# Installs dependencies and builds the JS so the app can run in CI.
+# NB: we call gulp directly instead of `npm run build` on purpose: the build
+# script has a `prebuild` hook that runs `bower install && bower update`, which
+# would re-fetch and re-pollute the committed, pinned js/vendor. js/vendor is
+# already committed, so we only need node deps + the gulp build to produce
+# js/public/app.min.js.
+.PHONY: ci
+ci: vendor
+	cd js && $(npm) install
+	cd js && node node_modules/gulp-cli/bin/gulp.js build
+
 ##---------------------
 ## Tests
 ##---------------------
@@ -219,6 +236,11 @@ test-js: ## Test js files
 test-js: npm
 	cd js && npm run test
 
+.PHONY: test-acceptance-webui
+test-acceptance-webui: ## Run webUI acceptance tests
+test-acceptance-webui: $(acceptance_test_deps)
+	BEHAT_BIN=$(BEHAT_BIN) ../../tests/acceptance/run.sh --remote --type webUI
+
 #
 # Dependency management
 #--------------------------------------
@@ -249,3 +271,9 @@ vendor-bin/phpstan/vendor: vendor/bamarni/composer-bin-plugin vendor-bin/phpstan
 
 vendor-bin/phpstan/composer.lock: vendor-bin/phpstan/composer.json
 	@echo phpstan composer.lock is not up to date.
+
+vendor-bin/behat/vendor: vendor/bamarni/composer-bin-plugin vendor-bin/behat/composer.lock
+	composer bin behat install --no-progress
+
+vendor-bin/behat/composer.lock: vendor-bin/behat/composer.json
+	@echo behat composer.lock is not up to date.

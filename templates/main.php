@@ -33,6 +33,10 @@ style('notes', [
         <?php print_unescaped($this->inc('note')); ?>
     </script>
 
+    <script type="text/ng-template" id="content.html">
+        <?php print_unescaped($this->inc('content')); ?>
+    </script>
+
     <div id="app-navigation" ng-controller="NotesController">
         <ul>
             <!-- new note button -->
