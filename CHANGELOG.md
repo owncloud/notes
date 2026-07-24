@@ -1,6 +1,8 @@
 # Changelog
 
-## [Unreleased] 
+## [Unreleased]
+
+## [2.2.0] - 2026-07-27
 
 ### Added
 - Show an empty-state placeholder in the content pane when no note is selected,
@@ -110,7 +112,8 @@ owncloud-notes (0.2)
 * Remember last note
 * Fixed various bugs
 
-[Unreleased]: https://github.com/owncloud/notes/compare/v2.1.2..master
+[Unreleased]: https://github.com/owncloud/notes/compare/v2.2.0..master
+[2.2.0]: https://github.com/owncloud/notes/compare/v2.1.2..v2.2.0
 [2.1.2]: https://github.com/owncloud/notes/compare/v2.1.1..v2.1.2
 [2.1.1]: https://github.com/owncloud/notes/compare/v2.1.0..v2.1.1
 [2.1.0]: https://github.com/owncloud/notes/compare/v2.0.7..v2.1.0
