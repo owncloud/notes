@@ -8,35 +8,29 @@
 
 Prism.languages.less = Prism.languages.extend('css', {
 	'comment': [
-		/\/\*[\w\W]*?\*\//,
+		/\/\*[\s\S]*?\*\//,
 		{
 			pattern: /(^|[^\\])\/\/.*/,
 			lookbehind: true
 		}
 	],
 	'atrule': {
-		pattern: /@[\w-]+?(?:\([^{}]+\)|[^(){};])*?(?=\s*\{)/i,
+		pattern: /@[\w-](?:\((?:[^(){}]|\([^(){}]*\))*\)|[^(){};\s]|\s+(?!\s))*?(?=\s*\{)/,
 		inside: {
 			'punctuation': /[:()]/
 		}
 	},
 	// selectors and mixins are considered the same
 	'selector': {
-		pattern: /(?:@\{[\w-]+\}|[^{};\s@])(?:@\{[\w-]+\}|\([^{}]*\)|[^{};@])*?(?=\s*\{)/,
+		pattern: /(?:@\{[\w-]+\}|[^{};\s@])(?:@\{[\w-]+\}|\((?:[^(){}]|\([^(){}]*\))*\)|[^(){};@\s]|\s+(?!\s))*?(?=\s*\{)/,
 		inside: {
 			// mixin parameters
 			'variable': /@+[\w-]+/
 		}
 	},
 
-	'property': /(\b|\B)(?:@\{[\w-]+\}|[\w-])+(?:\+_?)?(?=\s*:)/i,
-	'punctuation': /[{}();:,]/,
+	'property': /(?:@\{[\w-]+\}|[\w-])+(?:\+_?)?(?=\s*:)/,
 	'operator': /[+\-*\/]/
-});
-
-// Invert function and punctuation positions
-Prism.languages.insertBefore('less', 'punctuation', {
-	'function': Prism.languages.less.function
 });
 
 Prism.languages.insertBefore('less', 'property', {
@@ -45,7 +39,7 @@ Prism.languages.insertBefore('less', 'property', {
 		{
 			pattern: /@[\w-]+\s*:/,
 			inside: {
-				"punctuation": /:/
+				'punctuation': /:/
 			}
 		},
 
@@ -53,7 +47,7 @@ Prism.languages.insertBefore('less', 'property', {
 		/@@?[\w-]+/
 	],
 	'mixin-usage': {
-		pattern: /([{;]\s*)[.#](?!\d)[\w-]+.*?(?=[(;])/,
+		pattern: /([{;]\s*)[.#](?!\d)[\w-].*?(?=[(;])/,
 		lookbehind: true,
 		alias: 'function'
 	}

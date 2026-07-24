@@ -7,11 +7,12 @@
 code[class*="language-"],
 pre[class*="language-"] {
 	font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
-	direction: ltr;
+	font-size: 1em;
 	text-align: left;
 	white-space: pre;
 	word-spacing: normal;
 	word-break: normal;
+	word-wrap: normal;
 	line-height: 1.5;
 
 	-moz-tab-size: 4;
@@ -44,6 +45,7 @@ code[class*="language-"] {
 	padding: .2em;
 	border-radius: .3em;
 	box-shadow: none;
+	white-space: normal;
 }
 
 .token.comment,
@@ -57,7 +59,7 @@ code[class*="language-"] {
 	color: #999;
 }
 
-.namespace {
+.token.namespace {
 	opacity: .7;
 }
 
@@ -82,7 +84,7 @@ code[class*="language-"] {
 .token.entity,
 .token.url,
 .language-css .token.string,
-.toke.variable,
+.token.variable,
 .token.inserted {
 	color: yellowgreen;
 }
@@ -112,4 +114,17 @@ code[class*="language-"] {
 
 .token.deleted {
 	color: red;
+}
+
+/* Plugin styles: Diff Highlight */
+pre.diff-highlight.diff-highlight > code .token.deleted:not(.prefix),
+pre > code.diff-highlight.diff-highlight .token.deleted:not(.prefix) {
+	background-color: rgba(255, 0, 0, .3);
+	display: inline;
+}
+
+pre.diff-highlight.diff-highlight > code .token.inserted:not(.prefix),
+pre > code.diff-highlight.diff-highlight .token.inserted:not(.prefix) {
+	background-color: rgba(0, 255, 128, .3);
+	display: inline;
 }

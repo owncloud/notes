@@ -8,12 +8,18 @@ Prism.languages.git = {
 	 * # and have 1 and 2 different commits each, respectively.
 	 * nothing to commit (working directory clean)
 	 */
-	'comment': /^#.*$/m,
+	'comment': /^#.*/m,
+
+	/*
+	 * Regexp to match the changed lines in a git diff output. Check the example below.
+	 */
+	'deleted': /^[-–].*/m,
+	'inserted': /^\+.*/m,
 
 	/*
 	 * a string (double and simple quote)
 	 */
-	'string': /("|')(\\?.)*?\1/m,
+	'string': /("|')(?:\\.|(?!\1)[^\\\r\n])*\1/,
 
 	/*
 	 * a git command. It starts with a random prompt finishing by a $, then "git" then some other parameters
@@ -29,7 +35,7 @@ Prism.languages.git = {
 			 * $ git diff --cached
 			 * $ git log -p
 			 */
-			'parameter': /\s(--|-)\w+/m
+			'parameter': /\s--?\w+/
 		}
 	},
 
@@ -49,12 +55,6 @@ Prism.languages.git = {
 	'coord': /^@@.*@@$/m,
 
 	/*
-	 * Regexp to match the changed lines in a git diff output. Check the example above.
-	 */
-	'deleted': /^-(?!-).+$/m,
-	'inserted': /^\+(?!\+).+$/m,
-
-	/*
 	 * Match a "commit [SHA1]" line in a git log output.
 	 * For instance:
 	 * $ git log
@@ -64,5 +64,5 @@ Prism.languages.git = {
 	 *
 	 *     Add of a new line
 	 */
-	'commit_sha1': /^commit \w{40}$/m
+	'commit-sha1': /^commit \w{40}$/m
 };

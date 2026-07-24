@@ -1,124 +1,131 @@
-/* TODO
-	Add support for variables inside double quoted strings
-	Add support for {php}
-*/
+(function (Prism) {
 
-(function(Prism) {
-
-	var smarty_pattern = /\{\*[\w\W]+?\*\}|\{[\w\W]+?\}/g;
-	var smarty_litteral_start = '{literal}';
-	var smarty_litteral_end = '{/literal}';
-	var smarty_litteral_mode = false;
-	
-	Prism.languages.smarty = Prism.languages.extend('markup', {
-		'smarty': {
-			pattern: smarty_pattern,
+	Prism.languages.smarty = {
+		'comment': {
+			pattern: /^\{\*[\s\S]*?\*\}/,
+			greedy: true
+		},
+		'embedded-php': {
+			pattern: /^\{php\}[\s\S]*?\{\/php\}/,
+			greedy: true,
 			inside: {
-				'delimiter': {
-					pattern: /^\{|\}$/i,
-					alias: 'punctuation'
+				'smarty': {
+					pattern: /^\{php\}|\{\/php\}$/,
+					inside: null // see below
 				},
-				'string': /(["'])(\\?.)*?\1/,
-				'number': /\b-?(0x[\dA-Fa-f]+|\d*\.?\d+([Ee]-?\d+)?)\b/,
-				'variable': [
-					/\$(?!\d)\w+/,
-					/#(?!\d)\w+#/,
-					{
-						pattern: /(\.|->)(?!\d)\w+/,
-						lookbehind: true
-					},
-					{
-						pattern: /(\[)(?!\d)\w+(?=\])/,
-						lookbehind: true
-					}
-				],
-				'function': [
-					{
-						pattern: /(\|\s*)@?(?!\d)\w+/,
-						lookbehind: true
-					},
-					/^\/?(?!\d)\w+/,
-					/(?!\d)\w+(?=\()/
-				],
-				'attr-name': {
-					// Value is made optional because it may have already been tokenized
-					pattern: /\w+\s*=\s*(?:(?!\d)\w+)?/,
-					inside: {
-						"variable": {
-							pattern: /(=\s*)(?!\d)\w+/,
-							lookbehind: true
-						},
-						"punctuation": /=/
-					}
-				},
-				'punctuation': /[\[\]().,=\|:`]|\->/,
-				'operator': [
-					/[+\-*\/%]|===?|[!<>]=?|&&|\|\|/,
-					/\bis\s+(?:not\s+)?(?:div|even|odd)(?:\s+by)?\b/,
-					/\b(?:eq|neq?|gt|lt|gt?e|lt?e|not|mod|or|and)\b/
-				],
-				'keyword': /\b(?:false|off|on|no|true|yes)\b/
+				'php': {
+					pattern: /[\s\S]+/,
+					alias: 'language-php',
+					inside: Prism.languages.php
+				}
 			}
-		}
-	});
+		},
+		'string': [
+			{
+				pattern: /"(?:\\.|[^"\\\r\n])*"/,
+				greedy: true,
+				inside: {
+					'interpolation': {
+						pattern: /\{[^{}]*\}|`[^`]*`/,
+						inside: {
+							'interpolation-punctuation': {
+								pattern: /^[{`]|[`}]$/,
+								alias: 'punctuation'
+							},
+							'expression': {
+								pattern: /[\s\S]+/,
+								inside: null // see below
+							}
+						}
+					},
+					'variable': /\$\w+/
+				}
+			},
+			{
+				pattern: /'(?:\\.|[^'\\\r\n])*'/,
+				greedy: true
+			},
+		],
+		'keyword': {
+			pattern: /(^\{\/?)[a-z_]\w*\b(?!\()/i,
+			lookbehind: true,
+			greedy: true
+		},
+		'delimiter': {
+			pattern: /^\{\/?|\}$/,
+			greedy: true,
+			alias: 'punctuation'
+		},
+		'number': /\b0x[\dA-Fa-f]+|(?:\b\d+(?:\.\d*)?|\B\.\d+)(?:[Ee][-+]?\d+)?/,
+		'variable': [
+			/\$(?!\d)\w+/,
+			/#(?!\d)\w+#/,
+			{
+				pattern: /(\.|->|\w\s*=)(?!\d)\w+\b(?!\()/,
+				lookbehind: true
+			},
+			{
+				pattern: /(\[)(?!\d)\w+(?=\])/,
+				lookbehind: true
+			}
+		],
+		'function': {
+			pattern: /(\|\s*)@?[a-z_]\w*|\b[a-z_]\w*(?=\()/i,
+			lookbehind: true
+		},
+		'attr-name': /\b[a-z_]\w*(?=\s*=)/i,
+		'boolean': /\b(?:false|no|off|on|true|yes)\b/,
+		'punctuation': /[\[\](){}.,:`]|->/,
+		'operator': [
+			/[+\-*\/%]|==?=?|[!<>]=?|&&|\|\|?/,
+			/\bis\s+(?:not\s+)?(?:div|even|odd)(?:\s+by)?\b/,
+			/\b(?:and|eq|gt?e|gt|lt?e|lt|mod|neq?|not|or)\b/
+		]
+	};
 
-	// Comments are inserted at top so that they can
-	// surround markup
-	Prism.languages.insertBefore('smarty', 'tag', {
-		'smarty-comment': {
-			pattern: /\{\*[\w\W]*?\*\}/,
-			alias: ['smarty','comment']
-		}
-	});
+	Prism.languages.smarty['embedded-php'].inside.smarty.inside = Prism.languages.smarty;
+	Prism.languages.smarty.string[0].inside.interpolation.inside.expression.inside = Prism.languages.smarty;
+
+	var string = /"(?:\\.|[^"\\\r\n])*"|'(?:\\.|[^'\\\r\n])*'/;
+	var smartyPattern = RegExp(
+		// comments
+		/\{\*[\s\S]*?\*\}/.source +
+		'|' +
+		// php tags
+		/\{php\}[\s\S]*?\{\/php\}/.source +
+		'|' +
+		// smarty blocks
+		/\{(?:[^{}"']|<str>|\{(?:[^{}"']|<str>|\{(?:[^{}"']|<str>)*\})*\})*\}/.source
+			.replace(/<str>/g, function () { return string.source; }),
+		'g'
+	);
 
 	// Tokenize all inline Smarty expressions
-	Prism.hooks.add('before-highlight', function(env) {
-		if (env.language !== 'smarty') {
-			return;
-		}
+	Prism.hooks.add('before-tokenize', function (env) {
+		var smartyLiteralStart = '{literal}';
+		var smartyLiteralEnd = '{/literal}';
+		var smartyLiteralMode = false;
 
-		env.tokenStack = [];
-
-		env.backupCode = env.code;
-		env.code = env.code.replace(smarty_pattern, function(match) {
-
+		Prism.languages['markup-templating'].buildPlaceholders(env, 'smarty', smartyPattern, function (match) {
 			// Smarty tags inside {literal} block are ignored
-			if(match === smarty_litteral_end) {
-				smarty_litteral_mode = false;
+			if (match === smartyLiteralEnd) {
+				smartyLiteralMode = false;
 			}
 
-			if(!smarty_litteral_mode) {
-				if(match === smarty_litteral_start) {
-					smarty_litteral_mode = true;
+			if (!smartyLiteralMode) {
+				if (match === smartyLiteralStart) {
+					smartyLiteralMode = true;
 				}
-				env.tokenStack.push(match);
 
-				return '___SMARTY' + env.tokenStack.length + '___';
+				return true;
 			}
-			return match;
+			return false;
 		});
 	});
 
-	// Restore env.code for other plugins (e.g. line-numbers)
-	Prism.hooks.add('before-insert', function(env) {
-		if (env.language === 'smarty') {
-			env.code = env.backupCode;
-			delete env.backupCode;
-		}
-	});
-
-	// Re-insert the tokens after highlighting
-	// and highlight them with defined grammar
-	Prism.hooks.add('after-highlight', function(env) {
-		if (env.language !== 'smarty') {
-			return;
-		}
-
-		for (var i = 0, t; t = env.tokenStack[i]; i++) {
-			env.highlightedCode = env.highlightedCode.replace('___SMARTY' + (i + 1) + '___', Prism.highlight(t, env.grammar, 'smarty'));
-		}
-
-		env.element.innerHTML = env.highlightedCode;
+	// Re-insert the tokens after tokenizing
+	Prism.hooks.add('after-tokenize', function (env) {
+		Prism.languages['markup-templating'].tokenizePlaceholders(env, 'smarty');
 	});
 
 }(Prism));
