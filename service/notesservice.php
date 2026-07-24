@@ -181,7 +181,8 @@ class NotesService {
 		}
 
 		$tags = $tagger->getTagsForObjects([$id]);
-		return \in_array(\OC\Tags::TAG_FAVORITE, $tags[$id]);
+		$noteTags = \array_key_exists($id, $tags) ? $tags[$id] : [];
+		return \in_array(\OC\Tags::TAG_FAVORITE, $noteTags);
 	}
 
 	/**
