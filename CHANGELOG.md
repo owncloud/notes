@@ -7,6 +7,11 @@
   instead of a blank white area.
 
 ### Fixed
+- Unfavoriting a note no longer returns HTTP 500. When a note had no tags left
+  after removing the favorite, `getTagsForObjects()` returns no entry for the
+  note id, so `in_array()` was called with `null` and threw a `TypeError`. Guard
+  the lookup with `array_key_exists()`, matching the pattern already used
+  elsewhere in `NotesService`.
 - Restore the empty AngularJS hash prefix so clicking a note in the sidebar
   opens it again. The AngularJS 1.8 upgrade changed the default hash prefix to
   `!`, which broke the `#/notes/{id}` sidebar links so only the first note (or
