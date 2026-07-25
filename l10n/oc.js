@@ -5,6 +5,9 @@ OC.L10N.register(
     "Note is currently saving. Leaving the page will delete all changes!" : "Nòta en cors de salvament. Quitar la pagina suprimirà totes los cambiaments !",
     "_%n word_::_%n words_" : ["%n mot","%n mots"],
     "Delete note" : "Suprimir la nòta",
-    "Favorite" : "Apondre als favorits"
+    "Favorite" : "Apondre als favorits",
+    "Notes" : "Nòtas",
+    "No note selected" : "Cap de nòta pas seleccionada",
+    "Create a note using the + button in the sidebar." : "Creatz una nòta amb lo boton + dins la barra laterala."
 },
 "nplurals=2; plural=(n > 1);");

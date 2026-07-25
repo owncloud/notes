@@ -5,6 +5,9 @@ OC.L10N.register(
     "Note is currently saving. Leaving the page will delete all changes!" : "La nota ta guardandose. Si de la páxina, ¡van esaniciase tolos cambeos!",
     "_%n word_::_%n words_" : ["%n pallabra","%n pallabres"],
     "Delete note" : "Desaniciar nota",
-    "Favorite" : "Favoritu"
+    "Favorite" : "Favoritu",
+    "Notes" : "Notes",
+    "No note selected" : "Nun se seleicionó nenguna nota",
+    "Create a note using the + button in the sidebar." : "Crea una nota col botón + de la barra llateral."
 },
 "nplurals=2; plural=(n != 1);");

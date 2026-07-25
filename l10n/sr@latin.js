@@ -1,9 +1,13 @@
 OC.L10N.register(
     "notes",
     {
+    "Notes" : "Beleške",
     "New note" : "Nova beleška",
-    "_%n word_::_%n words_" : ["%n реч","%n речи","%n речи"],
     "Delete note" : "Obriši belešku",
-    "Favorite" : "Omiljeni"
+    "Favorite" : "Omiljeni",
+    "Note is currently saving. Leaving the page will delete all changes!" : "Beleška se trenutno čuva. Napuštanje stranice će obrisati sve izmene!",
+    "No note selected" : "Nijedna beleška nije izabrana",
+    "Create a note using the + button in the sidebar." : "Napravite belešku pomoću dugmeta + u bočnoj traci.",
+    "_%n word_::_%n words_" : ["%n реч","%n речи","%n речи"]
 },
 "nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);");

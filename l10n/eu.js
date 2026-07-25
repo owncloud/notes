@@ -3,6 +3,11 @@ OC.L10N.register(
     {
     "Notes" : "Oharrak",
     "New note" : "Ohar berria",
-    "Delete note" : "Ezabatu oharra"
+    "Delete note" : "Ezabatu oharra",
+    "Favorite" : "Gogokoa",
+    "Note is currently saving. Leaving the page will delete all changes!" : "Oharra gordetzen ari da. Orritik irtenez gero, aldaketa guztiak ezabatuko dira!",
+    "No note selected" : "Ez da oharrik hautatu",
+    "Create a note using the + button in the sidebar." : "Sortu ohar bat alboko barrako + botoiaren bidez.",
+    "_%n word_::_%n words_" : ["%n hitz","%n hitz"]
 },
 "nplurals=2; plural=(n != 1);");

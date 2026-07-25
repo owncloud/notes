@@ -3,6 +3,9 @@
     "Note is currently saving. Leaving the page will delete all changes!" : "Nota word tans bewaar. Deur die blad te verlaat word alle veranderinge ontdaan!",
     "_%n word_::_%n words_" : ["%n woord","%n woorde"],
     "Delete note" : "Skrap nota",
-    "Favorite" : "Gunsteling"
+    "Favorite" : "Gunsteling",
+    "Notes" : "Notas",
+    "No note selected" : "Geen nota gekies nie",
+    "Create a note using the + button in the sidebar." : "Skep 'n nota met die +-knoppie in die kantbalk."
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

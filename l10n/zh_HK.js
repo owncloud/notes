@@ -1,10 +1,13 @@
 OC.L10N.register(
     "notes",
     {
+    "Notes" : "筆記",
     "New note" : "新筆記",
-    "Note is currently saving. Leaving the page will delete all changes!" : "正在保存笔记，离开页面将会放弃所有更改！",
-    "_%n word_::_%n words_" : ["%n 字"],
     "Delete note" : "刪除筆記",
-    "Favorite" : "我的最愛"
+    "Favorite" : "我的最愛",
+    "Note is currently saving. Leaving the page will delete all changes!" : "正在保存笔记，离开页面将会放弃所有更改！",
+    "No note selected" : "未選擇筆記",
+    "Create a note using the + button in the sidebar." : "使用側邊欄中的 + 按鈕建立筆記。",
+    "_%n word_::_%n words_" : ["%n 字"]
 },
 "nplurals=1; plural=0;");

@@ -7,6 +7,9 @@ OC.L10N.register(
     "No note selected" : "Keine Notiz ausgewählt",
     "Create a note using the + button in the sidebar." : "Erstellen Sie eine Notiz über die +-Schaltfläche in der Seitenleiste.",
     "Delete note" : "Notiz löschen",
-    "Favorite" : "Favorit"
+    "Favorite" : "Favorit",
+    "Notes" : "Notizen",
+    "No note selected" : "Keine Notiz ausgewählt",
+    "Create a note using the + button in the sidebar." : "Erstellen Sie eine Notiz über die Schaltfläche + in der Seitenleiste."
 },
 "nplurals=2; plural=(n != 1);");

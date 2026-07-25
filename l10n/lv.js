@@ -5,6 +5,9 @@ OC.L10N.register(
     "Note is currently saving. Leaving the page will delete all changes!" : "Piezīme pašlaik tiek saglabāta. Pametot lapu, visas izmaiņas tiks izdzēstas!",
     "_%n word_::_%n words_" : ["%n vārdu","%n vārds","%n vārdi"],
     "Delete note" : "Dzēst piezīmi",
-    "Favorite" : "Iecienītais"
+    "Favorite" : "Iecienītais",
+    "Notes" : "Piezīmes",
+    "No note selected" : "Nav atlasīta neviena piezīme",
+    "Create a note using the + button in the sidebar." : "Izveidojiet piezīmi, izmantojot pogu + sānjoslā."
 },
 "nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : 2);");
