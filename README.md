@@ -77,10 +77,11 @@ and our [Code of Conduct](CODE_OF_CONDUCT.md) before getting started.
 
 ## Translations
 
-Help translate this project on Transifex:
-**<https://explore.transifex.com/owncloud-org/owncloud/>**
-
-Please submit translations via Transifex -- do not open pull requests for translation changes.
+Translations are maintained directly in this repository under `l10n/`, as
+paired `l10n/<lang>.js` and `l10n/<lang>.json` catalogs. To add or update a
+translation, edit both files for the language and open a pull request. When a
+translatable source string changes, its translations must be updated in the same
+pull request.
 
 ## Security
 
