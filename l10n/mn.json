@@ -1,6 +1,6 @@
 { "translations": {
-    "Notes" : "Тэмдэглэгээ",
-    "New note" : "Шинэ тэмдэглэгээ",
-    "Delete note" : "Тэмдэглэгээ устгах"
+    "Notes" : "Тэмдэглэлүүд",
+    "New note" : "Шинэ тэмдэглэл",
+    "Delete note" : "Тэмдэглэл устгах"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
