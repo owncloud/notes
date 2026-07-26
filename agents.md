@@ -51,6 +51,11 @@ make dist                     # Create distribution package
 - Review and merge Dependabot PRs as part of regular maintenance.
 - Do not introduce new dependencies without discussion in an issue first.
 
+### Translations
+- When you add or change a translatable source string (`$l->t()` / `p($l->t())` in `templates/`, or `t()` / `n()` in `js/`), you **must** add the matching entries to every `l10n/<lang>.js` and `l10n/<lang>.json` file.
+- Keep each language's `.js` and `.json` pair in sync, and preserve each file's existing `pluralForm`; plural strings need one array element per `nplurals`.
+- Translations are maintained in-repo (no Transifex); include them in the same PR as the source-string change.
+
 ### Git Workflow
 - **Rebase policy**: Always rebase; never create merge commits. Use `git pull --rebase` and `git rebase` before pushing.
 - **Signed commits**: All commits **must** be PGP/GPG signed (`git commit -S -s`).
