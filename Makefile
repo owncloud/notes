@@ -236,6 +236,11 @@ test-js: ## Test js files
 test-js: npm
 	cd js && npm run test
 
+.PHONY: test-l10n
+test-l10n: ## Check l10n catalogs for duplicate translation keys
+test-l10n:
+	python3 tests/l10n/check-duplicate-keys.py
+
 .PHONY: test-acceptance-webui
 test-acceptance-webui: ## Run webUI acceptance tests
 test-acceptance-webui: $(acceptance_test_deps)
