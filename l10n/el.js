@@ -5,6 +5,9 @@ OC.L10N.register(
     "Note is currently saving. Leaving the page will delete all changes!" : "Σημείωση προς το παρόν είναι η αποταμίευση. Αφήστε τη σελίδα θα διαγράψει όλες τις αλλαγές!",
     "_%n word_::_%n words_" : ["%n λέξη","%n λέξεις"],
     "Delete note" : "Διαγραφή σημείωσης",
-    "Favorite" : "Αγαπημένο"
+    "Favorite" : "Αγαπημένο",
+    "Notes" : "Σημειώσεις",
+    "No note selected" : "Δεν έχει επιλεγεί σημείωση",
+    "Create a note using the + button in the sidebar." : "Δημιουργήστε μια σημείωση με το κουμπί + στην πλαϊνή μπάρα."
 },
 "nplurals=2; plural=(n != 1);");

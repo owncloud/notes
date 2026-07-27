@@ -5,6 +5,9 @@ OC.L10N.register(
     "Note is currently saving. Leaving the page will delete all changes!" : "ບັນທຶກກຳລັງຖືກຈັດເກັບ. ການອອກຈາກໜ້ານີ້ຈະເຮັດໃຫ້ຂໍ້ມູນທີ່ປ່ຽນແປງທັງໝົດຖືກລຶບຖິ້ມ!",
     "_%n word_::_%n words_" : ["%n ຄຳ"],
     "Delete note" : "ລຶບບັນທຶກ",
-    "Favorite" : "ລາຍການທີ່ມັກ"
+    "Favorite" : "ລາຍການທີ່ມັກ",
+    "Notes" : "ບັນທຶກ",
+    "No note selected" : "ບໍ່ໄດ້ເລືອກບັນທຶກ",
+    "Create a note using the + button in the sidebar." : "ສ້າງບັນທຶກໂດຍໃຊ້ປຸ່ມ + ຢູ່ແຖບດ້ານຂ້າງ."
 },
 "nplurals=1; plural=0;");

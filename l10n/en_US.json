@@ -3,6 +3,9 @@
     "Note is currently saving. Leaving the page will delete all changes!" : "Note is currently saving. Leaving the page will delete all changes!",
     "_%n word_::_%n words_" : ["%n word","%n words"],
     "Delete note" : "Delete note",
-    "Favorite" : "Favourite"
+    "Favorite" : "Favourite",
+    "Notes" : "Notes",
+    "No note selected" : "No note selected",
+    "Create a note using the + button in the sidebar." : "Create a note using the + button in the sidebar."
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

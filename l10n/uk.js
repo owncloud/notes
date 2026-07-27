@@ -1,10 +1,13 @@
 OC.L10N.register(
     "notes",
     {
+    "Notes" : "Нотатки",
     "New note" : "Нова нотатка",
-    "Note is currently saving. Leaving the page will delete all changes!" : "Нотатка зараз зберігається. Покидання сторінки видалить всі зміни!",
-    "_%n word_::_%n words_" : ["%n слово","%n слів","%n слів","%n слів"],
     "Delete note" : "Вилучити нотатку",
-    "Favorite" : "Улюблений"
+    "Favorite" : "Улюблений",
+    "Note is currently saving. Leaving the page will delete all changes!" : "Нотатка зараз зберігається. Покидання сторінки видалить всі зміни!",
+    "No note selected" : "Жодної нотатки не вибрано",
+    "Create a note using the + button in the sidebar." : "Створіть нотатку за допомогою кнопки + на бічній панелі.",
+    "_%n word_::_%n words_" : ["%n слово","%n слів","%n слів","%n слів"]
 },
 "nplurals=4; plural=(n % 1 == 0 && n % 10 == 1 && n % 100 != 11 ? 0 : n % 1 == 0 && n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? 1 : n % 1 == 0 && (n % 10 ==0 || (n % 10 >=5 && n % 10 <=9) || (n % 100 >=11 && n % 100 <=14 )) ? 2: 3);");

@@ -3,6 +3,11 @@ OC.L10N.register(
     {
     "Notes" : "Notas",
     "New note" : "Nove nota",
-    "Delete note" : "Dele nota"
+    "Delete note" : "Dele nota",
+    "Favorite" : "Favorite",
+    "Note is currently saving. Leaving the page will delete all changes!" : "Le nota es actualmente in salveguarda. Quitar le pagina delera tote le cambiamentos!",
+    "No note selected" : "Nulle nota seligite",
+    "Create a note using the + button in the sidebar." : "Crea un nota con le button + in le barra lateral.",
+    "_%n word_::_%n words_" : ["%n parola","%n parolas"]
 },
 "nplurals=2; plural=(n != 1);");

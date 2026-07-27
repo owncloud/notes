@@ -3,6 +3,9 @@
     "Note is currently saving. Leaving the page will delete all changes!" : "Poznámka je právě ukládána. Opuštění stránky smaže všechny změny!",
     "_%n word_::_%n words_" : ["%n slovo","%n slova","%n slov","%n slov"],
     "Delete note" : "Smazat poznámku",
-    "Favorite" : "Oblíbené"
+    "Favorite" : "Oblíbené",
+    "Notes" : "Poznámky",
+    "No note selected" : "Není vybrána žádná poznámka",
+    "Create a note using the + button in the sidebar." : "Vytvořte poznámku pomocí tlačítka + v postranním panelu."
 },"pluralForm" :"nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;"
 }

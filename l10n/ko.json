@@ -3,6 +3,9 @@
     "Note is currently saving. Leaving the page will delete all changes!" : "메모를 저장하고 있습니다. 페이지에서 나가면 모든 변경 사항이 삭제됩니다!",
     "_%n word_::_%n words_" : ["단어 %n개"],
     "Delete note" : "메모 삭제",
-    "Favorite" : "즐겨찾기"
+    "Favorite" : "즐겨찾기",
+    "Notes" : "메모",
+    "No note selected" : "선택된 메모 없음",
+    "Create a note using the + button in the sidebar." : "사이드바의 + 버튼을 사용하여 메모를 만드세요."
 },"pluralForm" :"nplurals=1; plural=0;"
 }

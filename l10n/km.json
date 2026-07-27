@@ -1,6 +1,11 @@
 { "translations": {
     "Notes" : "កំណត់​ចំណាំ",
     "New note" : "កំណត់​ចំណាំ​ថ្មី",
-    "Delete note" : "លុប​កំណត់​ចំណាំ"
+    "Delete note" : "លុប​កំណត់​ចំណាំ",
+    "Favorite" : "សំណព្វ",
+    "Note is currently saving. Leaving the page will delete all changes!" : "កំណត់ចំណាំកំពុងរក្សាទុក។ ការចាកចេញពីទំព័រនេះនឹងលុបការផ្លាស់ប្តូរទាំងអស់!",
+    "No note selected" : "មិនបានជ្រើសរើសកំណត់ចំណាំ",
+    "Create a note using the + button in the sidebar." : "បង្កើតកំណត់ចំណាំដោយប្រើប៊ូតុង + នៅរបារចំហៀង។",
+    "_%n word_::_%n words_" : ["%n ពាក្យ"]
 },"pluralForm" :"nplurals=1; plural=0;"
 }

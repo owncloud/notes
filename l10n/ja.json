@@ -1,8 +1,11 @@
 { "translations": {
+    "Notes" : "ノート",
     "New note" : "新しいノート",
-    "Note is currently saving. Leaving the page will delete all changes!" : "ノートを保存しています。このページから移動すると全ての変更が失われます！",
-    "_%n word_::_%n words_" : ["%n 単語"],
     "Delete note" : "ノートを削除",
-    "Favorite" : "お気に入り"
+    "Favorite" : "お気に入り",
+    "Note is currently saving. Leaving the page will delete all changes!" : "ノートを保存しています。このページから移動すると全ての変更が失われます！",
+    "No note selected" : "ノートが選択されていません",
+    "Create a note using the + button in the sidebar." : "サイドバーの + ボタンを使ってノートを作成します。",
+    "_%n word_::_%n words_" : ["%n 単語"]
 },"pluralForm" :"nplurals=1; plural=0;"
 }

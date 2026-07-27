@@ -1,7 +1,11 @@
 { "translations": {
     "Notes" : "Poznámky",
     "New note" : "Nová poznámka",
-    "Note is currently saving. Leaving " : "Poznámka je práve ukladá. Opustenie",
-    "Delete note" : "Zmazať poznámku"
+    "Delete note" : "Zmazať poznámku",
+    "Favorite" : "Obľúbené",
+    "Note is currently saving. Leaving the page will delete all changes!" : "Poznámka sa práve ukladá. Opustením stránky sa stratia všetky zmeny!",
+    "No note selected" : "Nie je vybraná žiadna poznámka",
+    "Create a note using the + button in the sidebar." : "Vytvorte poznámku pomocou tlačidla + na bočnom paneli.",
+    "_%n word_::_%n words_" : ["%n slovo","%n slová","%n slov"]
 },"pluralForm" :"nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;"
 }

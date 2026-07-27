@@ -5,6 +5,9 @@ OC.L10N.register(
     "Note is currently saving. Leaving the page will delete all changes!" : "یادداشت در حال ذخیره‌شدن است. خروج از صفحه باعث از بین رفتن تغییرات انجام شده می‌شود.",
     "_%n word_::_%n words_" : ["%n کلمه","%n کلمه"],
     "Delete note" : "حذف یادداشت",
-    "Favorite" : "برگزیده"
+    "Favorite" : "برگزیده",
+    "Notes" : "یادداشت‌ها",
+    "No note selected" : "هیچ یادداشتی انتخاب نشده است",
+    "Create a note using the + button in the sidebar." : "با دکمه + در نوار کناری یک یادداشت بسازید."
 },
 "nplurals=2; plural=(n > 1);");

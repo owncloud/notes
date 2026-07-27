@@ -5,6 +5,9 @@ OC.L10N.register(
     "Note is currently saving. Leaving the page will delete all changes!" : "Забелешката во моментов се зачувува. Заминувањето од страницава ќе ги избрише сите промени!",
     "_%n word_::_%n words_" : ["%n збор","%n зборови"],
     "Delete note" : "Избриши белешка",
-    "Favorite" : "Омилен"
+    "Favorite" : "Омилен",
+    "Notes" : "Белешки",
+    "No note selected" : "Не е избрана белешка",
+    "Create a note using the + button in the sidebar." : "Креирај белешка со користење на копчето + во страничната лента."
 },
 "nplurals=2; plural=(n % 10 == 1 && n % 100 != 11) ? 0 : 1;");
