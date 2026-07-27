@@ -5,11 +5,9 @@ OC.L10N.register(
     "Note is currently saving. Leaving the page will delete all changes!" : "Notizen werden gerade gespeichert. Das Verlassen der Seite löscht alle Änderungen!",
     "_%n word_::_%n words_" : ["%n Wort","%n Wörter"],
     "No note selected" : "Keine Notiz ausgewählt",
-    "Create a note using the + button in the sidebar." : "Erstellen Sie eine Notiz über den +-Button in der Seitenleiste.",
+    "Create a note using the + button in the sidebar." : "Erstelle eine Notiz über die +-Schaltfläche in der Seitenleiste.",
     "Delete note" : "Notiz löschen",
     "Favorite" : "Favorisieren",
-    "Notes" : "Notizen",
-    "No note selected" : "Keine Notiz ausgewählt",
-    "Create a note using the + button in the sidebar." : "Erstelle eine Notiz über die +-Schaltfläche in der Seitenleiste."
+    "Notes" : "Notizen"
 },
 "nplurals=2; plural=(n != 1);");
