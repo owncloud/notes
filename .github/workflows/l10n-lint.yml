@@ -1,0 +1,28 @@
+name: l10n lint
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+
+permissions:
+  contents: read
+
+concurrency:
+  group: l10n-lint-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  duplicate-keys:
+    name: Duplicate translation keys
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Check l10n catalogs for duplicate keys
+        run: make test-l10n
