@@ -1,10 +1,16 @@
 # Changelog
 
-## [Unreleased] 
+## [Unreleased]
+
+## [2.2.0] - 2026-07-27
 
 ### Added
 - Show an empty-state placeholder in the content pane when no note is selected,
   instead of a blank white area.
+- Full translation backfill across all supported languages (#561).
+
+### Changed
+- Retire the Transifex sync; translations are now maintained in-repo (#558).
 
 ### Fixed
 - Unfavoriting a note no longer returns HTTP 500. When a note had no tags left
@@ -16,6 +22,9 @@
   opens it again. The AngularJS 1.8 upgrade changed the default hash prefix to
   `!`, which broke the `#/notes/{id}` sidebar links so only the first note (or
   the last-viewed note) could be opened.
+- Render fenced code blocks with a background box for readability (#560).
+- Correct zh-Hans "Favorite"/"New note" and unify Mongolian note terminology (#559).
+- Remove duplicate de/de_DE empty-state translation keys (#562).
 
 ### Security
 - Upgrade vendored JS libraries to patched versions, resolving Trivy findings:
@@ -110,7 +119,8 @@ owncloud-notes (0.2)
 * Remember last note
 * Fixed various bugs
 
-[Unreleased]: https://github.com/owncloud/notes/compare/v2.1.2..master
+[Unreleased]: https://github.com/owncloud/notes/compare/v2.2.0..master
+[2.2.0]: https://github.com/owncloud/notes/compare/v2.1.2..v2.2.0
 [2.1.2]: https://github.com/owncloud/notes/compare/v2.1.1..v2.1.2
 [2.1.1]: https://github.com/owncloud/notes/compare/v2.1.0..v2.1.1
 [2.1.0]: https://github.com/owncloud/notes/compare/v2.0.7..v2.1.0
