@@ -7,6 +7,10 @@
 ### Added
 - Show an empty-state placeholder in the content pane when no note is selected,
   instead of a blank white area.
+- Full translation backfill across all supported languages (#561).
+
+### Changed
+- Retire the Transifex sync; translations are now maintained in-repo (#558).
 
 ### Fixed
 - Unfavoriting a note no longer returns HTTP 500. When a note had no tags left
@@ -18,6 +22,9 @@
   opens it again. The AngularJS 1.8 upgrade changed the default hash prefix to
   `!`, which broke the `#/notes/{id}` sidebar links so only the first note (or
   the last-viewed note) could be opened.
+- Render fenced code blocks with a background box for readability (#560).
+- Correct zh-Hans "Favorite"/"New note" and unify Mongolian note terminology (#559).
+- Remove duplicate de/de_DE empty-state translation keys (#562).
 
 ### Security
 - Upgrade vendored JS libraries to patched versions, resolving Trivy findings:
