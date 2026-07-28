@@ -1,0 +1,24 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    permissions:
+      contents: write
+    uses: owncloud/reusable-workflows/.github/workflows/release.yml@main
+    with:
+      app-name: notes
+      # notes emits two tarballs both named notes.tar.gz (source and appstore);
+      # publish only the appstore one, otherwise the release assets collide.
+      artifact-glob: build/artifacts/appstore/*.tar.gz
+    secrets:
+      SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
+      SIGNING_CERT: ${{ secrets.SIGNING_CERT }}
+      SIGNING_CHAIN: ${{ secrets.SIGNING_CHAIN }}
