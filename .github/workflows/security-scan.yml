@@ -1,0 +1,28 @@
+name: Security Scan
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+  schedule:
+    # Weekly, so CVEs published against already-released code surface without a
+    # code change. That is how the outdated bundled rclone would have been found.
+    - cron: '0 3 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: security-scan-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  trivy:
+    name: Trivy
+    uses: owncloud/reusable-workflows/.github/workflows/trivy.yml@main
