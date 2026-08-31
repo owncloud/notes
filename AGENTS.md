@@ -1,4 +1,4 @@
-# agents.md -- Notes
+# AGENTS.md -- Notes
 
 ## Repository Overview
 
