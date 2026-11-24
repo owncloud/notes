@@ -3,6 +3,7 @@
         verbose="true"
         failOnRisky="true"
         failOnWarning="true"
+        convertDeprecationsToExceptions="true"
         timeoutForSmallTests="900"
         timeoutForMediumTests="900"
         timeoutForLargeTests="900"
